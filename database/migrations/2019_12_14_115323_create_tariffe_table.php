@@ -15,10 +15,11 @@ class CreateTariffeTable extends Migration
     {
         Schema::create('tariffe', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('tariffa');
             $table->unsignedInteger('da_gg');
             $table->unsignedInteger('a_gg');
             $table->float('coefficiente');
-            $table->boolean('valido');
+            $table->boolean('attiva');
         });
     }
 

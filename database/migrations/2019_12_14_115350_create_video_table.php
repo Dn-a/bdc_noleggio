@@ -15,12 +15,14 @@ class CreateVideoTable extends Migration
     {
         Schema::create('video', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('titolo');
+            $table->string('titolo',50);
             $table->unsignedInteger('durata');
             $table->unsignedInteger('id_casa_produzione');
             $table->unsignedInteger('id_categoria');
             $table->unsignedInteger('id_regista');
             $table->boolean('in_uscita');
+            $table->date('data_uscita');
+            $table->float('prezzo');
         });
 
         Schema::table('video', function($table) {

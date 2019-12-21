@@ -15,9 +15,9 @@ class CreateComuniTable extends Migration
     {
         Schema::create('comuni', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nome');
-            $table->string('prov');
-            $table->string('regione');
+            $table->string('nome',50);
+            $table->string('prov',5);
+            $table->string('regione',50);
         });
     }
 

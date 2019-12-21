@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCaseProduzioneTable extends Migration
+class CreateConfigurazioniTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateCaseProduzioneTable extends Migration
      */
     public function up()
     {
-        Schema::create('case_produzione', function (Blueprint $table) {
+        Schema::create('configurazioni', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nome',50);
+            $table->string('titolo');
+            $table->string('parametri');
         });
     }
 
@@ -26,6 +27,6 @@ class CreateCaseProduzioneTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('case_produzione');
+        Schema::dropIfExists('configurazioni');
     }
 }

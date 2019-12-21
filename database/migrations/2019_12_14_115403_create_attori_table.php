@@ -15,8 +15,8 @@ class CreateAttoriTable extends Migration
     {
         Schema::create('attori', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nome');
-            $table->string('cognome');
+            $table->string('nome',50);
+            $table->string('cognome',50);
         });
     }
 

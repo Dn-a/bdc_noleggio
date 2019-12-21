@@ -15,16 +15,16 @@ class CreatePrenotazioniTable extends Migration
     {
         Schema::create('prenotazioni', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('id_video');
-            $table->unsignedInteger('id_pt_vendita');
+            $table->unsignedInteger('id_dipendente');
             $table->unsignedInteger('id_cliente');
-            $table->date('data');
+            $table->unsignedInteger('id_video');
+            $table->boolean('ritirato');
         });
 
         Schema::table('prenotazioni', function($table) {
-        	$table->foreign('id_video')->references('id')->on('video')->onDelete('restrict');
-        	$table->foreign('id_pt_vendita')->references('id')->on('pt_vendita')->onDelete('restrict');
         	$table->foreign('id_cliente')->references('id')->on('clienti')->onDelete('restrict');
+        	$table->foreign('id_dipendente')->references('id')->on('dipendenti')->onDelete('restrict');
+            $table->foreign('id_video')->references('id')->on('video')->onDelete('restrict');
         });
     }
 
