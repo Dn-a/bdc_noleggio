@@ -23,6 +23,7 @@ class CreateVideoTable extends Migration
             $table->boolean('in_uscita');
             $table->date('data_uscita');
             $table->float('prezzo');
+            $table->string('img',2048);
         });
 
         Schema::table('video', function($table) {

@@ -17,9 +17,9 @@ class CreateClientiTable extends Migration
             $table->increments('id');
             $table->string('nome',50);
             $table->string('cognome',50);
-            $table->string('CF',16);
+            $table->string('CF',16)->unique();
             $table->date('data_nascita');
-            $table->string('email',50);
+            $table->string('email',50)->unique();
             $table->string('telefono',12);
             $table->string('cellulare',12);
             $table->string('indirizzo',50);

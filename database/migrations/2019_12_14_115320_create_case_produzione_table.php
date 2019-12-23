@@ -15,7 +15,7 @@ class CreateCaseProduzioneTable extends Migration
     {
         Schema::create('case_produzione', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nome',50);
+            $table->string('nome',50)->unique();
         });
     }
 

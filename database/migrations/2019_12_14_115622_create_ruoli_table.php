@@ -15,7 +15,7 @@ class CreateRuoliTable extends Migration
     {
         Schema::create('ruoli', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('titolo',50);
+            $table->string('titolo',50)->unique();
         });
     }
 

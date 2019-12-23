@@ -15,9 +15,9 @@ class CreatePtVenditaTable extends Migration
     {
         Schema::create('pt_vendita', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('codice');
+            $table->string('titolo');
             $table->string('indirizzo');
-            $table->unsignedInteger('id_comune');
+            $table->unsignedInteger('id_comune')->default(1);
         });
 
         Schema::table('pt_vendita', function($table) {
