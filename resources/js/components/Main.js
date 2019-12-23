@@ -1,59 +1,80 @@
 import React, { Component , Fragment } from 'react';
 import ReactDOM from 'react-dom';
+import {BrowserRouter as Router, Switch, Route, Link, NavLink} from "react-router-dom";
 
 import Home from './view/Home';
 import Video from './view/Video';
 import Clienti from './view/Clienti';
 
-import {BrowserRouter as Router, Switch, Route, Link, NavLink} from "react-router-dom";
+const routes = [
+    {path: "/", name:"Home", icon:'fa-home', Component: Home},
+    {path: "/video", name:"Video", icon:'fa-film', Component: Video},
+    {path: "/clienti", name:"Clienti", icon:'fa-user-o', Component: Clienti},
+];
 
 export default class Main extends Component {
     render() {
+
         return (
             <Router>
                 <aside id="sidebar" className="shadow">
                     <nav className="menu py-3" >
                         <ul>
-                            <li >
-                                <NavLink exact to="/">
-                                    <i className="fa fa-home" aria-hidden="true"></i>
-                                    <span>Home</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/video">
-                                    <i className="fa fa-film" aria-hidden="true"></i>
-                                    <span>Video</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/edit">
-                                    <i className="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                    <span>Edit</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/clienti">
-                                    <i className="fa fa-user-o" aria-hidden="true"></i>
-                                    <span>Clienti</span>
-                                </NavLink>
-                            </li>
+                            {
+                                routes.map(({path, name, icon},key) => {
+                                    return(
+                                        <li key={key} >
+                                            <NavLink exact to={path}>
+                                                <i className={"fa "+icon} aria-hidden="true"></i>
+                                                <span>{name}</span>
+                                            </NavLink>
+                                        </li>
+                                    )
+                                })
+                            }
                         </ul>
                     </nav>
                 </aside>
 
-                <main id="content">
+                <main id="content" className="py-4">
+
+                    <MainTitle />
+
                     <Switch>
-                        <Route path="/" exact component={Home} />
-                        <Route path="/video" exact component={Video} />
-                        <Route path="/clienti" exact component={Clienti} />
+                        {
+                            routes.map(({path, Component},key) => {
+                                return(
+                                    <Route key={key} path={path} exact component={Component} />
+                                )
+                            })
+                        }
                     </Switch>
+
                 </main>
 
             </Router>
 
         );
     }
+}
+
+const MainTitle = ()  => {
+    return(
+    <div className="px-2 ml-4 mb-4 ">
+        <Switch>
+            {
+            routes.map(({path, name},key) => {
+            return(
+            <Route key={key} exact path={path} >
+                <h3><strong>{name}</strong></h3>
+            </Route>
+            )
+            })
+            }
+        </Switch>
+    </div>
+
+    );
 }
 
 if (document.getElementById('noleggio')) {

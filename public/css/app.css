@@ -11444,8 +11444,16 @@ a[data-toggle=collapse] {
     width: 0px;
   }
 
+  #content {
+    padding-left: 0 !important;
+  }
+
   #sidebar.active {
     width: 100px;
+  }
+
+  #content.active {
+    padding-left: 100px !important;
   }
 }
 
@@ -11472,6 +11480,7 @@ header {
 #content {
   position: relative;
   top: 56px;
+  padding-left: 42px;
   overflow: auto;
   height: 80%;
   width: 100%;
@@ -11481,6 +11490,12 @@ header {
 
 #content.active {
   padding-left: 100px;
+}
+
+/*--- Breadcrumb ---*/
+
+.breadcrumb {
+  padding: 5px 0 5px 58px;
 }
 
 /*--- FOOTER ---*/

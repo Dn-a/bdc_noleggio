@@ -19,4 +19,7 @@ Auth::routes([
   ]);
 
 //Route::get('/', 'HomeController@index')->name('home');
-Route::get('/{name}', 'HomeController@index')->name('home')->where('name','(|home)');
+
+if(request()->header('accept')!='application/json')
+    Route::get('/{name}', 'HomeController@index')->name('home')->where('name','(|home|clienti|video)');
+

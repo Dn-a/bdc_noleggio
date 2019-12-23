@@ -36,4 +36,17 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    /*protected function attemptLogin(Request $request)
+    {
+        $customerAttempt = Auth::guard('customer')->attempt(
+            $this->credentials($request), $request->has('remember')
+        );
+        if(!$customerAttempt){
+            return Auth::guard('seller')->attempt(
+                $this->credentials($request), $request->has('remember')
+            );
+        }
+        return $customerAttempt;
+    }*/
 }
