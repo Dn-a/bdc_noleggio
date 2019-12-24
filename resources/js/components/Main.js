@@ -5,14 +5,45 @@ import {BrowserRouter as Router, Switch, Route, Link, NavLink} from "react-route
 import Home from './view/Home';
 import Video from './view/Video';
 import Clienti from './view/Clienti';
+import Magazzino from './view/CaricoScarico';
 
 const routes = [
-    {path: "/", name:"Home", icon:'fa-home', Component: Home},
-    {path: "/video", name:"Video", icon:'fa-film', Component: Video},
-    {path: "/clienti", name:"Clienti", icon:'fa-user-o', Component: Clienti},
+    {path: "/", name:"Home",title:'Home', icon:'fa-home', Component:Home},
+    {path: "/noleggi", name:"Noleggi",title:'Gestione Noleggi', icon:'fa-film', Component: Video},
+    {path: "/deposito", name:"Deposito",title:'Gestione Deposito', icon:'fa-list-alt', Component: Magazzino},
+    {path: "/clienti", name:"Clienti",title:'Gestione Clienti', icon:'fa-user-o', Component: Clienti},
 ];
 
+
+const MainTitle = ()  => {
+    return(
+    <div className="px-2 ml-4 mb-4 ">
+        <Switch>
+            {
+            routes.map(({path, title},key) => {
+            return(
+            <Route key={key} exact path={path} >
+                <h3><strong>{title}</strong></h3>
+            </Route>
+            )
+            })
+            }
+        </Switch>
+    </div>
+
+    );
+}
+
 export default class Main extends Component {
+
+    constructor(props){
+        super(props);
+
+        const host = window.location.hostname;
+        this.home = host=='www.dn-a.it'? '/noleggio':'';
+        this.url = this.home;
+    }
+
     render() {
 
         return (
@@ -44,7 +75,9 @@ export default class Main extends Component {
                         {
                             routes.map(({path, Component},key) => {
                                 return(
-                                    <Route key={key} path={path} exact component={Component} />
+                                    <Route key={key} path={path} exact
+                                        component={() => <Component url={this.url} />}
+                                    />
                                 )
                             })
                         }
@@ -58,24 +91,6 @@ export default class Main extends Component {
     }
 }
 
-const MainTitle = ()  => {
-    return(
-    <div className="px-2 ml-4 mb-4 ">
-        <Switch>
-            {
-            routes.map(({path, name},key) => {
-            return(
-            <Route key={key} exact path={path} >
-                <h3><strong>{name}</strong></h3>
-            </Route>
-            )
-            })
-            }
-        </Switch>
-    </div>
-
-    );
-}
 
 if (document.getElementById('noleggio')) {
     ReactDOM.render(<Main />, document.getElementById('noleggio'));

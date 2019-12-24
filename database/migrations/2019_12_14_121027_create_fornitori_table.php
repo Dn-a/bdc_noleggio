@@ -15,7 +15,7 @@ class CreateFornitoriTable extends Migration
     {
         Schema::create('fornitori', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('CF_PIVA',50)->unique();
+            $table->string('cf_piva',50)->unique();
             $table->string('titolo',50);
             $table->string('indirizzo',50);
             $table->unsignedInteger('id_comune');
