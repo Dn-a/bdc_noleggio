@@ -8,11 +8,7 @@ use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request)
     {
         $page = $request->input('per-page') ?: 15;
@@ -22,67 +18,87 @@ class ClienteController extends Controller
         return new ClienteCollection($cliente,[],true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+    public function search(Request $request, $val)
+    {
+
+        $arr = explode(' ',$val);
+        //var_dump($arr);exit;
+        //echo "cerca: ".$val;exit;
+
+        $cliente = Cliente::
+        //where('nome','like',"$arr[0]%")
+        orWhere(function($query) use($arr) {
+            if(count($arr)==1)
+                $query->where('nome','like',$arr[0].'%');
+        })
+        ->orWhere(function($query) use($arr) {
+            if(count($arr)==1)
+                $query->where('cognome','like',$arr[0].'%');
+        })
+        ->orWhere(function($query) use($arr) {
+            if(isset($arr[1]))
+                $query->where('cognome','like',$arr[1].'%')
+                ->where('nome','like',$arr[0].'%');
+        })
+        ->orWhere(function($query) use($arr) {
+            if(isset($arr[1]))
+                $query->where('nome','like',$arr[1].'%')
+                ->where('cognome','like',$arr[0].'%');
+        })
+
+        /*
+        ->orWhere(function($query) use($arr) {
+            if(isset($arr[1]))
+                $query->where('cognome','like','%'.$arr[1].'%');
+        })
+        ->orWhere(function($query) use($arr) {
+            if(isset($arr[1]))
+                $query->where('nome','like','%'.$arr[1].'%');
+        })*/
+
+        //->orWhere('cognome','like',"$arr[0]%")
+        ->orWhere('email','like',"$arr[0]%")
+        ->orWhere('cf','like',"$arr[0]%")
+        ->orWhere('telefono','like',"$arr[0]%")
+        ->orWhere('cellulare','like',"$arr[0]%")->limit(10)->get();
+
+        return new ClienteCollection($cliente);
+    }
+
+
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
-        //
+        if($id=='search')
+            abort(404);
+        echo "Show: ".$id;exit;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
-        //
+        echo "Edit: ".$id;exit;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
         Cliente::destroy($id);

@@ -1,15 +1,12 @@
 import React, { Component , Fragment } from 'react';
 import axios from 'axios';
 
-import { makeStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import blue from '@material-ui/core/colors/blue';
-
-import STable from '../utils/STable';
-import ETable from '../utils/ETable';
 import AddEditModal from '../utils/AddEditModal';
+import SearchField from '../utils/SearchField';
+
+import { Button } from '../utils/Button';
+import { Table } from '@material-ui/core';
+import InfiniteTable from '../utils/InfiniteTable';
 
 
 const COLUMNS = [
@@ -43,11 +40,13 @@ export default class Clienti extends Component {
                 loading: false,
                 selected: []
             },
+            aa:"aa",
             show:false,
         };
 
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
+        this._searchFieldRemoteData = this._searchFieldRemoteData.bind(this);
     }
 
     componentDidMount(){
@@ -65,21 +64,24 @@ export default class Clienti extends Component {
 
         axios.get(url, headers )
 			.then(res => {
-                let rows = res.data;
                 let data = this.state.data;
 
-                data.rows = rows.data;
-                data.page = rows.current_page;
-                data.total = rows.total;
-                data.perPage = rows.per_page;
+                let remoteData = res.data;
+                let pagination = remoteData.pagination;
 
-                this.setState({data});
+                data.rows = remoteData.data;
+                data.page = pagination.current_page;
+                data.total = pagination.total;
+                data.perPage = pagination.per_page;
+
+                this.cache = {};
+                this.setState({data},() =>  this.cache.rows = this.state.data.rows);
 
 			}).catch((error) => {
 				console.log(error.response.data);
 				if(error.response.status==401)
 					if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-						window.location.href=this.home + '/login';
+						window.location.href=this.props.url + '/login';
 			});
     }
 
@@ -90,28 +92,49 @@ export default class Clienti extends Component {
         this.setState({show : true});
     }
 
+    _searchFieldRemoteData(rows,reset){
+
+        //console.log(rows);
+
+        let data = this.state.data;
+
+        if(data.rows.length >= 0){
+            data.rows = rows;
+            this.setState({data});
+        }
+
+        if(reset){
+            //console.log(this.cache);
+            data.rows = this.cache.rows;
+            this.setState({data});
+        }
+
+    }
+
     render() {
+        let urlClienti = this.props.url+'/clienti/search';
         return (
             <div className="container-fluid pl-3">
                 <div className="row text-right mb-3 px-2">
-                    <div className="col-md-12 ">
-                    <MuiThemeProvider theme={blueTheme}>
-                        <Fab color="primary" aria-label="add" onClick={this._handleShowModal}>
-                            <AddIcon />
-                        </Fab>
-                    </MuiThemeProvider>
-                    <AddEditModal body="suca" type="Nuovo" title="Cliente" show={this.state.show} onHide={this._handleCloseModal} />
+
+                    <div className="col-md-6">
+                        <SearchField url={urlClienti} callback={this._searchFieldRemoteData}  />
                     </div>
+
+                    <div className="col-md-6 ">
+                        <Button onClick={this._handleShowModal}>Nuovo Cliente</Button>
+                        <AddEditModal show={this.state.show} onHide={this._handleCloseModal} title="Cliente" type="Nuovo" >
+                            campi obbligatori
+                        </AddEditModal>
+                    </div>
+
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <STable titolo="Clienti" data={this.state.data} />
+                        <InfiniteTable data={this.state.data} />
                     </div>
                 </div>
             </div>
         );
     }
 }
-
-const color = blue[500];
-const blueTheme = createMuiTheme({ palette: { primary: blue } });

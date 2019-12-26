@@ -1,29 +1,9 @@
 import React, { Component , Fragment } from 'react';
-
-import Button from '@material-ui/core/Button';
-import { makeStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-
-import blue from '@material-ui/core/colors/blue';
-
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-
 import Modal from 'react-bootstrap/Modal';
-
-const color = blue[500];
-const blueTheme = createMuiTheme({ palette: { primary: blue } });
-
-
-const useStyles = makeStyles(theme => ({
-    button: {
-      margin: theme.spacing(1),
-    },
-  }));
+import { BackButton } from './Button';
 
 export default function AddEditModal(props) {
-    const classes = useStyles();
+    //console.log(props);
     return(
         <Modal show={props.show} onHide={props.onHide} aria-labelledby="contained-modal-title-vcenter" size='lg'>
             <Modal.Header closeButton>
@@ -32,16 +12,12 @@ export default function AddEditModal(props) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {props.body}
+                {
+                    props.children!== null && props.children
+                }
             </Modal.Body>
             <Modal.Footer>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    className={classes.button}
-                    startIcon={<CloseIcon />}
-                    onClick={props.onHide}
-                >Chiudi</Button>
+                <BackButton onClick={props.onHide} >Chiudi</BackButton>
             </Modal.Footer>
         </Modal>
     );

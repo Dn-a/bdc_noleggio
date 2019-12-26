@@ -24,8 +24,11 @@ Auth::routes([
 if(request()->header('accept')!='application/json')
     Route::get('/{name}', 'HomeController@index')->name('home')->where('name','(|home|clienti|video|deposito|noleggi|restituzioni|setting)');
 
-Route::middleware('auth')->group( function () {
 
+Route::middleware(['auth'])->group( function () {
+//Route::group(['middleware' => ['guest','auth']], function () {
+
+    Route::get('clienti/search/{val}', 'ClienteController@search')->name('clienti.search');
     Route::resource('clienti', 'ClienteController',['as' => 'clienti']);
 
 });

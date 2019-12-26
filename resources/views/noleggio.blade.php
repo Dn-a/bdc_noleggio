@@ -1,9 +1,16 @@
 @extends('layouts.app')
 
-@section('style')
+@section('temp')
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 @endsection
+
+@section('styles')
+    <!-- Material Design -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+@endsection
+
+
 
 @section('content')
 
