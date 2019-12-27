@@ -11541,6 +11541,11 @@ footer:hover {
   width: 100%;
 }
 
+.search-list li:hover {
+  background-color: #eee;
+  cursor: pointer;
+}
+
 /*--- LOAD --- */
 
 .img-loader {
@@ -11549,7 +11554,7 @@ footer:hover {
   display: none;
   position: absolute;
   right: 4px;
-  top: 5px;
+  bottom: 5px;
 }
 
 .img-loader.active {
@@ -11559,6 +11564,8 @@ footer:hover {
 .img-loader img {
   width: 100%;
 }
+
+/*--- TABLE ---*/
 
 .table tbody tr.active {
   background-color: #a8c7e6 !important;

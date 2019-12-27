@@ -42,6 +42,7 @@ export default class Clienti extends Component {
         this._handleShowModal = this._handleShowModal.bind(this);
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
         this._handleCheckDataModal = this._handleCheckDataModal.bind(this);
+        this._handleSearchFieldClick = this._handleSearchFieldClick.bind(this);
     }
 
 
@@ -72,6 +73,10 @@ export default class Clienti extends Component {
 
     }
 
+    _handleSearchFieldClick(data){
+        console.log(data)
+    }
+
 
     render() {
         let urlClienti = this.props.url+'/clienti/search';
@@ -80,8 +85,10 @@ export default class Clienti extends Component {
                 <div className="row text-right mb-3 px-2">
 
                     <div className="col-md-6">
-                        <SearchField withList={true} patternList={{id:'id',fields:['nome','cognome']}}
-                        url={urlClienti} callback={this._handleSearchFieldCallback}  />
+                        <SearchField showList={false} patternList={{id:'id',fields:['nome','cognome']}}
+                        url={urlClienti} callback={this._handleSearchFieldCallback}
+                        onClick={this._handleSearchFieldClick}
+                        />
                     </div>
 
                     <div className="col-md-6 ">
@@ -107,49 +114,77 @@ export default class Clienti extends Component {
     }
 }
 
-const ModalBody = (props) => {
-    let objFid = {'1':'Start','2':'Plus','3':'Revolution'};
-    let divClassName = 'mb-3';
-    let urlComuni = props.url+'/comuni/search';
-    return(
-        <form>
+class ModalBody extends Component {
 
-            <div className="form-group">
-                <InputField name="nome" divClassName={divClassName} className="form-control" label="Nome"
-                handleChange={props.handleChange} />
-                <InputField name="cognome" divClassName={divClassName} className="form-control" label="Cognome"
-                handleChange={props.handleChange} />
-                <InputField name="cf" divClassName={divClassName} className="form-control" label="Codice Fiscale"
-                handleChange={props.handleChange} />
-                <DataField name="data_nascita" className="form-control" label="Data di Nascita"
-                handleChange={props.handleChange} />
-            </div>
+    constructor(props){
+        super(props);
 
-            <div className="form-group">
-                <InputField name="indirizzo" divClassName={divClassName} className="form-control" label="Indirizzo"
-                handleChange={props.handleChange} />
-                <SearchField url={urlComuni} callback={(val) => console.log(val)}  />
-            </div>
+        this.state = {
+            data: [],
+            show:false,
+        };
 
-            <div className="form-group">
-                <InputField name="email" divClassName={divClassName} className="form-control" label="E-mail"
-                handleChange={props.handleChange} />
-                <InputField name="telefono" divClassName={divClassName}className="form-control" label="Telefono"
-                handleChange={props.handleChange} />
-                <InputField name="cellulare" className="form-control" label="Cellulare"
-                handleChange={props.handleChange} />
-            </div>
+        this._handleCheck = this._handleCheck.bind(this);
+    }
 
-            <div className="form-group">
-                <DropDownSelect name="id_fidelizzazione" className="form-control" label="Fidelizzazione"
-                values={objFid}
-                handleChange={props.handleChange} />
-            </div>
+    _handleCheck(e){
+        console.log(e.target.value);
+    }
 
-            <div className="form-group">
-                Privacy
-            </div>
+    render(){
 
-        </form>
-    );
+        let objFid = {'1':'Start','2':'Plus','3':'Revolution'};
+        let divClassName = 'mb-3';
+
+        let urlComuni = this.props.url+'/comuni/search';
+
+        return(
+            <form>
+
+                <div className="form-group">
+                    <InputField name="nome" divClassName={divClassName} className="form-control" label="Nome"
+                    handleChange={this._handleCheck} />
+                    <InputField name="cognome" divClassName={divClassName} className="form-control" label="Cognome"
+                    handleChange={this._handleCheck} />
+                    <InputField name="cf" divClassName={divClassName} className="form-control" label="Codice Fiscale"
+                    handleChange={this._handleCheck} />
+                    <DataField name="data_nascita" className="form-control" label="Data di Nascita"
+                    handleChange={this._handleCheck} />
+                </div>
+
+                <div className="form-group">
+                    <InputField name="id_comune" type="hidden"  />
+                    <SearchField
+                        label="Comune"
+                        placeholder='Cerca un Comune'
+                        showList={true}
+                        url={urlComuni}
+                        patternList={{id:'id',fields:['nome','prov']}}
+                        reloadOnClick={false}
+                        onClick={(val) => {console.log(val); id_comune=val.id; }}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <InputField name="email" divClassName={divClassName} className="form-control" label="E-mail"
+                    handleChange={this._handleCheck} />
+                    <InputField name="telefono" divClassName={divClassName}className="form-control" label="Telefono"
+                    handleChange={this._handleCheck} />
+                    <InputField name="cellulare" className="form-control" label="Cellulare"
+                    handleChange={this._handleCheck} />
+                </div>
+
+                <div className="form-group">
+                    <DropDownSelect name="id_fidelizzazione" className="form-control" label="Fidelizzazione"
+                    values={objFid}
+                    handleChange={this._handleCheck} />
+                </div>
+
+                <div className="form-group">
+                    Privacy
+                </div>
+
+            </form>
+        );
+    }
 }

@@ -10,12 +10,15 @@ export default class SearchField extends Component {
         this.timeOut = 500;// timeout before remote call
 
         this.state = {
+            value : '',
             data: [],
             loader:false,
         };
 
         this.getRemoteData = this.getRemoteData.bind(this);
         this._handleChange = this._handleChange.bind(this);
+        this._handleClick = this._handleClick.bind(this);
+        this._timeOut = this._timeOut.bind(this);
     }
 
 
@@ -30,12 +33,15 @@ export default class SearchField extends Component {
 
         this.setState({loader:true});
 
-        axios.get(url, headers )
+        return axios.get(url, headers )
 			.then(res => {
                 let data = res.data;
-                this.props.callback(data);
 
-                this.setState({ data:data, loader:false });
+                if(this.props.callback !== undefined)
+                    this.props.callback(data);
+
+                return data;
+                //this.setState({ data:data, loader:false });
                 //console.log(rows);
                 //this.setState({data});
 
@@ -52,35 +58,75 @@ export default class SearchField extends Component {
         //console.log(e.target.value);
         let value = e.target.value;
 
-        clearTimeout(this.timer);
+        this.setState({value:value});
 
-        if(value=='') {this.state.data=[]; return this.props.callback([], true);}
-
-        this.timer = setTimeout( () => {
-            this.getRemoteData(value);
-        },this.timeOut);
-        //setTimeout( ,300);
+        this._timeOut(value).then((data) => this.setState({ data: data==null? []: data, loader:false }) );
     }
 
+    _handleClick(val){
+        let patternList = this.props.patternList!== undefined ? this.props.patternList : {id:'',fields:[]};
+        let txt ='';
+
+        patternList.fields.map((field,key) => {
+            txt += val[field];
+            txt += patternList.fields.length > (key+1) ? ' ':'';
+        })
+
+        //console.log(txt)
+        this.setState({value:txt});
+
+        let reload = this.props.reloadOnClick!== undefined ? this.props.reloadOnClick : true;
+
+        if(!reload)
+            this.setState({ data:[]});
+        else
+            this._timeOut(txt,0).then((data) => { if(data!=null) this.setState({ data:[], loader:false })} );
+
+        if(this.props.onClick!== undefined)
+            this.props.onClick(val);
+    }
+
+    _timeOut(value,time){
+        let setTime = time!== undefined ? time : this.timeOut;
+
+        clearTimeout(this.timer);
+
+        return new Promise((resolve, reject) => {
+
+            if(value==''){
+                if(this.props.callback!== undefined)
+                    this.props.callback([], true);
+                return resolve(null);
+            }
+
+            this.timer = setTimeout( () => {
+                //console.log("tt");
+                resolve(this.getRemoteData(value));
+            },setTime);
+        });
+    }
 
     render(){
         let data = this.state.data.data!==undefined ? this.state.data.data : this.state.data;
         let patternList = this.props.patternList!== undefined ? this.props.patternList : {id:'',fields:[]};
-        //console.log(data)
-        //divClassName =this.props.className!== undefined ? this.props.className: '';
-        let withList = this.props.withList!== undefined ? this.props.withList : false;
+        let showList = this.props.showList!== undefined ? this.props.showList : false;
+
         return(
             <div className="search-field ">
-                <InputField  divClassName="d-inline" className="form-control" name="search_field" placeholder="Cerca" handleChange={this._handleChange} />
+                <InputField value={this.state.value}  divClassName="d-inline" className="form-control" name="search_field"
+                placeholder={this.props.placeholder!== undefined? this.props.placeholder:"Cerca"}
+                label={this.props.label!== undefined? this.props.label:''}
+                handleChange={this._handleChange} />
                 <div className={"img-loader " + (this.state.loader ? "active":'' )}>
                     <img src="../img/loader.gif" />
                 </div>
-                {withList &&
+                {showList &&
                     <div className="search-list text-left">
                         <ul className="list-group">
                             {data.map((val,id) => {
                                     return(
                                         <li key={id} id={val[patternList.id]}
+                                        onClick={() => this._handleClick(val)}
                                         className="list-group-item">
                                             {patternList.fields.map((field,id) => {
                                                 return(

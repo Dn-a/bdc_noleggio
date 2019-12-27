@@ -157,6 +157,12 @@ ul{
     z-index: 1;
     width: 100%;
 }
+.search-list li {
+    &:hover{
+        background-color: #eee;
+        cursor: pointer;
+    }
+}
 /*--- LOAD --- */
 .img-loader {
     width: 27px;
@@ -164,7 +170,7 @@ ul{
     display: none;
     position: absolute;
     right: 4px;
-    top: 5px;
+    bottom: 5px;
     &.active{
         display: inline-block;
     }
@@ -172,6 +178,8 @@ ul{
 .img-loader img {
     width: 100%;
 }
+
+/*--- TABLE ---*/
 .table tbody tr{
     &.active{
         background-color: #a8c7e6 !important;

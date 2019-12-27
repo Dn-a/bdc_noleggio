@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 
-const InputField = ({name ,divClassName='', className='', placeholder, label, required, value, handleFocus, handleChange, helperText, dataList}) => (
+const InputField = ({name ,type='', divClassName='', className='', placeholder, label, required, value, handleFocus, handleChange, helperText, dataList}) => (
     <div className={"input-field "+divClassName}>
         { label != null ? <label
         //className="pr-1 col-form-label text-md-right"
         className=""
         htmlFor={name}>{label}</label>:''}
         <input
-            type="text"
+            type={type!=''? type : "text"}
             id = {name}
             name={name}
             //className={'form-control validate' + className}

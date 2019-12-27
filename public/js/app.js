@@ -76702,11 +76702,14 @@ function (_Component) {
     _this.timeOut = 500; // timeout before remote call
 
     _this.state = {
+      value: '',
       data: [],
       loader: false
     };
     _this.getRemoteData = _this.getRemoteData.bind(_assertThisInitialized(_this));
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
+    _this._handleClick = _this._handleClick.bind(_assertThisInitialized(_this));
+    _this._timeOut = _this._timeOut.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -76725,17 +76728,12 @@ function (_Component) {
       this.setState({
         loader: true
       });
-      axios.get(url, headers).then(function (res) {
+      return axios.get(url, headers).then(function (res) {
         var data = res.data;
-
-        _this2.props.callback(data);
-
-        _this2.setState({
-          data: data,
-          loader: false
-        }); //console.log(rows);
+        if (_this2.props.callback !== undefined) _this2.props.callback(data);
+        return data; //this.setState({ data:data, loader:false });
+        //console.log(rows);
         //this.setState({data});
-
       })["catch"](function (error) {
         console.log(error.response.data);
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.props.url + '/login';
@@ -76748,41 +76746,91 @@ function (_Component) {
 
       //console.log(e.target.value);
       var value = e.target.value;
+      this.setState({
+        value: value
+      });
+
+      this._timeOut(value).then(function (data) {
+        return _this3.setState({
+          data: data == null ? [] : data,
+          loader: false
+        });
+      });
+    }
+  }, {
+    key: "_handleClick",
+    value: function _handleClick(val) {
+      var _this4 = this;
+
+      var patternList = this.props.patternList !== undefined ? this.props.patternList : {
+        id: '',
+        fields: []
+      };
+      var txt = '';
+      patternList.fields.map(function (field, key) {
+        txt += val[field];
+        txt += patternList.fields.length > key + 1 ? ' ' : '';
+      }); //console.log(txt)
+
+      this.setState({
+        value: txt
+      });
+      var reload = this.props.reloadOnClick !== undefined ? this.props.reloadOnClick : true;
+      if (!reload) this.setState({
+        data: []
+      });else this._timeOut(txt, 0).then(function (data) {
+        if (data != null) _this4.setState({
+          data: [],
+          loader: false
+        });
+      });
+      if (this.props.onClick !== undefined) this.props.onClick(val);
+    }
+  }, {
+    key: "_timeOut",
+    value: function _timeOut(value, time) {
+      var _this5 = this;
+
+      var setTime = time !== undefined ? time : this.timeOut;
       clearTimeout(this.timer);
+      return new Promise(function (resolve, reject) {
+        if (value == '') {
+          if (_this5.props.callback !== undefined) _this5.props.callback([], true);
+          return resolve(null);
+        }
 
-      if (value == '') {
-        this.state.data = [];
-        return this.props.callback([], true);
-      }
-
-      this.timer = setTimeout(function () {
-        _this3.getRemoteData(value);
-      }, this.timeOut); //setTimeout( ,300);
+        _this5.timer = setTimeout(function () {
+          //console.log("tt");
+          resolve(_this5.getRemoteData(value));
+        }, setTime);
+      });
     }
   }, {
     key: "render",
     value: function render() {
+      var _this6 = this;
+
       var data = this.state.data.data !== undefined ? this.state.data.data : this.state.data;
       var patternList = this.props.patternList !== undefined ? this.props.patternList : {
         id: '',
         fields: []
-      }; //console.log(data)
-      //divClassName =this.props.className!== undefined ? this.props.className: '';
-
-      var withList = this.props.withList !== undefined ? this.props.withList : false;
+      };
+      var showList = this.props.showList !== undefined ? this.props.showList : false;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "search-field "
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_form_InputField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        value: this.state.value,
         divClassName: "d-inline",
         className: "form-control",
         name: "search_field",
-        placeholder: "Cerca",
+        placeholder: this.props.placeholder !== undefined ? this.props.placeholder : "Cerca",
+        label: this.props.label !== undefined ? this.props.label : '',
         handleChange: this._handleChange
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "img-loader " + (this.state.loader ? "active" : '')
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
         src: "../img/loader.gif"
-      })), withList && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), showList && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "search-list text-left"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
         className: "list-group"
@@ -76790,6 +76838,9 @@ function (_Component) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
           key: id,
           id: val[patternList.id],
+          onClick: function onClick() {
+            return _this6._handleClick(val);
+          },
           className: "list-group-item"
         }, patternList.fields.map(function (field, id) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], {
@@ -76924,6 +76975,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var InputField = function InputField(_ref) {
   var name = _ref.name,
+      _ref$type = _ref.type,
+      type = _ref$type === void 0 ? '' : _ref$type,
       _ref$divClassName = _ref.divClassName,
       divClassName = _ref$divClassName === void 0 ? '' : _ref$divClassName,
       _ref$className = _ref.className,
@@ -76943,7 +76996,7 @@ var InputField = function InputField(_ref) {
     className: "",
     htmlFor: name
   }, label) : '', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    type: "text",
+    type: type != '' ? type : "text",
     id: name,
     name: name //className={'form-control validate' + className}
     ,
@@ -77078,6 +77131,7 @@ function (_Component) {
     _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
     _this._handleCheckDataModal = _this._handleCheckDataModal.bind(_assertThisInitialized(_this));
+    _this._handleSearchFieldClick = _this._handleSearchFieldClick.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -77118,6 +77172,11 @@ function (_Component) {
       }
     }
   }, {
+    key: "_handleSearchFieldClick",
+    value: function _handleSearchFieldClick(data) {
+      console.log(data);
+    }
+  }, {
     key: "render",
     value: function render() {
       var urlClienti = this.props.url + '/clienti/search';
@@ -77128,13 +77187,14 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        withList: true,
+        showList: false,
         patternList: {
           id: 'id',
           fields: ['nome', 'cognome']
         },
         url: urlClienti,
-        callback: this._handleSearchFieldCallback
+        callback: this._handleSearchFieldCallback,
+        onClick: this._handleSearchFieldClick
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 "
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_4__["Button"], {
@@ -77166,83 +77226,119 @@ function (_Component) {
 
 
 
-var ModalBody = function ModalBody(props) {
-  var objFid = {
-    '1': 'Start',
-    '2': 'Plus',
-    '3': 'Revolution'
-  };
-  var divClassName = 'mb-3';
-  var urlComuni = props.url + '/comuni/search';
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    name: "nome",
-    divClassName: divClassName,
-    className: "form-control",
-    label: "Nome",
-    handleChange: props.handleChange
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    name: "cognome",
-    divClassName: divClassName,
-    className: "form-control",
-    label: "Cognome",
-    handleChange: props.handleChange
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    name: "cf",
-    divClassName: divClassName,
-    className: "form-control",
-    label: "Codice Fiscale",
-    handleChange: props.handleChange
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DataField__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    name: "data_nascita",
-    className: "form-control",
-    label: "Data di Nascita",
-    handleChange: props.handleChange
-  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    name: "indirizzo",
-    divClassName: divClassName,
-    className: "form-control",
-    label: "Indirizzo",
-    handleChange: props.handleChange
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
-    url: urlComuni,
-    callback: function callback(val) {
-      return console.log(val);
+var ModalBody =
+/*#__PURE__*/
+function (_Component2) {
+  _inherits(ModalBody, _Component2);
+
+  function ModalBody(props) {
+    var _this2;
+
+    _classCallCheck(this, ModalBody);
+
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(ModalBody).call(this, props));
+    _this2.state = {
+      data: [],
+      show: false
+    };
+    _this2._handleCheck = _this2._handleCheck.bind(_assertThisInitialized(_this2));
+    return _this2;
+  }
+
+  _createClass(ModalBody, [{
+    key: "_handleCheck",
+    value: function _handleCheck(e) {
+      console.log(e.target.value);
     }
-  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    name: "email",
-    divClassName: divClassName,
-    className: "form-control",
-    label: "E-mail",
-    handleChange: props.handleChange
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    name: "telefono",
-    divClassName: divClassName,
-    className: "form-control",
-    label: "Telefono",
-    handleChange: props.handleChange
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    name: "cellulare",
-    className: "form-control",
-    label: "Cellulare",
-    handleChange: props.handleChange
-  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_8__["default"], {
-    name: "id_fidelizzazione",
-    className: "form-control",
-    label: "Fidelizzazione",
-    values: objFid,
-    handleChange: props.handleChange
-  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-group"
-  }, "Privacy"));
-};
+  }, {
+    key: "render",
+    value: function render() {
+      var objFid = {
+        '1': 'Start',
+        '2': 'Plus',
+        '3': 'Revolution'
+      };
+      var divClassName = 'mb-3';
+      var urlComuni = this.props.url + '/comuni/search';
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        name: "nome",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Nome",
+        handleChange: this._handleCheck
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        name: "cognome",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Cognome",
+        handleChange: this._handleCheck
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        name: "cf",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Codice Fiscale",
+        handleChange: this._handleCheck
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DataField__WEBPACK_IMPORTED_MODULE_7__["default"], {
+        name: "data_nascita",
+        className: "form-control",
+        label: "Data di Nascita",
+        handleChange: this._handleCheck
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        name: "id_comune",
+        type: "hidden"
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        label: "Comune",
+        placeholder: "Cerca un Comune",
+        showList: true,
+        url: urlComuni,
+        patternList: {
+          id: 'id',
+          fields: ['nome', 'prov']
+        },
+        reloadOnClick: false,
+        onClick: function onClick(val) {
+          console.log(val);
+          id_comune = val.id;
+        }
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        name: "email",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "E-mail",
+        handleChange: this._handleCheck
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        name: "telefono",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Telefono",
+        handleChange: this._handleCheck
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        name: "cellulare",
+        className: "form-control",
+        label: "Cellulare",
+        handleChange: this._handleCheck
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_8__["default"], {
+        name: "id_fidelizzazione",
+        className: "form-control",
+        label: "Fidelizzazione",
+        values: objFid,
+        handleChange: this._handleCheck
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, "Privacy"));
+    }
+  }]);
+
+  return ModalBody;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 /***/ }),
 

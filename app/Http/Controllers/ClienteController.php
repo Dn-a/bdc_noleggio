@@ -46,6 +46,17 @@ class ClienteController extends Controller
                 $query->where('nome','like',$arr[1].'%')
                 ->where('cognome','like',$arr[0].'%');
         })
+        // Nel caso di due nomi
+        ->orWhere(function($query) use($arr) {
+            if(isset($arr[1]))
+                $query->where('nome','like',$arr[0].' '.$arr[1].'%');
+        })
+        // Nel caso di due nomi e cognome
+        ->orWhere(function($query) use($arr) {
+            if(isset($arr[2]))
+                $query->where('nome','like',$arr[0].' '.$arr[1].'%')
+                ->where('cognome','like',$arr[2].'%');
+        })
 
         /*
         ->orWhere(function($query) use($arr) {
