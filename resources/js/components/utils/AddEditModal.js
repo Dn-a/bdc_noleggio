@@ -5,7 +5,9 @@ import { BackButton } from './Button';
 export default function AddEditModal(props) {
     //console.log(props);
     return(
-        <Modal show={props.show} onHide={props.onHide} aria-labelledby="contained-modal-title-vcenter" size='lg'>
+        <Modal show={props.show} onHide={props.onHide} aria-labelledby="contained-modal-title-vcenter"
+            size={props.size!==undefined? props.size : 'lg'}
+        >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
                 <strong>{props.type}:</strong> {props.title}

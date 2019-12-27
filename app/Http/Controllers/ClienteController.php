@@ -13,7 +13,7 @@ class ClienteController extends Controller
     {
         $page = $request->input('per-page') ?: 5;
 
-        $cliente = Cliente::orderBy('id','ASC')->paginate($page);
+        $cliente = Cliente::orderBy('id','DESC')->paginate($page);
 
         return new ClienteCollection($cliente,[],true);
     }

@@ -31,4 +31,6 @@ if(request()->header('accept')!='application/json')
     Route::get('clienti/search/{val}', 'ClienteController@search')->name('clienti.search');
     Route::resource('clienti', 'ClienteController',['as' => 'clienti']);
 
+    Route::get('comuni/search/{val}', 'ComuneController@search')->name('comuni.search');
+
 //});

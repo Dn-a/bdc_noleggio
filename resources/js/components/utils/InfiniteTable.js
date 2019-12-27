@@ -14,6 +14,7 @@ export default class InfiniteTable extends Component {
                 perPage : 0,
                 selected: []
             },
+            selectedList:[],
             moreData:true,
             loader:false,
         };
@@ -22,6 +23,7 @@ export default class InfiniteTable extends Component {
 
         this._handleScroll = this._handleScroll.bind(this);
         this._moreData = this._moreData.bind(this);
+        this._handleMultiSelection = this._handleMultiSelection.bind(this);
     }
 
     componentDidMount () {
@@ -69,6 +71,23 @@ export default class InfiniteTable extends Component {
 					if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
 						window.location.href=this.props.url + '/login';
 			});
+    }
+
+    // Multiselezione righe
+    _handleMultiSelection(id){
+        let selectedList = this.state.selectedList;
+
+        if(this.props.multiSelect===undefined || !this.props.multiSelect) return;
+
+        let index = selectedList.indexOf(id);
+        if(index>=0)
+            selectedList.splice(index,1);
+        else
+            selectedList.push(id);
+
+        this.setState({selectedList});
+
+        //console.log(id)
     }
 
     // quando la barra di scorrimento verticale supera una certa percentuale,
@@ -131,8 +150,10 @@ export default class InfiniteTable extends Component {
                 <tbody>
                     {
                         rows.map((row,id) => {
+                            let idField = row.id;
+                            let sl = this.state.selectedList;
                             return(
-                                <tr key={id}>
+                                <tr className={sl.indexOf(idField)>-1 ? 'active':''} key={id} onClick={() => this._handleMultiSelection(idField)}>
                                     {
                                         columns.map((column,id) => {
                                             //console.log(row[column.field]);

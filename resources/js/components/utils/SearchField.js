@@ -10,6 +10,7 @@ export default class SearchField extends Component {
         this.timeOut = 500;// timeout before remote call
 
         this.state = {
+            data: [],
             loader:false,
         };
 
@@ -31,10 +32,10 @@ export default class SearchField extends Component {
 
         axios.get(url, headers )
 			.then(res => {
-                let rows = res.data;
-                this.props.callback(rows.data);
+                let data = res.data;
+                this.props.callback(data);
 
-                this.setState({loader:false });
+                this.setState({ data:data, loader:false });
                 //console.log(rows);
                 //this.setState({data});
 
@@ -53,7 +54,7 @@ export default class SearchField extends Component {
 
         clearTimeout(this.timer);
 
-        if(value=='') return this.props.callback([], true);
+        if(value=='') {this.state.data=[]; return this.props.callback([], true);}
 
         this.timer = setTimeout( () => {
             this.getRemoteData(value);
@@ -63,12 +64,38 @@ export default class SearchField extends Component {
 
 
     render(){
+        let data = this.state.data.data!==undefined ? this.state.data.data : this.state.data;
+        let patternList = this.props.patternList!== undefined ? this.props.patternList : {id:'',fields:[]};
+        //console.log(data)
+        //divClassName =this.props.className!== undefined ? this.props.className: '';
+        let withList = this.props.withList!== undefined ? this.props.withList : false;
         return(
-            <div className="search-field">
-                <InputField  divClassName="d-inline" name="search_field" label="Cerca" handleChange={this._handleChange} />
+            <div className="search-field ">
+                <InputField  divClassName="d-inline" className="form-control" name="search_field" placeholder="Cerca" handleChange={this._handleChange} />
                 <div className={"img-loader " + (this.state.loader ? "active":'' )}>
                     <img src="../img/loader.gif" />
                 </div>
+                {withList &&
+                    <div className="search-list text-left">
+                        <ul className="list-group">
+                            {data.map((val,id) => {
+                                    return(
+                                        <li key={id} id={val[patternList.id]}
+                                        className="list-group-item">
+                                            {patternList.fields.map((field,id) => {
+                                                return(
+                                                    <Fragment key={id}>
+                                                        {val[field]} &nbsp;
+                                                    </Fragment>
+                                                )
+                                            })}
+                                        </li>
+                                    )
+                                })
+                            }
+                        </ul>
+                    </div>
+                }
             </div>
         );
     }

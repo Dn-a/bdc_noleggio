@@ -1,10 +1,10 @@
 import React, { Fragment } from "react";
 
-const DataField = ({name , placeholder,className='', label, required, value, _handleFocus, _handleChange, helperText}) => (
-    <div className="input-field">
-        { label != null ? <label 
+const DataField = ({name , placeholder,divClassName='',className='', label, required, value, handleFocus, handleChange, helperText}) => (
+    <div className={"input-field "+divClassName}>
+        { label != null ? <label
         //className="pr-1 col-form-label text-md-right"
-        className="active " 
+        className="active "
         >{label}</label>:''}
         <input
             type="date"
@@ -14,8 +14,8 @@ const DataField = ({name , placeholder,className='', label, required, value, _ha
             required = {required}
             autoComplete = {placeholder}
             placeholder = {placeholder}
-            onFocus = {_handleFocus}
-            onChange = {_handleChange}
+            onFocus = {handleFocus}
+            onChange = {handleChange}
             value = {value}
         />
         <span className="error-div">{helperText}</span>

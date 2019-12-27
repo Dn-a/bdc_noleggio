@@ -5,8 +5,11 @@ import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
 
 import { Button } from '../utils/Button';
-import { Table } from '@material-ui/core';
 import InfiniteTable from '../utils/InfiniteTable';
+
+import InputField from '../utils/form/InputField';
+import DataField from '../utils/form/DataField';
+import DropDownSelect from '../utils/form/DropdownSelect';
 
 
 const COLUMNS = [
@@ -38,6 +41,7 @@ export default class Clienti extends Component {
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
+        this._handleCheckDataModal = this._handleCheckDataModal.bind(this);
     }
 
 
@@ -48,13 +52,17 @@ export default class Clienti extends Component {
         this.setState({show : true});
     }
 
-    _handleSearchFieldCallback(newRows,reset){
+    _handleCheckDataModal(e){
+        console.log(e.target.value);
+    }
+
+    _handleSearchFieldCallback(data,reset){
 
         //console.log(rows);
 
         let rows = this.state.rows;
 
-        rows = newRows;
+        rows = data.data;
         this.setState({rows});
 
         if(reset){
@@ -72,13 +80,14 @@ export default class Clienti extends Component {
                 <div className="row text-right mb-3 px-2">
 
                     <div className="col-md-6">
-                        <SearchField url={urlClienti} callback={this._handleSearchFieldCallback}  />
+                        <SearchField withList={true} patternList={{id:'id',fields:['nome','cognome']}}
+                        url={urlClienti} callback={this._handleSearchFieldCallback}  />
                     </div>
 
                     <div className="col-md-6 ">
                         <Button onClick={this._handleShowModal}>Nuovo Cliente</Button>
-                        <AddEditModal show={this.state.show} onHide={this._handleCloseModal} title="Cliente" type="Nuovo" >
-                            campi obbligatori
+                        <AddEditModal size="md" show={this.state.show} onHide={this._handleCloseModal} title="Cliente" type="Nuovo" >
+                            <ModalBody url={this.props.url} handleChange={this._handleCheckDataModal}/>
                         </AddEditModal>
                     </div>
 
@@ -89,10 +98,58 @@ export default class Clienti extends Component {
                             url={this.props.url+'/clienti'}
                             columns={COLUMNS}
                             externalRows={this.state.rows}
+                            //multiSelect={true}
                         />
                     </div>
                 </div>
             </div>
         );
     }
+}
+
+const ModalBody = (props) => {
+    let objFid = {'1':'Start','2':'Plus','3':'Revolution'};
+    let divClassName = 'mb-3';
+    let urlComuni = props.url+'/comuni/search';
+    return(
+        <form>
+
+            <div className="form-group">
+                <InputField name="nome" divClassName={divClassName} className="form-control" label="Nome"
+                handleChange={props.handleChange} />
+                <InputField name="cognome" divClassName={divClassName} className="form-control" label="Cognome"
+                handleChange={props.handleChange} />
+                <InputField name="cf" divClassName={divClassName} className="form-control" label="Codice Fiscale"
+                handleChange={props.handleChange} />
+                <DataField name="data_nascita" className="form-control" label="Data di Nascita"
+                handleChange={props.handleChange} />
+            </div>
+
+            <div className="form-group">
+                <InputField name="indirizzo" divClassName={divClassName} className="form-control" label="Indirizzo"
+                handleChange={props.handleChange} />
+                <SearchField url={urlComuni} callback={(val) => console.log(val)}  />
+            </div>
+
+            <div className="form-group">
+                <InputField name="email" divClassName={divClassName} className="form-control" label="E-mail"
+                handleChange={props.handleChange} />
+                <InputField name="telefono" divClassName={divClassName}className="form-control" label="Telefono"
+                handleChange={props.handleChange} />
+                <InputField name="cellulare" className="form-control" label="Cellulare"
+                handleChange={props.handleChange} />
+            </div>
+
+            <div className="form-group">
+                <DropDownSelect name="id_fidelizzazione" className="form-control" label="Fidelizzazione"
+                values={objFid}
+                handleChange={props.handleChange} />
+            </div>
+
+            <div className="form-group">
+                Privacy
+            </div>
+
+        </form>
+    );
 }
