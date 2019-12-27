@@ -31,59 +31,15 @@ export default class Clienti extends Component {
         super(props);
 
         this.state = {
-            data: {
-                rows: [],
-                columns: COLUMNS,
-                page : 1,
-                total : 10,
-                perPage : 10,
-                loading: false,
-                selected: []
-            },
-            aa:"aa",
+            rows: '',
             show:false,
         };
 
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
-        this._searchFieldRemoteData = this._searchFieldRemoteData.bind(this);
+        this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
     }
 
-    componentDidMount(){
-        this.getRemoteData();
-    }
-
-    getRemoteData(){
-
-        let url = this.props.url+'/clienti';
-        let headers = {headers: {
-            'Accept': 'application/json',
-            //'Content-Type': 'application/json'
-            }
-        };
-
-        axios.get(url, headers )
-			.then(res => {
-                let data = this.state.data;
-
-                let remoteData = res.data;
-                let pagination = remoteData.pagination;
-
-                data.rows = remoteData.data;
-                data.page = pagination.current_page;
-                data.total = pagination.total;
-                data.perPage = pagination.per_page;
-
-                this.cache = {};
-                this.setState({data},() =>  this.cache.rows = this.state.data.rows);
-
-			}).catch((error) => {
-				console.log(error.response.data);
-				if(error.response.status==401)
-					if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-						window.location.href=this.props.url + '/login';
-			});
-    }
 
     _handleCloseModal () {
         this.setState({show : false});
@@ -92,24 +48,22 @@ export default class Clienti extends Component {
         this.setState({show : true});
     }
 
-    _searchFieldRemoteData(rows,reset){
+    _handleSearchFieldCallback(newRows,reset){
 
         //console.log(rows);
 
-        let data = this.state.data;
+        let rows = this.state.rows;
 
-        if(data.rows.length >= 0){
-            data.rows = rows;
-            this.setState({data});
-        }
+        rows = newRows;
+        this.setState({rows});
 
         if(reset){
-            //console.log(this.cache);
-            data.rows = this.cache.rows;
-            this.setState({data});
+            rows = '';
+            this.setState({rows});
         }
 
     }
+
 
     render() {
         let urlClienti = this.props.url+'/clienti/search';
@@ -118,7 +72,7 @@ export default class Clienti extends Component {
                 <div className="row text-right mb-3 px-2">
 
                     <div className="col-md-6">
-                        <SearchField url={urlClienti} callback={this._searchFieldRemoteData}  />
+                        <SearchField url={urlClienti} callback={this._handleSearchFieldCallback}  />
                     </div>
 
                     <div className="col-md-6 ">
@@ -131,7 +85,11 @@ export default class Clienti extends Component {
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <InfiniteTable data={this.state.data} />
+                        <InfiniteTable
+                            url={this.props.url+'/clienti'}
+                            columns={COLUMNS}
+                            externalRows={this.state.rows}
+                        />
                     </div>
                 </div>
             </div>

@@ -11,7 +11,7 @@ class ClienteController extends Controller
 
     public function index(Request $request)
     {
-        $page = $request->input('per-page') ?: 15;
+        $page = $request->input('per-page') ?: 5;
 
         $cliente = Cliente::orderBy('id','ASC')->paginate($page);
 

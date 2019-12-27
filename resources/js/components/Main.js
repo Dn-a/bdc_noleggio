@@ -5,12 +5,12 @@ import {BrowserRouter as Router, Switch, Route, Link, NavLink} from "react-route
 import Home from './view/Home';
 import Video from './view/Video';
 import Clienti from './view/Clienti';
-import Magazzino from './view/CaricoScarico';
+import Deposito from './view/Deposito';
 
 const routes = [
     {path: "/", name:"Home",title:'Home', icon:'fa-home', Component:Home},
     {path: "/noleggi", name:"Noleggi",title:'Gestione Noleggi', icon:'fa-film', Component: Video},
-    {path: "/deposito", name:"Deposito",title:'Gestione Deposito', icon:'fa-list-alt', Component: Magazzino},
+    {path: "/deposito", name:"Deposito",title:'Gestione Deposito', icon:'fa-list-alt', Component: Deposito},
     {path: "/clienti", name:"Clienti",title:'Gestione Clienti', icon:'fa-user-o', Component: Clienti},
 ];
 
