@@ -6,6 +6,7 @@ import InputField from '../utils/form/InputField';
 import DataField from '../utils/form/DataField';
 import DropDownSelect from '../utils/form/DropdownSelect';
 import INFO_ERROR from '../utils/form/InfoError';
+import FileField from '../utils/form/FileField';
 
 const email_reg_exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const whitespace_reg_ex = /^[^\s].*/;
@@ -18,6 +19,7 @@ const FIELDS = [
     'data_nascita',
     'telefono',
     'cellulare',
+    'indirizzo',
     'id_comune',
     'id_fidelizzazione',
 ];
@@ -36,13 +38,55 @@ export default class ClientiModal extends Component {
         this.state = {
             data: data,
             error: error,
+            checked: false,
         };
 
         this._handleChange = this._handleChange.bind(this);
+        this._handleOnSave = this._handleOnSave.bind(this);
+    }
+
+    setRemoteStore() {
+
+        let url = this.props.url+'/clienti';
+
+        let headers = {headers: {'Accept': 'application/json','Content-Type': 'application/json'},};
+
+        let data = this.state.data;
+
+        let arrayData=[];
+
+        Object.keys(data).map((k,id) => {
+            arrayData.push(data[k]);
+        });
+
+        let formData = {...data};
+
+        formData['_token'] = CSRF_TOKEN;
+
+        this.setState({loader:true});
+        //return;
+        return axios.post(url,formData,headers)
+        .then(result => {
+            console.log(result);
+          //this.setState({errorRemoteStore: ''});
+          return result;
+        }).catch((error) => {
+          console.error(error.response.data);
+          this.setState({errorRemoteStore:error.response.status});
+          if(error.response.status==401)
+            if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
+              window.location.href=this.home + '/login';
+          throw error;
+        });
+    }
+
+    _handleOnSave(){
+        console.log("save");
+        this.setRemoteStore();
     }
 
     _handleChange(e){
-        let value = e.target.value;
+        let value = e.target.value.trim().toLowerCase();
         let field = e.target.name;
 
         let error = this.state.error;
@@ -55,12 +99,21 @@ export default class ClientiModal extends Component {
 
         switch(field){
             case 'nome':
-                if(!whitespace_reg_ex.test(value))
+                if( value.length > 1 && !whitespace_reg_ex.test(value))
                     error.nome = INFO_ERROR['caratteri'];
                 break;
             case 'cognome':
-                if(!whitespace_reg_ex.test(value))
+                if(value.length > 1 && !whitespace_reg_ex.test(value))
                     error.cognome = INFO_ERROR['caratteri'];
+                break;
+            case 'cf':
+                value = value.toUpperCase();
+                if(value.length > 1 && !whitespace_reg_ex.test(value))
+                    error.cf = INFO_ERROR['caratteri'];
+                break;
+            case 'indirizzo':
+                if(value.length > 1 && !whitespace_reg_ex.test(value))
+                    error.cf = INFO_ERROR['caratteri'];
                 break;
             case 'telefono':
                 if(isNaN(value))
@@ -71,7 +124,9 @@ export default class ClientiModal extends Component {
                    error.cellulare = INFO_ERROR['numero'];
                 break;
             case 'email':
-                if(!email_reg_exp.test(value))
+                if(value.length < 8 )
+                    error.email = INFO_ERROR['email_1'];
+                else if(!email_reg_exp.test(value))
                     error.email = INFO_ERROR['email_2'];
                 break;
             case 'data_nascita':
@@ -86,7 +141,20 @@ export default class ClientiModal extends Component {
 
         data[field] = value;
 
-        this.setState({data,error});
+        this.setState({data,error},()  => this.checked());
+    }
+
+    checked(){
+        let data = this.state.data;
+        let error = this.state.error;
+
+        let checked = true;
+        Object.keys(error).map((k,id) => {
+            if(error[k]!='' || data[k]=='')
+                checked = false;
+        });
+
+        this.setState({checked});
     }
 
     showError(field){
@@ -96,7 +164,7 @@ export default class ClientiModal extends Component {
           return(
             <div className="error-div">{error}</div>
           );
-      }
+    }
 
     render(){
 
@@ -107,7 +175,10 @@ export default class ClientiModal extends Component {
 
         return(
             <AddEditModal size="md"
-                show={this.props.show} onHide={this.props.onHide}
+                show={this.props.show}
+                onHide={this.props.onHide}
+                onConfirm={this._handleOnSave}
+                disabledConfirmButton={!this.state.checked}
                 title="Cliente" type="Nuovo"
             >
 
@@ -125,7 +196,9 @@ export default class ClientiModal extends Component {
                     </div>
 
                     <div className="form-group">
-                        <InputField name="id_comune" type="hidden"  />
+                        <InputField name="indirizzo" divClassName={divClassName} className="form-control"
+                        label="Indirizzo"
+                        helperText={this.showError('indirizzo')} handleChange={this._handleChange} />
                         <SearchField
                             label="Comune"
                             placeholder='Cerca un Comune'
@@ -133,8 +206,28 @@ export default class ClientiModal extends Component {
                             url={urlComuni}
                             patternList={{id:'id',fields:['nome','prov']}}
                             reloadOnClick={false}
-                            onClick={(val) => {console.log(val); id_comune=val.id; }}
+                            onClick={(val) => {
+                                    //console.log(val);
+                                    let data = this.state.data;
+                                    let error = this.state.error;
+                                    data.id_comune = val.id;
+                                    error.id_comune = '';
+                                    this.setState({data,error},() => this.checked());
+                                }
+                            }
+                            callback={(val) => {
+                                    //console.log(val);
+                                    let data = this.state.data;
+                                    let error = this.state.error;
+                                    data.id_comune = '';
+                                    if(val.length==0){
+                                        error.id_comune = INFO_ERROR['comune'];
+                                    }
+                                    this.setState({data,error},() => this.checked());
+                                }
+                            }
                         />
+                        {this.showError('id_comune')}
                     </div>
 
                     <div className="form-group">
@@ -147,13 +240,16 @@ export default class ClientiModal extends Component {
                     </div>
 
                     <div className="form-group">
-                        <DropDownSelect name="id_fidelizzazione" className="form-control" label="Fidelizzazione"
+                        <DropDownSelect placeholder="Scegli un valore"
+                        name="id_fidelizzazione" className="form-control" label="Fidelizzazione"
                         values={objFid}
+                        selected='default'
                         handleChange={this._handleChange} />
                     </div>
 
                     <div className="form-group">
-                        Privacy
+                        <FileField name='privacy' divClassName={divClassName} className="form-control"
+                        label="Privacy" />
                     </div>
 
                 </form>

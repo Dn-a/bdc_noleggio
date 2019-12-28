@@ -86,7 +86,47 @@ class ClienteController extends Controller
 
     public function store(Request $request)
     {
-        //
+        //return $request->all();
+
+        try{
+            //return response()->json($request->all(),201);exit;
+            //Validate
+            $request->validate([
+                'nome' => 'required|string|min:1|max:50',
+                'cognome' => 'required|string|min:1|max:50',
+                'cf' => 'required|string|min:1|max:16',
+                'data_nascita' => 'required|date|date_format:Y-m-d',
+                'telefono' => 'required|string|min:1|max:15',
+                'cellulare' => 'required|string|min:1|max:15',
+                'email' => 'required|string|email|max:50',
+                'indirizzo' => 'required|string|min:1|max:50',
+                'id_comune' => 'required|integer',
+                'id_fidelizzazione' => 'required|integer',
+                'privacy' => 'nullable|mimes:jpeg,bmp,png,pdf'
+            ]);
+
+            if(isset($request->privacy)){
+                $temp = file_get_contents($request->privacy);
+                $blob = base64_encode($temp);
+            }
+
+
+            $input = $request->all();
+
+            $input['cf'] = strtoupper($request->cf);
+
+            $cliente = new Cliente();
+
+            $cliente->fill($input)->save();
+
+            return response()->json(['msg' =>'added'],201);
+
+            //$this->responseEmail($request);
+            //$this->notifyEmail($request);
+
+        }catch( \Illuminate\Database\QueryException $e){
+            return response()->json(['msg' => $e->getMessage() ],200);
+        }
     }
 
 

@@ -9,14 +9,14 @@ import ClientiModal from '../modals/ClientiModal';
 
 const COLUMNS = [
     { title: 'id', field: 'id' , align:'right'},
-    { title: 'Nome', field: 'nome' },
-    { title: 'Cognome', field: 'cognome' },
+    { title: 'Nome', field: 'nome', style: {textTransform:'capitalize'}  },
+    { title: 'Cognome', field: 'cognome', style: {textTransform:'capitalize'} },
     { title: 'C.F.', field: 'cf' },
     { title: 'Data di Nascita', field:'data_nascita',
         render: cell  =>  new Date(cell).toLocaleDateString("it-IT")
     },
     { title: 'Recapiti', field: 'recapiti', padding:'none' },
-    { title: 'Residenza', field: 'residenza' },
+    { title: 'Residenza', field: 'residenza', style: {textTransform:'capitalize'} },
     { title: 'Email', field: 'email', },
     { title: 'Fidelizzazione', field:'fidelizzazione', render: cell => cell.titolo },
     { title: 'Privacy', field: 'privacy', },

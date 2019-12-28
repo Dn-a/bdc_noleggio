@@ -1,6 +1,6 @@
 import React, { Component , Fragment } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import { BackButton } from './Button';
+import { BackButton, ConfirmButton } from './Button';
 
 export default function AddEditModal(props) {
     //console.log(props);
@@ -20,6 +20,9 @@ export default function AddEditModal(props) {
             </Modal.Body>
             <Modal.Footer>
                 <BackButton onClick={props.onHide} >Chiudi</BackButton>
+                <ConfirmButton
+                disabled={props.disabledConfirmButton!==undefined ? props.disabledConfirmButton:false}
+                onClick={props.onConfirm}>Aggiungi</ConfirmButton>
             </Modal.Footer>
         </Modal>
     );

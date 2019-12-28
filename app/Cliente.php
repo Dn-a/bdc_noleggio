@@ -8,6 +8,8 @@ class Cliente extends Model
 {
     protected $table = 'clienti';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'nome', 'cognome', 'cf', 'data_nascita','email','telefono',
         'cellulare', 'indirizzo', 'id_comune', 'id_fidelizzazione','privacy'

@@ -76331,7 +76331,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_form_DataField__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/form/DataField */ "./resources/js/components/utils/form/DataField.js");
 /* harmony import */ var _utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/form/DropdownSelect */ "./resources/js/components/utils/form/DropdownSelect.js");
 /* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
+/* harmony import */ var _utils_form_FileField__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/form/FileField */ "./resources/js/components/utils/form/FileField.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -76356,9 +76363,10 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var email_reg_exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 var whitespace_reg_ex = /^[^\s].*/;
-var FIELDS = ['nome', 'cognome', 'cf', 'email', 'data_nascita', 'telefono', 'cellulare', 'id_comune', 'id_fidelizzazione'];
+var FIELDS = ['nome', 'cognome', 'cf', 'email', 'data_nascita', 'telefono', 'cellulare', 'indirizzo', 'id_comune', 'id_fidelizzazione'];
 
 var ClientiModal =
 /*#__PURE__*/
@@ -76378,16 +76386,66 @@ function (_Component) {
     });
     _this.state = {
       data: data,
-      error: error
+      error: error,
+      checked: false
     };
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
+    _this._handleOnSave = _this._handleOnSave.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(ClientiModal, [{
+    key: "setRemoteStore",
+    value: function setRemoteStore() {
+      var _this2 = this;
+
+      var url = this.props.url + '/clienti';
+      var headers = {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      };
+      var data = this.state.data;
+      var arrayData = [];
+      Object.keys(data).map(function (k, id) {
+        arrayData.push(data[k]);
+      });
+
+      var formData = _objectSpread({}, data);
+
+      formData['_token'] = CSRF_TOKEN;
+      this.setState({
+        loader: true
+      }); //return;
+
+      return axios.post(url, formData, headers).then(function (result) {
+        console.log(result); //this.setState({errorRemoteStore: ''});
+
+        return result;
+      })["catch"](function (error) {
+        console.error(error.response.data);
+
+        _this2.setState({
+          errorRemoteStore: error.response.status
+        });
+
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
+        throw error;
+      });
+    }
+  }, {
+    key: "_handleOnSave",
+    value: function _handleOnSave() {
+      console.log("save");
+      this.setRemoteStore();
+    }
+  }, {
     key: "_handleChange",
     value: function _handleChange(e) {
-      var value = e.target.value;
+      var _this3 = this;
+
+      var value = e.target.value.trim().toLowerCase();
       var field = e.target.name;
       var error = this.state.error;
       var data = this.state.data;
@@ -76395,11 +76453,20 @@ function (_Component) {
 
       switch (field) {
         case 'nome':
-          if (!whitespace_reg_ex.test(value)) error.nome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.nome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
           break;
 
         case 'cognome':
-          if (!whitespace_reg_ex.test(value)) error.cognome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cognome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+          break;
+
+        case 'cf':
+          value = value.toUpperCase();
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cf = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+          break;
+
+        case 'indirizzo':
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cf = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
           break;
 
         case 'telefono':
@@ -76411,7 +76478,7 @@ function (_Component) {
           break;
 
         case 'email':
-          if (!email_reg_exp.test(value)) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['email_2'];
+          if (value.length < 8) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['email_1'];else if (!email_reg_exp.test(value)) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['email_2'];
           break;
 
         case 'data_nascita':
@@ -76427,6 +76494,21 @@ function (_Component) {
       this.setState({
         data: data,
         error: error
+      }, function () {
+        return _this3.checked();
+      });
+    }
+  }, {
+    key: "checked",
+    value: function checked() {
+      var data = this.state.data;
+      var error = this.state.error;
+      var checked = true;
+      Object.keys(error).map(function (k, id) {
+        if (error[k] != '' || data[k] == '') checked = false;
+      });
+      this.setState({
+        checked: checked
       });
     }
   }, {
@@ -76440,6 +76522,8 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
+      var _this4 = this;
+
       var objFid = {
         '1': 'Start',
         '2': 'Plus',
@@ -76451,6 +76535,8 @@ function (_Component) {
         size: "md",
         show: this.props.show,
         onHide: this.props.onHide,
+        onConfirm: this._handleOnSave,
+        disabledConfirmButton: !this.state.checked,
         title: "Cliente",
         type: "Nuovo"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -76485,8 +76571,12 @@ function (_Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        name: "id_comune",
-        type: "hidden"
+        name: "indirizzo",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Indirizzo",
+        helperText: this.showError('indirizzo'),
+        handleChange: this._handleChange
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
         label: "Comune",
         placeholder: "Cerca un Comune",
@@ -76498,10 +76588,37 @@ function (_Component) {
         },
         reloadOnClick: false,
         onClick: function onClick(val) {
-          console.log(val);
-          id_comune = val.id;
+          //console.log(val);
+          var data = _this4.state.data;
+          var error = _this4.state.error;
+          data.id_comune = val.id;
+          error.id_comune = '';
+
+          _this4.setState({
+            data: data,
+            error: error
+          }, function () {
+            return _this4.checked();
+          });
+        },
+        callback: function callback(val) {
+          //console.log(val);
+          var data = _this4.state.data;
+          var error = _this4.state.error;
+          data.id_comune = '';
+
+          if (val.length == 0) {
+            error.id_comune = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['comune'];
+          }
+
+          _this4.setState({
+            data: data,
+            error: error
+          }, function () {
+            return _this4.checked();
+          });
         }
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), this.showError('id_comune')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__["default"], {
         name: "email",
@@ -76526,14 +76643,21 @@ function (_Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        placeholder: "Scegli un valore",
         name: "id_fidelizzazione",
         className: "form-control",
         label: "Fidelizzazione",
         values: objFid,
+        selected: "default",
         handleChange: this._handleChange
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
-      }, "Privacy")));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_FileField__WEBPACK_IMPORTED_MODULE_7__["default"], {
+        name: "privacy",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Privacy"
+      }))));
     }
   }]);
 
@@ -76574,7 +76698,10 @@ function AddEditModal(props) {
     id: "contained-modal-title-vcenter"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, props.type, ":"), " ", props.title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_1__["default"].Body, null, props.children !== null && props.children), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_1__["default"].Footer, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Button__WEBPACK_IMPORTED_MODULE_2__["BackButton"], {
     onClick: props.onHide
-  }, "Chiudi")));
+  }, "Chiudi"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Button__WEBPACK_IMPORTED_MODULE_2__["ConfirmButton"], {
+    disabled: props.disabledConfirmButton !== undefined ? props.disabledConfirmButton : false,
+    onClick: props.onConfirm
+  }, "Aggiungi")));
 }
 
 /***/ }),
@@ -76612,11 +76739,13 @@ var Button = function Button(_ref) {
 
 var ConfirmButton = function ConfirmButton(_ref2) {
   var _ref2$className = _ref2.className,
-      className = _ref2$className === void 0 ? null : _ref2$className,
+      className = _ref2$className === void 0 ? '' : _ref2$className,
       _onClick2 = _ref2.onClick,
-      children = _ref2.children;
+      children = _ref2.children,
+      _ref2$disabled = _ref2.disabled,
+      disabled = _ref2$disabled === void 0 ? false : _ref2$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn waves-effect waves-light light-green darken-2 " + className,
+    className: "btn waves-effect waves-light light-green darken-2 " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick2();
     }
@@ -76625,7 +76754,7 @@ var ConfirmButton = function ConfirmButton(_ref2) {
 
 var BackButton = function BackButton(_ref3) {
   var _ref3$className = _ref3.className,
-      className = _ref3$className === void 0 ? null : _ref3$className,
+      className = _ref3$className === void 0 ? '' : _ref3$className,
       _onClick3 = _ref3.onClick,
       children = _ref3.children;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
@@ -76638,7 +76767,7 @@ var BackButton = function BackButton(_ref3) {
 
 var CloseButton = function CloseButton(_ref4) {
   var _ref4$className = _ref4.className,
-      className = _ref4$className === void 0 ? null : _ref4$className,
+      className = _ref4$className === void 0 ? '' : _ref4$className,
       _onClick4 = _ref4.onClick,
       children = _ref4.children;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
@@ -76651,7 +76780,7 @@ var CloseButton = function CloseButton(_ref4) {
 
 var NextButton = function NextButton(_ref5) {
   var _ref5$className = _ref5.className,
-      className = _ref5$className === void 0 ? null : _ref5$className,
+      className = _ref5$className === void 0 ? '' : _ref5$className,
       _onClick5 = _ref5.onClick,
       children = _ref5.children;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
@@ -76871,6 +77000,7 @@ function (_Component) {
             key: id
           }, column.render(cell));
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+            style: column.style !== undefined ? column.style : {},
             key: id
           }, cell);
         }));
@@ -77180,9 +77310,13 @@ var DropdownSelect = function DropdownSelect(_ref) {
     defaultValue: selected,
     required: required,
     onChange: handleChange
-  }, firstValue !== undefined && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+  }, placeholder !== undefined && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+    defaultValue: selected,
+    value: "default",
+    disabled: true
+  }, placeholder), firstValue !== undefined && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
     value: firstValue
-  }, firstValue ? firstValue : placeholder), Object.keys(values).map(function (id) {
+  }, firstValue ? firstValue : ''), Object.keys(values).map(function (id) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
       value: id,
       key: id
@@ -77191,6 +77325,62 @@ var DropdownSelect = function DropdownSelect(_ref) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (DropdownSelect);
+
+/***/ }),
+
+/***/ "./resources/js/components/utils/form/FileField.js":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/utils/form/FileField.js ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var FileField = function FileField(_ref) {
+  var name = _ref.name,
+      _ref$type = _ref.type,
+      type = _ref$type === void 0 ? '' : _ref$type,
+      _ref$divClassName = _ref.divClassName,
+      divClassName = _ref$divClassName === void 0 ? '' : _ref$divClassName,
+      _ref$className = _ref.className,
+      className = _ref$className === void 0 ? '' : _ref$className,
+      placeholder = _ref.placeholder,
+      label = _ref.label,
+      required = _ref.required,
+      value = _ref.value,
+      handleFocus = _ref.handleFocus,
+      handleChange = _ref.handleChange,
+      helperText = _ref.helperText,
+      dataList = _ref.dataList;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "input-field " + divClassName
+  }, label != null ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+    //className="pr-1 col-form-label text-md-right"
+    className: "",
+    htmlFor: name
+  }, label) : '', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: type != '' ? type : "file",
+    id: name,
+    name: name //className={'form-control validate' + className}
+    ,
+    className: 'validate ' + className,
+    required: required,
+    autoComplete: placeholder,
+    placeholder: placeholder,
+    onFocus: handleFocus,
+    onChange: handleChange,
+    value: value
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+    className: "error-div"
+  }, helperText));
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (FileField);
 
 /***/ }),
 
@@ -77207,6 +77397,7 @@ var InfoError = {
   'vuoto': 'campo vuoto',
   'data': 'inserire una data inferiore a quella corrente',
   'caratteri': 'Inserire caratteri validi',
+  'comune': 'inserire un comune valido',
   'caratteri_min': 'Inserire almeno 2 caratteri',
   'iva': 'La partita IVA in genere è composta da 11 cifre',
   'cap': 'il CAP in genere è composto da almeno 5 cifre',
@@ -77331,10 +77522,16 @@ var COLUMNS = [{
   align: 'right'
 }, {
   title: 'Nome',
-  field: 'nome'
+  field: 'nome',
+  style: {
+    textTransform: 'capitalize'
+  }
 }, {
   title: 'Cognome',
-  field: 'cognome'
+  field: 'cognome',
+  style: {
+    textTransform: 'capitalize'
+  }
 }, {
   title: 'C.F.',
   field: 'cf'
@@ -77350,7 +77547,10 @@ var COLUMNS = [{
   padding: 'none'
 }, {
   title: 'Residenza',
-  field: 'residenza'
+  field: 'residenza',
+  style: {
+    textTransform: 'capitalize'
+  }
 }, {
   title: 'Email',
   field: 'email'
