@@ -21,7 +21,6 @@ export default class SearchField extends Component {
         this._timeOut = this._timeOut.bind(this);
     }
 
-
     getRemoteData(val){
 
         let url = this.props.url + '/' + val;
@@ -53,7 +52,7 @@ export default class SearchField extends Component {
             });
     }
 
-
+    // dopo aver inserito un carattere nel campo
     _handleChange(e){
         //console.log(e.target.value);
         let value = e.target.value;
@@ -63,6 +62,7 @@ export default class SearchField extends Component {
         this._timeOut(value).then((data) => this.setState({ data: data==null? []: data, loader:false }) );
     }
 
+    // Click item dell'elenco dei risultati
     _handleClick(val){
         let patternList = this.props.patternList!== undefined ? this.props.patternList : {id:'',fields:[]};
         let txt ='';
@@ -86,6 +86,7 @@ export default class SearchField extends Component {
             this.props.onClick(val);
     }
 
+    // Richiama grtRemoteData dopo un certo tempo T
     _timeOut(value,time){
         let setTime = time!== undefined ? time : this.timeOut;
 

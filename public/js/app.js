@@ -76313,6 +76313,237 @@ if (document.getElementById('noleggio')) {
 
 /***/ }),
 
+/***/ "./resources/js/components/modals/ClientiModal.js":
+/*!********************************************************!*\
+  !*** ./resources/js/components/modals/ClientiModal.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ClientiModal; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_AddEditModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/AddEditModal */ "./resources/js/components/utils/AddEditModal.js");
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/form/InputField */ "./resources/js/components/utils/form/InputField.js");
+/* harmony import */ var _utils_form_DataField__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/form/DataField */ "./resources/js/components/utils/form/DataField.js");
+/* harmony import */ var _utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/form/DropdownSelect */ "./resources/js/components/utils/form/DropdownSelect.js");
+/* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+
+
+var email_reg_exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+var whitespace_reg_ex = /^[^\s].*/;
+var FIELDS = ['nome', 'cognome', 'cf', 'email', 'data_nascita', 'telefono', 'cellulare', 'id_comune', 'id_fidelizzazione'];
+
+var ClientiModal =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(ClientiModal, _Component);
+
+  function ClientiModal(props) {
+    var _this;
+
+    _classCallCheck(this, ClientiModal);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ClientiModal).call(this, props));
+    var data = {};
+    var error = {};
+    FIELDS.map(function (fd, id) {
+      data[fd] = error[fd] = '';
+    });
+    _this.state = {
+      data: data,
+      error: error
+    };
+    _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(ClientiModal, [{
+    key: "_handleChange",
+    value: function _handleChange(e) {
+      var value = e.target.value;
+      var field = e.target.name;
+      var error = this.state.error;
+      var data = this.state.data;
+      if (value == '') error[field] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['vuoto'];else error[field] = '';
+
+      switch (field) {
+        case 'nome':
+          if (!whitespace_reg_ex.test(value)) error.nome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+          break;
+
+        case 'cognome':
+          if (!whitespace_reg_ex.test(value)) error.cognome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+          break;
+
+        case 'telefono':
+          if (isNaN(value)) error.telefono = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['numero'];
+          break;
+
+        case 'cellulare':
+          if (isNaN(value)) error.cellulare = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['numero'];
+          break;
+
+        case 'email':
+          if (!email_reg_exp.test(value)) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['email_2'];
+          break;
+
+        case 'data_nascita':
+          var today = new Date();
+          today = new Date(today.toDateString()).getTime();
+          var date = new Date(value);
+          date = new Date(date.toDateString()).getTime();
+          if (date > today) error.data_nascita = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['data'];
+          break;
+      }
+
+      data[field] = value;
+      this.setState({
+        data: data,
+        error: error
+      });
+    }
+  }, {
+    key: "showError",
+    value: function showError(field) {
+      var error = this.state.error[field] !== undefined ? this.state.error[field] : '';
+      if (error != '') return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "error-div"
+      }, error);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var objFid = {
+        '1': 'Start',
+        '2': 'Plus',
+        '3': 'Revolution'
+      };
+      var divClassName = 'mb-3';
+      var urlComuni = this.props.url + '/comuni/search';
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        size: "md",
+        show: this.props.show,
+        onHide: this.props.onHide,
+        title: "Cliente",
+        type: "Nuovo"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        name: "nome",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Nome",
+        helperText: this.showError('nome'),
+        handleChange: this._handleChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        name: "cognome",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Cognome",
+        helperText: this.showError('cognome'),
+        handleChange: this._handleChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        name: "cf",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Codice Fiscale",
+        helperText: this.showError('cf'),
+        handleChange: this._handleChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DataField__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        name: "data_nascita",
+        className: "form-control",
+        label: "Data di Nascita",
+        helperText: this.showError('data_nascita'),
+        handleChange: this._handleChange
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        name: "id_comune",
+        type: "hidden"
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        label: "Comune",
+        placeholder: "Cerca un Comune",
+        showList: true,
+        url: urlComuni,
+        patternList: {
+          id: 'id',
+          fields: ['nome', 'prov']
+        },
+        reloadOnClick: false,
+        onClick: function onClick(val) {
+          console.log(val);
+          id_comune = val.id;
+        }
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        name: "email",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "E-mail",
+        helperText: this.showError('email'),
+        handleChange: this._handleChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        name: "telefono",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Telefono",
+        helperText: this.showError('telefono'),
+        handleChange: this._handleChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        name: "cellulare",
+        className: "form-control",
+        label: "Cellulare",
+        helperText: this.showError('cellulare'),
+        handleChange: this._handleChange
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        name: "id_fidelizzazione",
+        className: "form-control",
+        label: "Fidelizzazione",
+        values: objFid,
+        handleChange: this._handleChange
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, "Privacy")));
+    }
+  }]);
+
+  return ClientiModal;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/utils/AddEditModal.js":
 /*!*******************************************************!*\
   !*** ./resources/js/components/utils/AddEditModal.js ***!
@@ -76589,8 +76820,8 @@ function (_Component) {
         this.getRemoteData(++page);
       }
     } //Di default nella fase iniziale vengono recuperati un numero fisso di righe.
-    // A seconda dello schermo che si sta utilizzando, il numero di righe iniziali potrebbero
-    // non essere sufficienti a riempire l'area dello schermo.
+    // A seconda delle dimensioni dello schermo che si sta utilizzando,
+    // il numero di righe iniziali potrebbero non essere sufficienti a riempire l'area dello schermo.
     // MoreData provvede a recuperare un numero di righe sufficienti ad attivare la barra di scorrimento verticale
 
   }, {
@@ -76738,7 +76969,8 @@ function (_Component) {
         console.log(error.response.data);
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.props.url + '/login';
       });
-    }
+    } // dopo aver inserito un carattere nel campo
+
   }, {
     key: "_handleChange",
     value: function _handleChange(e) {
@@ -76756,7 +76988,8 @@ function (_Component) {
           loader: false
         });
       });
-    }
+    } // Click item dell'elenco dei risultati
+
   }, {
     key: "_handleClick",
     value: function _handleClick(val) {
@@ -76785,7 +77018,8 @@ function (_Component) {
         });
       });
       if (this.props.onClick !== undefined) this.props.onClick(val);
-    }
+    } // Richiama grtRemoteData dopo un certo tempo T
+
   }, {
     key: "_timeOut",
     value: function _timeOut(value, time) {
@@ -76960,6 +77194,31 @@ var DropdownSelect = function DropdownSelect(_ref) {
 
 /***/ }),
 
+/***/ "./resources/js/components/utils/form/InfoError.js":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/utils/form/InfoError.js ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var InfoError = {
+  'vuoto': 'campo vuoto',
+  'data': 'inserire una data inferiore a quella corrente',
+  'caratteri': 'Inserire caratteri validi',
+  'caratteri_min': 'Inserire almeno 2 caratteri',
+  'iva': 'La partita IVA in genere è composta da 11 cifre',
+  'cap': 'il CAP in genere è composto da almeno 5 cifre',
+  'telefono': 'Il numero di telefono in genere è composto da almeno 8 cifre',
+  'numero': 'Inserire un numero valido',
+  'email_1': 'l\'email in genere è composta da almeno 8 caratteri',
+  'email_2': 'email non valida'
+};
+/* harmony default export */ __webpack_exports__["default"] = (InfoError);
+
+/***/ }),
+
 /***/ "./resources/js/components/utils/form/InputField.js":
 /*!**********************************************************!*\
   !*** ./resources/js/components/utils/form/InputField.js ***!
@@ -77038,13 +77297,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/AddEditModal */ "./resources/js/components/utils/AddEditModal.js");
-/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
-/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
-/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
-/* harmony import */ var _utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/InputField */ "./resources/js/components/utils/form/InputField.js");
-/* harmony import */ var _utils_form_DataField__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/form/DataField */ "./resources/js/components/utils/form/DataField.js");
-/* harmony import */ var _utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../utils/form/DropdownSelect */ "./resources/js/components/utils/form/DropdownSelect.js");
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
+/* harmony import */ var _modals_ClientiModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/ClientiModal */ "./resources/js/components/modals/ClientiModal.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -77062,9 +77318,6 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
 
 
 
@@ -77186,7 +77439,7 @@ function (_Component) {
         className: "row text-right mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
         showList: false,
         patternList: {
           id: 'id',
@@ -77197,22 +77450,17 @@ function (_Component) {
         onClick: this._handleSearchFieldClick
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 "
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_4__["Button"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
         onClick: this._handleShowModal
-      }, "Nuovo Cliente"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        size: "md",
-        show: this.state.show,
-        onHide: this._handleCloseModal,
-        title: "Cliente",
-        type: "Nuovo"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ModalBody, {
+      }, "Nuovo Cliente"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_ClientiModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
         url: this.props.url,
-        handleChange: this._handleCheckDataModal
-      })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        show: this.state.show,
+        onHide: this._handleCloseModal
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
         url: this.props.url + '/clienti',
         columns: COLUMNS,
         externalRows: this.state.rows //multiSelect={true}
@@ -77225,120 +77473,6 @@ function (_Component) {
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 
-
-var ModalBody =
-/*#__PURE__*/
-function (_Component2) {
-  _inherits(ModalBody, _Component2);
-
-  function ModalBody(props) {
-    var _this2;
-
-    _classCallCheck(this, ModalBody);
-
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(ModalBody).call(this, props));
-    _this2.state = {
-      data: [],
-      show: false
-    };
-    _this2._handleCheck = _this2._handleCheck.bind(_assertThisInitialized(_this2));
-    return _this2;
-  }
-
-  _createClass(ModalBody, [{
-    key: "_handleCheck",
-    value: function _handleCheck(e) {
-      console.log(e.target.value);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var objFid = {
-        '1': 'Start',
-        '2': 'Plus',
-        '3': 'Revolution'
-      };
-      var divClassName = 'mb-3';
-      var urlComuni = this.props.url + '/comuni/search';
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        name: "nome",
-        divClassName: divClassName,
-        className: "form-control",
-        label: "Nome",
-        handleChange: this._handleCheck
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        name: "cognome",
-        divClassName: divClassName,
-        className: "form-control",
-        label: "Cognome",
-        handleChange: this._handleCheck
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        name: "cf",
-        divClassName: divClassName,
-        className: "form-control",
-        label: "Codice Fiscale",
-        handleChange: this._handleCheck
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DataField__WEBPACK_IMPORTED_MODULE_7__["default"], {
-        name: "data_nascita",
-        className: "form-control",
-        label: "Data di Nascita",
-        handleChange: this._handleCheck
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        name: "id_comune",
-        type: "hidden"
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        label: "Comune",
-        placeholder: "Cerca un Comune",
-        showList: true,
-        url: urlComuni,
-        patternList: {
-          id: 'id',
-          fields: ['nome', 'prov']
-        },
-        reloadOnClick: false,
-        onClick: function onClick(val) {
-          console.log(val);
-          id_comune = val.id;
-        }
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        name: "email",
-        divClassName: divClassName,
-        className: "form-control",
-        label: "E-mail",
-        handleChange: this._handleCheck
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        name: "telefono",
-        divClassName: divClassName,
-        className: "form-control",
-        label: "Telefono",
-        handleChange: this._handleCheck
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        name: "cellulare",
-        className: "form-control",
-        label: "Cellulare",
-        handleChange: this._handleCheck
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_8__["default"], {
-        name: "id_fidelizzazione",
-        className: "form-control",
-        label: "Fidelizzazione",
-        values: objFid,
-        handleChange: this._handleCheck
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, "Privacy"));
-    }
-  }]);
-
-  return ModalBody;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 /***/ }),
 

@@ -109,8 +109,8 @@ export default class InfiniteTable extends Component {
     }
 
     //Di default nella fase iniziale vengono recuperati un numero fisso di righe.
-    // A seconda dello schermo che si sta utilizzando, il numero di righe iniziali potrebbero
-    // non essere sufficienti a riempire l'area dello schermo.
+    // A seconda delle dimensioni dello schermo che si sta utilizzando,
+    // il numero di righe iniziali potrebbero non essere sufficienti a riempire l'area dello schermo.
     // MoreData provvede a recuperare un numero di righe sufficienti ad attivare la barra di scorrimento verticale
     _moreData(){
         let content = document.getElementById('content');
@@ -123,7 +123,6 @@ export default class InfiniteTable extends Component {
         }
 
     }
-
 
     render(){
 
