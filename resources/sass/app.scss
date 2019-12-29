@@ -43,7 +43,7 @@ ul{
         margin-left: 0px;
         transition: all 0.3s;
         &.active{
-            width: 100px;
+            width: 125px;
         }
     }
     .menu {
@@ -84,10 +84,10 @@ ul{
             padding-left: 0 !important;
         }
         #sidebar.active {
-            width: 100px;
+            width: 125px;
         }
         #content.active {
-            padding-left: 100px !important;
+            padding-left: 125px !important;
         }
     }
     #sidebarCollapse {
@@ -116,7 +116,7 @@ ul{
         width: 100%;
         transition: all 0.3s;
         &.active{
-            padding-left: 100px;
+            padding-left: 125px;
         }
     }
 /*--- Breadcrumb ---*/
@@ -145,7 +145,12 @@ ul{
 #login .form-group input {
     padding-left: 35px;
 }
-
+/*--- ERROR DIV ---*/
+.error-div {
+    color:red;
+    font-size: 0.8em;
+    margin: 2px 0 0 5px;
+}
 /*--- Search-field ---*/
 .search-field{
     display: inline-block;
@@ -188,5 +193,10 @@ ul{
         background-color: #e7eff7;
         cursor: pointer;
     }
+}
+/*--- PRIVACY FILE ---*/
+.privacy-file {
+    font-size: 1.3em;
+    color: red;
 }
 

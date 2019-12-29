@@ -11400,7 +11400,7 @@ ul {
 }
 
 #sidebar.active {
-  width: 100px;
+  width: 125px;
 }
 
 .menu {
@@ -11450,11 +11450,11 @@ a[data-toggle=collapse] {
   }
 
   #sidebar.active {
-    width: 100px;
+    width: 125px;
   }
 
   #content.active {
-    padding-left: 100px !important;
+    padding-left: 125px !important;
   }
 }
 
@@ -11490,7 +11490,7 @@ header {
 }
 
 #content.active {
-  padding-left: 100px;
+  padding-left: 125px;
 }
 
 /*--- Breadcrumb ---*/
@@ -11525,6 +11525,14 @@ footer:hover {
 
 #login .form-group input {
   padding-left: 35px;
+}
+
+/*--- ERROR DIV ---*/
+
+.error-div {
+  color: red;
+  font-size: 0.8em;
+  margin: 2px 0 0 5px;
 }
 
 /*--- Search-field ---*/
@@ -11574,5 +11582,12 @@ footer:hover {
 .table tbody tr:hover {
   background-color: #e7eff7;
   cursor: pointer;
+}
+
+/*--- PRIVACY FILE ---*/
+
+.privacy-file {
+  font-size: 1.3em;
+  color: red;
 }
 

@@ -158,7 +158,7 @@ export default class InfiniteTable extends Component {
                                             //console.log(row[column.field]);
                                             let cell = row[column.field];
                                             if(column.render != undefined)
-                                                return(<td key={id}>{column.render(cell)}</td>);
+                                                return(<td key={id}>{column.render(cell,row)}</td>);
                                             return(
                                                 <td style={column.style!==undefined?column.style:{}} key={id}>{cell}</td>
                                             );

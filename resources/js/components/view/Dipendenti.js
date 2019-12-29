@@ -39,7 +39,7 @@ const COLUMNS = [
   ];
 
 
-export default class Clienti extends Component {
+export default class Dipendenti extends Component {
 
     constructor(props){
         super(props);

@@ -3,6 +3,7 @@ const InfoError = {
     'data': 'inserire una data inferiore a quella corrente',
     'caratteri': 'Inserire caratteri validi',
     'comune':'inserire un comune valido',
+    'file': 'Allegare un file valido',
     'caratteri_min': 'Inserire almeno 2 caratteri',
     'iva': 'La partita IVA in genere è composta da 11 cifre',
     'cap':'il CAP in genere è composto da almeno 5 cifre',

@@ -18,7 +18,7 @@ const DataField = ({name , placeholder,divClassName='',className='', label, requ
             onChange = {handleChange}
             value = {value}
         />
-        <span className="error-div">{helperText}</span>
+        {helperText}
     </div>
 );
 

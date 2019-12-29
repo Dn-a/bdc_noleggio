@@ -22,6 +22,7 @@ const FIELDS = [
     'indirizzo',
     'id_comune',
     'id_fidelizzazione',
+    'privacy'
 ];
 export default class ClientiModal extends Component {
 
@@ -49,19 +50,26 @@ export default class ClientiModal extends Component {
 
         let url = this.props.url+'/clienti';
 
-        let headers = {headers: {'Accept': 'application/json','Content-Type': 'application/json'},};
+        let headers = {headers: {'Accept': 'application/json',
+            //'Content-Type': 'application/json'
+            //'Content-Type': 'multipart/form-data'
+            'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
 
         let data = this.state.data;
 
-        let arrayData=[];
+        let formData = new FormData();
 
         Object.keys(data).map((k,id) => {
-            arrayData.push(data[k]);
+            formData.append(k,data[k]);
         });
 
-        let formData = {...data};
+        formData.append('_token',CSRF_TOKEN);
 
-        formData['_token'] = CSRF_TOKEN;
+        //let formData = {...data};
+        //formData['_token'] = CSRF_TOKEN;
+        //console.log(formData);
 
         this.setState({loader:true});
         //return;
@@ -86,8 +94,9 @@ export default class ClientiModal extends Component {
     }
 
     _handleChange(e){
-        let value = e.target.value.trim().toLowerCase();
+        let value = e.target.value.toLowerCase();
         let field = e.target.name;
+
 
         let error = this.state.error;
         let data = this.state.data;
@@ -113,7 +122,7 @@ export default class ClientiModal extends Component {
                 break;
             case 'indirizzo':
                 if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.cf = INFO_ERROR['caratteri'];
+                    error.indirizzo = INFO_ERROR['caratteri'];
                 break;
             case 'telefono':
                 if(isNaN(value))
@@ -137,9 +146,13 @@ export default class ClientiModal extends Component {
                 if(date > today)
                     error.data_nascita = INFO_ERROR['data'];
                 break;
+            case 'privacy':
+                value = e.target.files[0];
+                if(e.target.files.length== 0)
+                   error.privacy = INFO_ERROR['file'];
         }
 
-        data[field] = value;
+        data[field] = field!='privacy'? value.trim() : value;
 
         this.setState({data,error},()  => this.checked());
     }
@@ -168,7 +181,7 @@ export default class ClientiModal extends Component {
 
     render(){
 
-        let objFid = {'1':'Start','2':'Plus','3':'Revolution'};
+        let objFid = {'1':'Start - 0%','2':'Plus - 10%','3':'Revolution - 20%'};
         let divClassName = 'mb-3';
 
         let urlComuni = this.props.url+'/comuni/search';
@@ -202,9 +215,10 @@ export default class ClientiModal extends Component {
                         <SearchField
                             label="Comune"
                             placeholder='Cerca un Comune'
+                            searchClassName='w-100'
                             showList={true}
                             url={urlComuni}
-                            patternList={{id:'id',fields:['nome','prov']}}
+                            patternList={{id:'id', fields:['nome','prov']}}//id di ritorno; i fields vengono usati come titolo
                             reloadOnClick={false}
                             onClick={(val) => {
                                     //console.log(val);
@@ -249,7 +263,7 @@ export default class ClientiModal extends Component {
 
                     <div className="form-group">
                         <FileField name='privacy' divClassName={divClassName} className="form-control"
-                        label="Privacy" />
+                        helperText={this.showError('privacy')} handleChange={this._handleChange} label="Privacy" />
                     </div>
 
                 </form>

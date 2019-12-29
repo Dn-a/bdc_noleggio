@@ -20,7 +20,7 @@ const InputField = ({name ,type='', divClassName='', className='', placeholder, 
             value = {value}
 
         />
-        <span className="error-div">{helperText}</span>
+        {helperText}
         { dataList != null &&
           <datalist id={name}>
             {

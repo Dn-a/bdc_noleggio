@@ -20,7 +20,7 @@ const FileField = ({name ,type='', divClassName='', className='', placeholder, l
             value = {value}
 
         />
-        <span className="error-div">{helperText}</span>
+        {helperText}
     </div>
 );
 

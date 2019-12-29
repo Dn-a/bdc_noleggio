@@ -22,7 +22,8 @@ Auth::routes([
 
 // browser request
 if(request()->header('accept')!='application/json')
-    Route::get('/{name}', 'HomeController@index')->name('home')->where('name','(|home|clienti|video|deposito|noleggi|restituzioni|setting)');
+    Route::get('/{name}', 'HomeController@index')->name('home')
+    ->where('name','(|home|clienti|dipendenti|video|deposito|noleggi|restituzioni|setting)');
 
 
 //Route::middleware(['auth'])->group( function () {

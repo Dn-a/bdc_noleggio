@@ -19,10 +19,11 @@ export default function AddEditModal(props) {
                 }
             </Modal.Body>
             <Modal.Footer>
-                <BackButton onClick={props.onHide} >Chiudi</BackButton>
+                <BackButton className="btn-light" onClick={props.onHide} >Chiudi</BackButton>
                 <ConfirmButton
                 disabled={props.disabledConfirmButton!==undefined ? props.disabledConfirmButton:false}
-                onClick={props.onConfirm}>Aggiungi</ConfirmButton>
+                className="btn-success" onClick={props.onConfirm}
+                >Aggiungi</ConfirmButton>
             </Modal.Footer>
         </Modal>
     );

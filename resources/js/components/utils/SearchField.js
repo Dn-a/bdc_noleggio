@@ -112,8 +112,10 @@ export default class SearchField extends Component {
         let patternList = this.props.patternList!== undefined ? this.props.patternList : {id:'',fields:[]};
         let showList = this.props.showList!== undefined ? this.props.showList : false;
 
+        let searchClassName = this.props.searchClassName!== undefined ? this.props.searchClassName:'';
+
         return(
-            <div className="search-field ">
+            <div className={"search-field "+searchClassName}>
                 <InputField value={this.state.value}  divClassName="d-inline" className="form-control" name="search_field"
                 placeholder={this.props.placeholder!== undefined? this.props.placeholder:"Cerca"}
                 label={this.props.label!== undefined? this.props.label:''}

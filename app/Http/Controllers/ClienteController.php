@@ -102,16 +102,21 @@ class ClienteController extends Controller
                 'indirizzo' => 'required|string|min:1|max:50',
                 'id_comune' => 'required|integer',
                 'id_fidelizzazione' => 'required|integer',
-                'privacy' => 'nullable|mimes:jpeg,bmp,png,pdf'
+                'privacy' => 'required|mimes:jpeg,bmp,png,pdf'
             ]);
 
             if(isset($request->privacy)){
+                //return $request->privacy;
                 $temp = file_get_contents($request->privacy);
                 $blob = base64_encode($temp);
+                //return $blob;exit;
             }
 
-
             $input = $request->all();
+
+            $temp = file_get_contents($request->privacy);
+            $blob = base64_encode($temp);
+            $input['privacy'] = $blob;
 
             $input['cf'] = strtoupper($request->cf);
 
