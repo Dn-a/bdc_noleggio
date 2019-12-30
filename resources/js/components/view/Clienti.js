@@ -47,6 +47,7 @@ export default class Clienti extends Component {
         this.state = {
             rows: '',
             show:false,
+            reloadInfiniteTable:0
         };
 
         this._handleCloseModal = this._handleCloseModal.bind(this);
@@ -63,6 +64,7 @@ export default class Clienti extends Component {
     _handleShowModal (){
         this.setState({show : true});
     }
+
 
     _handleCheckDataModal(e){
         console.log(e.target.value);
@@ -96,7 +98,7 @@ export default class Clienti extends Component {
                 <div className="row text-right mb-3 px-2">
 
                     <div className="col-md-6">
-                        <SearchField showList={false} patternList={{id:'id',fields:['nome','cognome']}}
+                        <SearchField showList={false} patternList={{id:'id',fields:{nome:[],cognome:[]}} }
                         url={urlClienti} callback={this._handleSearchFieldCallback}
                         onClick={this._handleSearchFieldClick}
                         />
@@ -105,16 +107,22 @@ export default class Clienti extends Component {
                     <div className="col-md-6 ">
                         <Button onClick={this._handleShowModal}>
                         <i className="fa fa-plus-circle" aria-hidden="true"></i>
-                        Nuovo Cliente</Button>
+                        &nbsp;Nuovo Cliente</Button>
 
                         <ClientiModal url={this.props.url}
-                        show={this.state.show} onHide={this._handleCloseModal} />
+                        show={this.state.show} onHide={this._handleCloseModal}
+                        callback={
+                            (row) => {
+                                this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                            }
+                        } />
                     </div>
 
                 </div>
                 <div className="row">
                     <div className="col-md-12">
                         <InfiniteTable
+                            reload={this.state.reloadInfiniteTable}
                             url={this.props.url+'/clienti'}
                             columns={COLUMNS}
                             externalRows={this.state.rows}

@@ -11,7 +11,7 @@ class ClienteController extends Controller
 
     public function index(Request $request)
     {
-        $page = $request->input('per-page') ?: 5;
+        $page = $request->input('per-page') ?: 10;
 
         $cliente = Cliente::orderBy('id','DESC')->paginate($page);
 
@@ -105,12 +105,6 @@ class ClienteController extends Controller
                 'privacy' => 'required|mimes:jpeg,bmp,png,pdf'
             ]);
 
-            if(isset($request->privacy)){
-                //return $request->privacy;
-                $temp = file_get_contents($request->privacy);
-                $blob = base64_encode($temp);
-                //return $blob;exit;
-            }
 
             $input = $request->all();
 
@@ -124,7 +118,9 @@ class ClienteController extends Controller
 
             $cliente->fill($input)->save();
 
-            return response()->json(['msg' =>'added'],201);
+            $id = $cliente->id;
+
+            return response()->json(['msg' =>'added','data' => "{id:'{$id}'}"],201);
 
             //$this->responseEmail($request);
             //$this->notifyEmail($request);

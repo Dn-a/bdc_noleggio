@@ -23,7 +23,7 @@ export default function AddEditModal(props) {
                 <ConfirmButton
                 disabled={props.disabledConfirmButton!==undefined ? props.disabledConfirmButton:false}
                 className="btn-success" onClick={props.onConfirm}
-                >Aggiungi</ConfirmButton>
+                >Aggiungi <img className={"loader-2"+(props.loader==true?' d-inline-block':'')} src="../img/loader_2.gif"></img></ConfirmButton>
             </Modal.Footer>
         </Modal>
     );

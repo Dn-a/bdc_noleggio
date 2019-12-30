@@ -14,17 +14,19 @@ const whitespace_reg_ex = /^[^\s].*/;
 const FIELDS = [
     'nome',
     'cognome',
-    'cf',
+    'matricola',
     'email',
-    'data_nascita',
-    'telefono',
-    'cellulare',
-    'indirizzo',
-    'id_comune',
-    'id_fidelizzazione',
-    'privacy'
+    'id_ruolo',
+    'id_pt_vendita',
+    'password',
+    'confirm_password'
 ];
-export default class ClientiModal extends Component {
+
+const HIDE_FIELD = [
+    'confirm_password'
+]
+
+export default class DipendentiModal extends Component {
 
     constructor(props){
         super(props);
@@ -47,13 +49,9 @@ export default class ClientiModal extends Component {
         this._handleOnSave = this._handleOnSave.bind(this);
     }
 
-    componentWillUnmount () {
-        this.state.data= this.state.error = {};
-    }
-
     setRemoteStore() {
 
-        let url = this.props.url+'/clienti';
+        let url = this.props.url+'/dipendenti';
 
         let headers = {headers: {'Accept': 'application/json',
             //'Content-Type': 'application/json'
@@ -64,17 +62,18 @@ export default class ClientiModal extends Component {
 
         let data = this.state.data;
 
+
         let formData = new FormData();
 
         Object.keys(data).map((k,id) => {
-            formData.append(k,data[k]);
+            if(!HIDE_FIELD.includes(k)){
+                formData.append(k,data[k]);
+            }
         });
 
-        formData.append('_token',CSRF_TOKEN);
+        //console.log(FormData);return;
 
-        //let formData = {...data};
-        //formData['_token'] = CSRF_TOKEN;
-        //console.log(formData);
+        formData.append('_token',CSRF_TOKEN);
 
         this.setState({loader:true});
 
@@ -85,15 +84,6 @@ export default class ClientiModal extends Component {
                 this.props.callback(data);
             this.props.onHide();
             this.state.loader = false;
-            /*var reader = new FileReader();
-            reader.readAsDataURL(data.privacy);
-            reader.onload= () =>  {
-                data.privacy = reader.result;
-                data.id='1';
-                if(this.props.callback !== undefined)
-                    this.props.callback(data);
-                this.props.onHide();
-            }*/
             return result;
         }).catch((error) => {
           console.error(error.response.data);
@@ -132,22 +122,10 @@ export default class ClientiModal extends Component {
                 if(value.length > 1 && !whitespace_reg_ex.test(value))
                     error.cognome = INFO_ERROR['caratteri'];
                 break;
-            case 'cf':
+            case 'matricola':
                 value = value.toUpperCase();
                 if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.cf = INFO_ERROR['caratteri'];
-                break;
-            case 'indirizzo':
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.indirizzo = INFO_ERROR['caratteri'];
-                break;
-            case 'telefono':
-                if(isNaN(value))
-                   error.telefono = INFO_ERROR['numero'];
-                break;
-            case 'cellulare':
-                if(isNaN(value))
-                   error.cellulare = INFO_ERROR['numero'];
+                    error.matricola = INFO_ERROR['caratteri'];
                 break;
             case 'email':
                 if(value.length < 8 )
@@ -155,18 +133,22 @@ export default class ClientiModal extends Component {
                 else if(!email_reg_exp.test(value))
                     error.email = INFO_ERROR['email_2'];
                 break;
-            case 'data_nascita':
-                let today = new Date();
-                today = new Date(today.toDateString()).getTime();
-                let date = new Date(value);
-                date = new Date(date.toDateString()).getTime();
-                if(date > today)
-                    error.data_nascita = INFO_ERROR['data'];
+            case 'password':
+                if(value.length > 1 && !whitespace_reg_ex.test(value))
+                    error.password = INFO_ERROR['caratteri'];
+                else if(value.length > 0 && value.length < 8)
+                    error.password = INFO_ERROR['password'];
+                else if(this.state.data.confirm_password!='' && value != this.state.data.confirm_password)
+                    error.confirm_password = INFO_ERROR['confirm_password'];
+                else
+                    error.confirm_password = '';
                 break;
-            case 'privacy':
-                value = e.target.files[0];
-                if(e.target.files.length== 0)
-                   error.privacy = INFO_ERROR['file'];
+            case 'confirm_password':
+                if(value.length > 1 && !whitespace_reg_ex.test(value))
+                    error.confirm_password = INFO_ERROR['caratteri'];
+                else if( value.length > 0 && value.length < 8 || value != this.state.data.password)
+                    error.confirm_password = INFO_ERROR['confirm_password'];
+                break;
         }
 
         data[field] = field!='privacy'? value.trim() : value;
@@ -198,19 +180,21 @@ export default class ClientiModal extends Component {
 
     render(){
 
-        let objFid = {'1':'Start - 0%','2':'Plus - 10%','3':'Revolution - 20%'};
+        let objFid = {'3':'Addetto','2':'Responsabile',
+            '1':'Admin'
+        };
         let divClassName = 'mb-3';
 
-        let urlComuni = this.props.url+'/comuni/search';
+        let urlPtVendita = this.props.url+'/punti-vendita/search';
 
         return(
             <AddEditModal size="md"
                 show={this.props.show}
                 onHide={this.props.onHide}
-                onConfirm={this._handleOnSave}
                 loader={this.state.loader}
+                onConfirm={this._handleOnSave}
                 disabledConfirmButton={!this.state.checked}
-                title="Cliente" type="Nuovo"
+                title="Dipendente" type="Nuovo"
             >
 
                 <form>
@@ -220,30 +204,23 @@ export default class ClientiModal extends Component {
                         helperText={this.showError('nome')} handleChange={this._handleChange} />
                         <InputField name="cognome" divClassName={divClassName} className="form-control" label="Cognome"
                         helperText={this.showError('cognome')} handleChange={this._handleChange} />
-                        <InputField name="cf" divClassName={divClassName} className="form-control" label="Codice Fiscale"
-                        helperText={this.showError('cf')} handleChange={this._handleChange} />
-                        <DataField name="data_nascita" className="form-control" label="Data di Nascita"
-                        helperText={this.showError('data_nascita')} handleChange={this._handleChange} />
                     </div>
 
                     <div className="form-group">
-                        <InputField name="indirizzo" divClassName={divClassName} className="form-control"
-                        label="Indirizzo"
-                        helperText={this.showError('indirizzo')} handleChange={this._handleChange} />
                         <SearchField
-                            label="Comune"
-                            placeholder='Cerca un Comune'
+                            label="Punto Vendita"
+                            placeholder='Cerca un Punto Vendita'
                             searchClassName='w-100'
                             showList={true}
-                            url={urlComuni}
-                            patternList={{id:'id', fields:{nome:[],prov:[]}} }//id di ritorno; i fields vengono usati come titolo
+                            url={urlPtVendita}
+                            patternList={{id:'id', fields:{titolo:[],indirizzo:[],comune:['nome','prov']} } }//id di ritorno; i fields vengono usati come titolo
                             reloadOnClick={false}
                             onClick={(val) => {
                                     //console.log(val);
                                     let data = this.state.data;
                                     let error = this.state.error;
-                                    data.id_comune = val.id;
-                                    error.id_comune = '';
+                                    data.id_pt_vendita = val.id;
+                                    error.id_pt_vendita = '';
                                     this.setState({data,error},() => this.checked());
                                 }
                             }
@@ -251,37 +228,37 @@ export default class ClientiModal extends Component {
                                     //console.log(val);
                                     let data = this.state.data;
                                     let error = this.state.error;
-                                    data.id_comune = '';
+                                    data.id_pt_vendita = '';
                                     if(val.length==0){
-                                        error.id_comune = INFO_ERROR['comune'];
+                                        error.id_pt_vendita = INFO_ERROR['pt_vendita'];
                                     }
                                     this.setState({data,error},() => this.checked());
                                 }
                             }
                         />
-                        {this.showError('id_comune')}
+                        {this.showError('id_pt_vendita')}
                     </div>
 
                     <div className="form-group">
-                        <InputField name="email" autocomplete='on' divClassName={divClassName} className="form-control" label="E-mail"
+                        <InputField name="matricola" divClassName={divClassName} className="form-control" label="Matricola"
+                        helperText={this.showError('matricola')} handleChange={this._handleChange} />
+                        <InputField name="email" autocomplete='on' className="form-control" label="E-mail"
                         helperText={this.showError('email')} handleChange={this._handleChange} />
-                        <InputField name="telefono" divClassName={divClassName}className="form-control" label="Telefono"
-                        helperText={this.showError('telefono')} handleChange={this._handleChange} />
-                        <InputField name="cellulare" className="form-control" label="Cellulare"
-                        helperText={this.showError('cellulare')} handleChange={this._handleChange} />
                     </div>
 
                     <div className="form-group">
                         <DropDownSelect placeholder="Scegli un valore"
-                        name="id_fidelizzazione" className="form-control" label="Fidelizzazione"
+                        name="id_ruolo" className="form-control" label="Ruolo"
                         values={objFid}
                         selected='default'
                         handleChange={this._handleChange} />
                     </div>
 
                     <div className="form-group">
-                        <FileField name='privacy' divClassName={divClassName} className="form-control"
-                        helperText={this.showError('privacy')} handleChange={this._handleChange} label="Privacy" />
+                        <InputField type="password" name='password' divClassName={divClassName} className="form-control"
+                        helperText={this.showError('password')} handleChange={this._handleChange} label="Password" />
+                        <InputField type="password" name='confirm_password' divClassName={divClassName} className="form-control"
+                        helperText={this.showError('confirm_password')} handleChange={this._handleChange} label="Conferma Password" />
                     </div>
 
                 </form>

@@ -17,12 +17,8 @@ class ClienteCollection extends ResourceCollection
         $this->withPagination = $withPagination;
     }
 
-    /**
-     * Transform the resource collection into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
+    // Pagination
+    // return Array
     public function toArray($request)
     {
         $collection = $this->collection->transform(function($cliente){
@@ -50,16 +46,17 @@ class ClienteCollection extends ResourceCollection
         $comune = (string) $item->indirizzo .' - '. (string) $item->comune->nome.' ('.(string) $item->comune->prov.')';
         $fidelizzazione = $item->fidelizzazione;
 
-        unset(
-            //$item['telefono'], $item['cellulare'],
-            //$item['indirizzo'], $item['comune'],
-            $item['fidelizzazione'],
-            $item['id_comune'], $item['id_fidelizzazione']
-        );
-
         $item['recapiti'] = $recapiti;
         $item['residenza'] = $comune;
         $item['fidelizzazione'] = $fidelizzazione;
+
+        unset(
+            $item['telefono'], $item['cellulare'],
+            $item['indirizzo'], $item['comune'],
+            //$item['fidelizzazione'],
+            $item['id_comune'], $item['id_fidelizzazione']
+        );
+
 
         return $item;
         //if(empty($this->withFields)) return $array;

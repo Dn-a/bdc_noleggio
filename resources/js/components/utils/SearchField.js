@@ -67,10 +67,25 @@ export default class SearchField extends Component {
         let patternList = this.props.patternList!== undefined ? this.props.patternList : {id:'',fields:[]};
         let txt ='';
 
+        let fieldsKey = Object.keys(patternList.fields);
+        fieldsKey.map((field,key) => {
+
+            if(patternList.fields[field].length==0){
+                txt += val[field];
+                txt += fieldsKey.length > (key+1) ? ' ':'';
+            }else
+                patternList.fields[field].map((f,k) => {
+                    txt += val[field][f];
+                    txt += patternList.fields[field].length > (k+1) ? ' ':'';
+                })
+
+        });
+
+        /*
         patternList.fields.map((field,key) => {
             txt += val[field];
             txt += patternList.fields.length > (key+1) ? ' ':'';
-        })
+        })*/
 
         //console.log(txt)
         this.setState({value:txt});
@@ -131,13 +146,43 @@ export default class SearchField extends Component {
                                         <li key={id} id={val[patternList.id]}
                                         onClick={() => this._handleClick(val)}
                                         className="list-group-item">
-                                            {patternList.fields.map((field,id) => {
+                                            {
+                                                Object.keys(patternList.fields).map((field,key) => {
+
+                                                    if(patternList.fields[field].length==0)
+                                                        return(
+                                                            <Fragment key={key}>
+                                                                {val[field]} &nbsp;
+                                                            </Fragment>
+                                                        )
+                                                    if(val[field] instanceof Object)
+                                                        return(
+                                                            patternList.fields[field].map((f,k) => {
+                                                                return(
+                                                                    <Fragment key={key+k}>
+                                                                        {val[field][f]} &nbsp;
+                                                                    </Fragment>
+                                                                )
+                                                            })
+                                                        )
+                                                })
+                                            }
+                                            {/*patternList.fields.map((field,id) => {
+                                                console.log(val['comune']);
+                                                if(field instanceof Object)
+                                                    Object.keys(field).map((f,k) => {
+                                                        if(val[f] instanceof Object)
+                                                            <Fragment key={id}>
+                                                                {val[field[f]]} &nbsp;
+                                                            </Fragment>
+                                                    });
+                                                if(val[field] instanceof Object) return 'aa';
                                                 return(
                                                     <Fragment key={id}>
                                                         {val[field]} &nbsp;
                                                     </Fragment>
                                                 )
-                                            })}
+                                            })*/}
                                         </li>
                                     )
                                 })

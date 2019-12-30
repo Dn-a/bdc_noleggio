@@ -17,6 +17,7 @@ export default class InfiniteTable extends Component {
             selectedList:[],
             moreData:true,
             loader:false,
+            reload:0
         };
 
         this.timeOut = 500;// timeout before remote call
@@ -27,13 +28,24 @@ export default class InfiniteTable extends Component {
     }
 
     componentDidMount () {
+        //console.log("load table");
         let content = document.getElementById('content');
         content.addEventListener('scroll', this._handleScroll);
         this.getRemoteData().then((a) => this._moreData());
     }
 
     componentWillUnmount () {
+        this.state.data={};
         document.getElementById('content').removeEventListener('scroll', this._handleScroll);
+    }
+
+    componentDidUpdate(){
+        if(this.props.reload!==undefined && this.props.reload > this.state.reload){
+            this.state.reload = this.props.reload;
+            this.state.data.rows = [];
+            console.log("reload");
+            this.getRemoteData().then((a) => this._moreData());
+        }
     }
 
     getRemoteData(page){
@@ -124,6 +136,7 @@ export default class InfiniteTable extends Component {
 
     }
 
+
     render(){
 
         let data = this.state.data;
@@ -135,6 +148,7 @@ export default class InfiniteTable extends Component {
             <table className="table">
                 <thead>
                     <tr>
+
                         {
 
                         columns.map((column,id) => {

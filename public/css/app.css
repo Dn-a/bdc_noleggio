@@ -11569,7 +11569,17 @@ footer:hover {
   display: inline-block;
 }
 
-.img-loader img {
+.loader-2 {
+  display: none;
+  width: 32px;
+  padding: 0 10px 0 4px;
+  right: 0;
+  margin-right: -15px;
+  position: relative;
+}
+
+.img-loader img,
+.loader-2 img {
   width: 100%;
 }
 

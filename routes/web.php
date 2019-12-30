@@ -14,7 +14,7 @@
 
 Auth::routes([
     'register' => false, // Registration Routes...
-    'reset' => false, // Password Reset Routes...
+    //'reset' => false, // Password Reset Routes...
     'verify' => false, // Email Verification Routes...
   ]);
 
@@ -29,9 +29,19 @@ if(request()->header('accept')!='application/json')
 //Route::middleware(['auth'])->group( function () {
 //Route::group(['middleware' => ['guest','auth']], function () {
 
+    // Comuni
+    Route::get('comuni/search/{val}', 'ComuneController@search')->name('comuni.search');
+
+    // Punti Vendita
+    Route::get('punti-vendita/search/{val}', 'PuntoVenditaController@search')->name('punti-vendita.search');
+
+    // Clienti
     Route::get('clienti/search/{val}', 'ClienteController@search')->name('clienti.search');
     Route::resource('clienti', 'ClienteController',['as' => 'clienti']);
 
-    Route::get('comuni/search/{val}', 'ComuneController@search')->name('comuni.search');
+    // Dipendenti
+    Route::get('dipendenti/search/{val}', 'DipendenteController@search')->name('dipendenti.search');
+    Route::resource('dipendenti', 'DipendenteController',['as' => 'dipendenti']);
+
 
 //});

@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-const InputField = ({name ,type='', divClassName='', className='', placeholder, label, required, value, handleFocus, handleChange, helperText, dataList}) => (
+const InputField = ({name ,type='', divClassName='', className='', placeholder,autocomplete='off', label, required, value, handleFocus, handleChange, helperText, dataList}) => (
     <div className={"input-field "+divClassName}>
         { label != null ? <label
         //className="pr-1 col-form-label text-md-right"
@@ -13,7 +13,7 @@ const InputField = ({name ,type='', divClassName='', className='', placeholder, 
             //className={'form-control validate' + className}
             className={'validate ' + className}
             required = {required}
-            autoComplete = {placeholder}
+            autoComplete = {autocomplete}
             placeholder = {placeholder}
             onFocus = {handleFocus}
             onChange = {handleChange}

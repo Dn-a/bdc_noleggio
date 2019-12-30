@@ -4,38 +4,17 @@ import axios from 'axios';
 import SearchField from '../utils/SearchField';
 import { Button } from '../utils/Button';
 import InfiniteTable from '../utils/InfiniteTable';
-import ClientiModal from '../modals/ClientiModal';
+import DipendentiModal from '../modals/DipendentiModal';
 
 
 const COLUMNS = [
     { title: 'id', field: 'id' , align:'right'},
     { title: 'Nome', field: 'nome', style: {textTransform:'capitalize'}  },
     { title: 'Cognome', field: 'cognome', style: {textTransform:'capitalize'} },
-    { title: 'C.F.', field: 'cf' },
-    { title: 'Data di Nascita', field:'data_nascita',
-        render: cell  =>  new Date(cell).toLocaleDateString("it-IT")
-    },
-    { title: 'Recapiti', field: 'recapiti', padding:'none' },
-    { title: 'Residenza', field: 'residenza', style: {textTransform:'capitalize'} },
-    { title: 'Email', field: 'email', },
-    { title: 'Fidelizzazione', field:'fidelizzazione', render: cell => cell.titolo },
-    { title: 'Privacy', field: 'privacy', render:(cell,row) => {
-
-        if(cell==null ) return;
-
-        let linkSource = 'data:application/pdf;base64,'+cell;
-        let downloadLink = document.createElement("a");
-        let fileName = 'privacy_'+row.nome+'_'+row.cognome+'.pdf';
-
-        return(
-            <a className="privacy-file" href={linkSource} download={fileName}>
-                <i className="fa fa-file-pdf-o" aria-hidden="true"></i>
-            </a>
-        );
-        downloadLink.href = linkSource;
-        downloadLink.download = fileName;
-        //downloadLink.click();
-    } },
+    { title: 'Matricola', field: 'matricola' },
+    { title: 'Ruolo', field:'ruolo'},
+    { title: 'Punto Vendita', field:'pt_vendita'},
+    { title: 'Creato il', field:'created_at', render: cell => new Date(cell).toLocaleDateString("it-IT")},
   ];
 
 
@@ -47,8 +26,10 @@ export default class Dipendenti extends Component {
         this.state = {
             rows: '',
             show:false,
+            reloadInfiniteTable:0
         };
 
+        this.url = this.props.url+'/dipendenti';
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
@@ -90,14 +71,14 @@ export default class Dipendenti extends Component {
 
 
     render() {
-        let urlClienti = this.props.url+'/clienti/search';
+
         return (
             <div className="container-fluid pl-3">
                 <div className="row text-right mb-3 px-2">
 
                     <div className="col-md-6">
                         <SearchField showList={false} patternList={{id:'id',fields:['nome','cognome']}}
-                        url={urlClienti} callback={this._handleSearchFieldCallback}
+                        url={this.url+'/search'} callback={this._handleSearchFieldCallback}
                         onClick={this._handleSearchFieldClick}
                         />
                     </div>
@@ -105,17 +86,23 @@ export default class Dipendenti extends Component {
                     <div className="col-md-6 ">
                         <Button onClick={this._handleShowModal}>
                         <i className="fa fa-plus-circle" aria-hidden="true"></i>
-                        Nuovo Cliente</Button>
+                        &nbsp;Nuovo Dipendente</Button>
 
-                        <ClientiModal url={this.props.url}
-                        show={this.state.show} onHide={this._handleCloseModal} />
+                        <DipendentiModal url={this.props.url}
+                        show={this.state.show} onHide={this._handleCloseModal}
+                        callback={
+                            (row) => {
+                                this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                            }
+                        } />
                     </div>
 
                 </div>
                 <div className="row">
                     <div className="col-md-12">
                         <InfiniteTable
-                            url={this.props.url+'/clienti'}
+                            reload={this.state.reloadInfiniteTable}
+                            url={this.url}
                             columns={COLUMNS}
                             externalRows={this.state.rows}
                             //multiSelect={true}
