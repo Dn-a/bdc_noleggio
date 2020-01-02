@@ -12,7 +12,7 @@ class DipendenteController extends Controller
 
     public function index(Request $request)
     {
-        $page = $request->input('per-page') ?: 5;
+        $page = $request->input('per-page') ?: 10;
 
         $dipendente = Dipendente::orderBy('id','DESC')->paginate($page);
 
@@ -60,6 +60,9 @@ class DipendenteController extends Controller
         })
         ->orWhere('email','like',"$arr[0]%")
         ->orWhere('matricola','like',"$arr[0]%")
+        ->orWhereHas('ruolo',function($query) use($arr) {
+            $query->where('titolo','like',$arr[0].'%');
+        })
         ->orWhereHas('puntoVendita',function($query) use($arr) {
             $query->where('titolo','like',$arr[0].'%');
         })->limit(10)->get();

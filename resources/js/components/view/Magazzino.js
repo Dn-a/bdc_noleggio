@@ -9,17 +9,18 @@ import DipendentiModal from '../modals/DipendentiModal';
 
 const COLUMNS = [
     { title: 'id', field: 'id' , align:'right'},
-    { title: 'Nome', field: 'nome', style: {textTransform:'capitalize'}  },
-    { title: 'Cognome', field: 'cognome', style: {textTransform:'capitalize'} },
-    { title: 'Email', field: 'email' },
-    { title: 'Matricola', field: 'matricola' },
-    { title: 'Ruolo', field:'ruolo'},
-    { title: 'Punto Vendita', field:'pt_vendita'},
-    { title: 'Creato il', field:'created_at', render: cell => new Date(cell).toLocaleDateString("it-IT")},
+    { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },
+    { title: 'P.to Vendita', field: 'pt_vendita', style: {textTransform:'capitalize'} },
+    { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} },
+    { title: 'Fornitore', field: 'fornitore',style: {textTransform:'capitalize'} },
+    { title: 'Data Scarico', field: 'data_scarico',render: cell => new Date(cell).toLocaleDateString("it-IT") },
+    { title: 'Giorni al Ritiro', field:'ritiro'},
+    { title: 'Noleggiato', field:'noleggiato'},
+    { title: 'Danneggiato', field:'danneggiato'},
   ];
 
 
-export default class Dipendenti extends Component {
+export default class Magazzino extends Component {
 
     constructor(props){
         super(props);
@@ -30,7 +31,7 @@ export default class Dipendenti extends Component {
             reloadInfiniteTable:0
         };
 
-        this.url = this.props.url+'/dipendenti';
+        this.url = this.props.url+'/magazzino';
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);

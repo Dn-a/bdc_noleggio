@@ -11554,6 +11554,20 @@ footer:hover {
   cursor: pointer;
 }
 
+.btn-clear {
+  position: absolute;
+  right: 4px;
+  bottom: 5px;
+  padding: 2.1px 7.5px;
+  color: #666;
+  cursor: pointer;
+  display: none;
+}
+
+.btn-clear.active {
+  display: block;
+}
+
 /*--- LOAD --- */
 
 .img-loader {

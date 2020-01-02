@@ -76177,7 +76177,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_Video__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./view/Video */ "./resources/js/components/view/Video.js");
 /* harmony import */ var _view_Clienti__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./view/Clienti */ "./resources/js/components/view/Clienti.js");
 /* harmony import */ var _view_Dipendenti__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./view/Dipendenti */ "./resources/js/components/view/Dipendenti.js");
-/* harmony import */ var _view_Deposito__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./view/Deposito */ "./resources/js/components/view/Deposito.js");
+/* harmony import */ var _view_Magazzino__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./view/Magazzino */ "./resources/js/components/view/Magazzino.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -76204,6 +76204,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var routes = [{
   path: "/",
   name: "Home",
@@ -76217,11 +76218,11 @@ var routes = [{
   icon: 'fa-film',
   Component: _view_Video__WEBPACK_IMPORTED_MODULE_4__["default"]
 }, {
-  path: "/deposito",
-  name: "Deposito",
-  title: 'Gestione Deposito',
-  icon: 'fa-list-alt',
-  Component: _view_Deposito__WEBPACK_IMPORTED_MODULE_7__["default"]
+  path: "/clienti",
+  name: "Clienti",
+  title: 'Gestione Clienti',
+  icon: 'fa-address-card-o',
+  Component: _view_Clienti__WEBPACK_IMPORTED_MODULE_5__["default"]
 }, {
   path: "/dipendenti",
   name: "Dipendenti",
@@ -76229,11 +76230,17 @@ var routes = [{
   icon: 'fa-users',
   Component: _view_Dipendenti__WEBPACK_IMPORTED_MODULE_6__["default"]
 }, {
-  path: "/clienti",
-  name: "Clienti",
-  title: 'Gestione Clienti',
-  icon: 'fa-address-card-o',
-  Component: _view_Clienti__WEBPACK_IMPORTED_MODULE_5__["default"]
+  path: "/incassi",
+  name: "Incassi",
+  title: 'Report Incassi giornalieri',
+  icon: 'fa-area-chart',
+  Component: _view_Magazzino__WEBPACK_IMPORTED_MODULE_7__["default"]
+}, {
+  path: "/magazzino",
+  name: "Magazzino",
+  title: 'Gestione Magazzino',
+  icon: 'fa-list-alt',
+  Component: _view_Magazzino__WEBPACK_IMPORTED_MODULE_7__["default"]
 }];
 
 var MainTitle = function MainTitle() {
@@ -77569,7 +77576,8 @@ function (_Component) {
       clearTimeout(this.timer);
       return new Promise(function (resolve, reject) {
         if (value == '') {
-          if (_this5.props.callback !== undefined) _this5.props.callback([], true);
+          if (_this5.props.callback !== undefined) _this5.props.callback([], true); // comunica al componente padre che non vi sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
+
           return resolve(null);
         }
 
@@ -77595,6 +77603,7 @@ function (_Component) {
         className: "search-field " + searchClassName
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_form_InputField__WEBPACK_IMPORTED_MODULE_1__["default"], {
         value: this.state.value,
+        autocomplete: "on",
         divClassName: "d-inline",
         className: "form-control",
         name: "search_field",
@@ -77605,6 +77614,19 @@ function (_Component) {
         className: "img-loader " + (this.state.loader ? "active" : '')
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
         src: "../img/loader.gif"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        onClick: function onClick() {
+          _this6.setState({
+            value: '',
+            data: []
+          });
+
+          _this6.props.callback([], true);
+        },
+        className: "btn-clear " + (this.state.value != '' ? "active" : '')
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-times",
+        "aria-hidden": "true"
       })), showList && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "search-list text-left"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
@@ -78123,78 +78145,6 @@ function (_Component) {
 
 /***/ }),
 
-/***/ "./resources/js/components/view/Deposito.js":
-/*!**************************************************!*\
-  !*** ./resources/js/components/view/Deposito.js ***!
-  \**************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Deposito; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-
-var Deposito =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(Deposito, _Component);
-
-  function Deposito() {
-    _classCallCheck(this, Deposito);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(Deposito).apply(this, arguments));
-  }
-
-  _createClass(Deposito, [{
-    key: "render",
-    value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "container-fluid py-4"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row justify-content-center"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-md-8"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card-header"
-      }, "Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card-body"
-      }, "I'm an example component!")))));
-    }
-  }]);
-
-  return Deposito;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-
-
-/***/ }),
-
 /***/ "./resources/js/components/view/Dipendenti.js":
 /*!****************************************************!*\
   !*** ./resources/js/components/view/Dipendenti.js ***!
@@ -78253,6 +78203,9 @@ var COLUMNS = [{
   style: {
     textTransform: 'capitalize'
   }
+}, {
+  title: 'Email',
+  field: 'email'
 }, {
   title: 'Matricola',
   field: 'matricola'
@@ -78469,6 +78422,216 @@ function (_Component) {
   }]);
 
   return Home;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/view/Magazzino.js":
+/*!***************************************************!*\
+  !*** ./resources/js/components/view/Magazzino.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Magazzino; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
+/* harmony import */ var _modals_DipendentiModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/DipendentiModal */ "./resources/js/components/modals/DipendentiModal.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+
+var COLUMNS = [{
+  title: 'id',
+  field: 'id',
+  align: 'right'
+}, {
+  title: 'Video',
+  field: 'video',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, {
+  title: 'P.to Vendita',
+  field: 'pt_vendita',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, {
+  title: 'Dipendente',
+  field: 'dipendente',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, {
+  title: 'Fornitore',
+  field: 'fornitore',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, {
+  title: 'Data Scarico',
+  field: 'data_scarico',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT");
+  }
+}, {
+  title: 'Giorni al Ritiro',
+  field: 'ritiro'
+}, {
+  title: 'Noleggiato',
+  field: 'noleggiato'
+}, {
+  title: 'Danneggiato',
+  field: 'danneggiato'
+}];
+
+var Magazzino =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Magazzino, _Component);
+
+  function Magazzino(props) {
+    var _this;
+
+    _classCallCheck(this, Magazzino);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Magazzino).call(this, props));
+    _this.state = {
+      rows: '',
+      show: false,
+      reloadInfiniteTable: 0
+    };
+    _this.url = _this.props.url + '/magazzino';
+    _this._handleCloseModal = _this._handleCloseModal.bind(_assertThisInitialized(_this));
+    _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
+    _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
+    _this._handleCheckDataModal = _this._handleCheckDataModal.bind(_assertThisInitialized(_this));
+    _this._handleSearchFieldClick = _this._handleSearchFieldClick.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(Magazzino, [{
+    key: "_handleCloseModal",
+    value: function _handleCloseModal() {
+      this.setState({
+        show: false
+      });
+    }
+  }, {
+    key: "_handleShowModal",
+    value: function _handleShowModal() {
+      this.setState({
+        show: true
+      });
+    }
+  }, {
+    key: "_handleCheckDataModal",
+    value: function _handleCheckDataModal(e) {
+      console.log(e.target.value);
+    }
+  }, {
+    key: "_handleSearchFieldCallback",
+    value: function _handleSearchFieldCallback(data, reset) {
+      //console.log(rows);
+      var rows = this.state.rows;
+      rows = data.data;
+      this.setState({
+        rows: rows
+      });
+
+      if (reset) {
+        rows = '';
+        this.setState({
+          rows: rows
+        });
+      }
+    }
+  }, {
+    key: "_handleSearchFieldClick",
+    value: function _handleSearchFieldClick(data) {
+      console.log(data);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container-fluid pl-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row text-right mb-3 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        showList: false,
+        patternList: {
+          id: 'id',
+          fields: ['nome', 'cognome']
+        },
+        url: this.url + '/search',
+        callback: this._handleSearchFieldCallback,
+        onClick: this._handleSearchFieldClick
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6 "
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
+        onClick: this._handleShowModal
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-plus-circle",
+        "aria-hidden": "true"
+      }), "\xA0Nuovo Dipendente"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_DipendentiModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        url: this.props.url,
+        show: this.state.show,
+        onHide: this._handleCloseModal,
+        callback: function callback(row) {
+          _this2.setState({
+            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+          });
+        }
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        reload: this.state.reloadInfiniteTable,
+        url: this.url,
+        columns: COLUMNS,
+        externalRows: this.state.rows //multiSelect={true}
+
+      }))));
+    }
+  }]);
+
+  return Magazzino;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 

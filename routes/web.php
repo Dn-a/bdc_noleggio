@@ -23,7 +23,7 @@ Auth::routes([
 // browser request
 if(request()->header('accept')!='application/json')
     Route::get('/{name}', 'HomeController@index')->name('home')
-    ->where('name','(|home|clienti|dipendenti|video|deposito|noleggi|restituzioni|setting)');
+    ->where('name','(|home|clienti|dipendenti|video|magazzino|noleggi|restituzioni|incassi|setting)');
 
 
 //Route::middleware(['auth'])->group( function () {
@@ -42,6 +42,9 @@ if(request()->header('accept')!='application/json')
     // Dipendenti
     Route::get('dipendenti/search/{val}', 'DipendenteController@search')->name('dipendenti.search');
     Route::resource('dipendenti', 'DipendenteController',['as' => 'dipendenti']);
+
+    // Magazzino
+    Route::resource('magazzino', 'MagazzinoController',['as' => 'magazzino']);
 
 
 //});

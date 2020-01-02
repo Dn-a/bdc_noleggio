@@ -20,16 +20,16 @@ class Video extends Model
 
     public function casaProduzione()
     {
-        return $this->hasOne('Newscare\CasaProduzione','id_casa_produzione');
+        return $this->hasOne('App\CasaProduzione','id_casa_produzione');
     }
 
     public function categoria()
     {
-        return $this->hasOne('Newscare\Categoria','id_categoria');
+        return $this->hasOne('App\Categoria','id_categoria');
     }
 
     public function regista()
     {
-        return $this->hasOne('Newscare\Regista','id_regista');
+        return $this->hasOne('App\Regista','id_regista');
     }
 }

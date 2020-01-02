@@ -20,7 +20,7 @@ class CreateCopieTable extends Migration
             $table->unsignedInteger('id_fornitore');
             $table->unsignedInteger('id_dipendente');
             $table->date('data_scarico')->useCurrent();
-            $table->date('data_restituzione_copia');
+            $table->date('data_ritiro');
             $table->date('data_prenotazione_noleggio');
             $table->boolean('danneggiato');
             $table->boolean('restituito');

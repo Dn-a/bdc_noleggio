@@ -111,7 +111,7 @@ export default class SearchField extends Component {
 
             if(value==''){
                 if(this.props.callback!== undefined)
-                    this.props.callback([], true);
+                    this.props.callback([], true);// comunica al componente padre che non vi sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
                 return resolve(null);
             }
 
@@ -131,12 +131,15 @@ export default class SearchField extends Component {
 
         return(
             <div className={"search-field "+searchClassName}>
-                <InputField value={this.state.value}  divClassName="d-inline" className="form-control" name="search_field"
+                <InputField value={this.state.value} autocomplete='on'  divClassName="d-inline" className="form-control" name="search_field"
                 placeholder={this.props.placeholder!== undefined? this.props.placeholder:"Cerca"}
                 label={this.props.label!== undefined? this.props.label:''}
                 handleChange={this._handleChange} />
                 <div className={"img-loader " + (this.state.loader ? "active":'' )}>
                     <img src="../img/loader.gif" />
+                </div>
+                <div onClick={() => {this.setState({value:'',data:[]});this.props.callback([], true);} } className={"btn-clear " + (this.state.value !='' ? "active":'' )}>
+                    <i className="fa fa-times" aria-hidden="true"></i>
                 </div>
                 {showList &&
                     <div className="search-list text-left">

@@ -30,17 +30,27 @@
 
                 <div class="navbar-collapse d-table" id="navbarSupportedContent">
 
-                    <!--
+
                     <ul class="navbar-nav mr-auto">
 
                     </ul>
-                    -->
+
                     <ul class="navbar-nav ml-auto">
+
+                            <li style="font-size: 0.8em;" class="nav-item pt-2 mt-1 mr-5" >
+                                Punto Vendita:
+                                <span style="color: rgba(0, 0, 0, 0.5); ">
+                                {{Auth::user()->puntoVendita->titolo}} -
+                                {{Auth::user()->puntoVendita->indirizzo}} -
+                                {{Auth::user()->puntoVendita->comune->nome}}
+                                ({{Auth::user()->puntoVendita->comune->prov}})
+                                </span>
+                            </li>
 
                             <li class="nav-item dropdown">
                                 <span>{{ Auth::user()->ruolo->titolo }}: </span>
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle d-inline-block" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre="false">
-                                    {{ Auth::user()->nome }} <span class="caret"></span>
+                                    {{ ucfirst(Auth::user()->nome) }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right position-absolute" aria-labelledby="navbarDropdown">

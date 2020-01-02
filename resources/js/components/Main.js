@@ -6,14 +6,16 @@ import Home from './view/Home';
 import Video from './view/Video';
 import Clienti from './view/Clienti';
 import Dipendenti from './view/Dipendenti';
-import Deposito from './view/Deposito';
+import Magazzino from './view/Magazzino';
+import Incassi from './view/Magazzino';
 
 const routes = [
     {path: "/", name:"Home",title:'Home', icon:'fa-home', Component:Home},
     {path: "/noleggi", name:"Noleggi",title:'Gestione Noleggi', icon:'fa-film', Component: Video},
-    {path: "/deposito", name:"Deposito",title:'Gestione Deposito', icon:'fa-list-alt', Component: Deposito},
-    {path: "/dipendenti", name:"Dipendenti",title:'Gestione Dipendenti', icon:'fa-users', Component: Dipendenti},
     {path: "/clienti", name:"Clienti",title:'Gestione Clienti', icon:'fa-address-card-o', Component: Clienti},
+    {path: "/dipendenti", name:"Dipendenti",title:'Gestione Dipendenti', icon:'fa-users', Component: Dipendenti},
+    {path: "/incassi", name:"Incassi",title:'Report Incassi giornalieri', icon:'fa-area-chart', Component: Incassi},
+    {path: "/magazzino", name:"Magazzino",title:'Gestione Magazzino', icon:'fa-list-alt', Component: Magazzino},
 ];
 
 
