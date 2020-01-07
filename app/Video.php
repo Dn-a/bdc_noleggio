@@ -18,18 +18,18 @@ class Video extends Model
         return $this->belongsToMany('App\Attore','attori_video','id_video','id_attore')->withTimestamps();//,'category_newspapers','newspaper_id','category_id'
     }
 
-    public function casaProduzione()
+    public function caseProduzione()
     {
-        return $this->hasOne('App\CasaProduzione','id_casa_produzione');
+        return $this->belongsToMany('App\CasaProduzione','video_case_produzione','id_video','id_casa_produzione');
     }
 
     public function categoria()
     {
-        return $this->hasOne('App\Categoria','id_categoria');
+        return $this->belongsTo('App\Categoria','id_categoria');
     }
 
     public function regista()
     {
-        return $this->hasOne('App\Regista','id_regista');
+        return $this->belongsTo('App\Regista','id_regista');
     }
 }

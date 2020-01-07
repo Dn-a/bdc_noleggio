@@ -117,6 +117,8 @@ export default class DipendentiModal extends Component {
                 break;
         }
 
+        data[field] = value;
+
         this.setState({data,error},()  => this.checked());
     }
 
@@ -126,9 +128,12 @@ export default class DipendentiModal extends Component {
 
         let checked = true;
         Object.keys(error).map((k,id) => {
+            console.log(error);
+            console.log(data);
             if(error[k]!='' || data[k]=='')
                 checked = false;
         });
+
 
         this.setState({checked});
     }
@@ -146,6 +151,7 @@ export default class DipendentiModal extends Component {
 
         let divClassName = 'mb-3';
 
+        let urlVideo = this.props.url+'/video/search';
         let urlFornitore = this.props.url+'/fornitori/search';
 
         return(
@@ -166,8 +172,8 @@ export default class DipendentiModal extends Component {
                             placeholder='Cerca un Film'
                             searchClassName='w-100'
                             showList={true}
-                            url={urlFornitore}
-                            patternList={{id:'id', fields:{titolo:[],indirizzo:[],comune:['nome','prov']} } }//id di ritorno; i fields vengono usati come titolo
+                            url={urlVideo}
+                            patternList={{id:'id', fields:{titolo:[],categoria:[],durata:[]} } }//id di ritorno; i fields vengono usati come titolo
                             reloadOnClick={false}
                             onClick={(val) => {
                                     //console.log(val);
@@ -200,7 +206,7 @@ export default class DipendentiModal extends Component {
                             searchClassName='w-100'
                             showList={true}
                             url={urlFornitore}
-                            patternList={{id:'id', fields:{titolo:[],indirizzo:[],comune:['nome','prov']} } }//id di ritorno; i fields vengono usati come titolo
+                            patternList={{id:'id', fields:{titolo:[],indirizzo:[],comune:[]} } }//id di ritorno; i fields vengono usati come titolo
                             reloadOnClick={false}
                             onClick={(val) => {
                                     //console.log(val);

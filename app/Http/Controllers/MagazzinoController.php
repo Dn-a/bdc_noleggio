@@ -18,6 +18,39 @@ class MagazzinoController extends Controller
         return new MagazzinoCollection($dipendente, true);
     }
 
+    public function search(Request $request, $val)
+    {
+        $arr = explode(' ',$val);
+
+        $magazzino = Magazzino::
+        whereHas('video',function($query) use($arr) {
+            $query->where('titolo','like',$arr[0].'%');
+        })
+        ->orWhereHas('puntoVendita',function($query) use($arr) {
+            $query->where('titolo','like',$arr[0].'%');
+        })
+        ->orWhereHas('fornitore',function($query) use($arr) {
+            $query->where('titolo','like',$arr[0].'%')
+            ->orWhere('indirizzo','like',$arr[0].'%')
+            ->orWhereHas('comune',function($query) use($arr) {
+                if(isset($arr[1]))
+                    $query->where('nome','like',$arr[0].'%')
+                    ->where('prov','like',$arr[1].'%');
+                elseif(isset($arr[0]))
+                    $query->where('nome','like',$arr[0].'%');
+            });
+        })
+        ->limit(5)->get();
+
+        $moreFields = [
+            //'pt_vendita',
+            //'dipendente',
+            //'restituito_al_fornitore'
+        ];
+
+        return  new MagazzinoCollection($magazzino,false,$moreFields);
+    }
+
 
     public function create()
     {

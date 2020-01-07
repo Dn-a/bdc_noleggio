@@ -11562,19 +11562,30 @@ footer:hover {
   width: 100%;
 }
 
+.info-search {
+  position: absolute;
+  color: #666;
+  font-size: 0.8em;
+  bottom: 9px;
+  right: 29px;
+}
+
 .search-list li:hover {
   background-color: #eee;
   cursor: pointer;
 }
 
-.btn-clear {
+.search-field .btn-clear {
   position: absolute;
   right: 4px;
   bottom: 5px;
+  display: none;
   padding: 2.1px 7.5px;
+}
+
+.btn-clear {
   color: #666;
   cursor: pointer;
-  display: none;
 }
 
 .btn-clear.active {
@@ -11619,6 +11630,14 @@ footer:hover {
 .table tbody tr:hover {
   background-color: #e7eff7;
   cursor: pointer;
+}
+
+.more-info-table {
+  color: #3490dc;
+}
+
+.more-info-table .btn-clear {
+  font-size: 1.2em;
 }
 
 /*--- PRIVACY FILE ---*/

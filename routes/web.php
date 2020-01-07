@@ -29,6 +29,13 @@ if(request()->header('accept')!='application/json')
 //Route::middleware(['auth'])->group( function () {
 //Route::group(['middleware' => ['guest','auth']], function () {
 
+    // Video
+    Route::get('video/search/{val}', 'VideoController@search')->name('video.search');
+    Route::resource('video', 'VideoController',['as' => 'video']);
+
+    // Fornitori
+    Route::get('fornitori/search/{val}', 'FornitoreController@search')->name('fornitori.search');
+
     // Comuni
     Route::get('comuni/search/{val}', 'ComuneController@search')->name('comuni.search');
 
@@ -44,6 +51,7 @@ if(request()->header('accept')!='application/json')
     Route::resource('dipendenti', 'DipendenteController',['as' => 'dipendenti']);
 
     // Magazzino
+    Route::get('magazzino/search/{val}', 'MagazzinoController@search')->name('magazzino.search');
     Route::resource('magazzino', 'MagazzinoController',['as' => 'magazzino']);
 
 

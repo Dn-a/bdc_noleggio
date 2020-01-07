@@ -4,25 +4,21 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class MagazzinoCollection extends ResourceCollection
+class FornitoreCollection extends ResourceCollection
 {
     protected $withFields = [
         'id',
-        'video',
-        'fornitore',
-        'data_scarico',
-        'ritiro',
-        'noleggiato',
-        'danneggiato',
+        'titolo',
+        'cf_piva',
+        'indirizzo',
+        'comune',
     ];
     protected $withPagination;
 
 
-    public function __construct($items, $withPagination=false, $fields=null)
+    public function __construct($items, $withPagination=false)
     {
         parent::__construct($items);
-        if($fields!=null && is_array($fields))
-            $this->withFields = array_merge($this->withFields,$fields);
         $this->withPagination = $withPagination;
     }
 
@@ -30,8 +26,8 @@ class MagazzinoCollection extends ResourceCollection
     // return array
     public function toArray($request)
     {
-        $collection = $this->collection->transform(function($copia){
-                return $this->filterFields($copia);
+        $collection = $this->collection->transform(function($dipendente){
+                return $this->filterFields($dipendente);
             });
 
         if($this->withPagination )
@@ -52,23 +48,10 @@ class MagazzinoCollection extends ResourceCollection
     protected function filterFields($item)
     {
 
-        $video = (string) $item->video->titolo;
-        $fornitore = (string) $item->fornitore->titolo;
-        $dipendente = (string) $item->dipendente->nome.' '.
-            (string) $item->dipendente->cognome;
-        $ptVendita = ' '. (string) $item->puntoVendita->titolo
-            .' - '. (string) $item->puntoVendita->indirizzo
-            .' - '. (string) $item->puntoVendita->comune->nome
-            .' ('. (string) $item->puntoVendita->comune->prov.')';
+        $comune = (string) $item->comune->nome
+        .' ('. (string) $item->comune->prov.')';
 
-        date_default_timezone_set("Europe/Rome");
-        $ritiro = round( (strtotime($item->data_ritiro) - time()) / 86400 );
-
-        $item['video'] = $video;
-        $item['pt_vendita'] = $ptVendita;
-        $item['fornitore'] = $fornitore;
-        $item['dipendente'] = $dipendente;
-        $item['ritiro'] = $ritiro;
+        $item['comune'] = $comune;
 
         if(empty($this->withFields)) return $item;
 

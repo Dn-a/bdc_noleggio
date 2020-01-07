@@ -13,6 +13,7 @@ export default class SearchField extends Component {
             value : '',
             data: [],
             loader:false,
+            infoSearch:''
         };
 
         this.getRemoteData = this.getRemoteData.bind(this);
@@ -59,7 +60,11 @@ export default class SearchField extends Component {
 
         this.setState({value:value});
 
-        this._timeOut(value).then((data) => this.setState({ data: data==null? []: data, loader:false }) );
+        this._timeOut(value).then((data) =>
+            {
+                let size = data.data !== undefined ? data.data.length: data.length;
+                this.setState({ data: size==0? []: data, infoSearch: size==0? 'nessun risultato':'', loader:false })}
+        );
     }
 
     // Click sugli elementi della lista risultati
@@ -94,7 +99,7 @@ export default class SearchField extends Component {
         let reload = this.props.reloadOnClick!== undefined ? this.props.reloadOnClick : true;
 
         if(!reload)
-            this.setState({ data:[]});
+            this.setState({ data:[], infoSearch:''});
         else
             this._timeOut(txt,0).then((data) => { if(data!=null) this.setState({ data:[], loader:false })} );
 
@@ -139,7 +144,12 @@ export default class SearchField extends Component {
                 <div className={"img-loader " + (this.state.loader ? "active":'' )}>
                     <img src="../img/loader.gif" />
                 </div>
-                <div onClick={() => {this.setState({value:'',data:[]});this.props.callback([], true);} } className={"btn-clear " + (this.state.value !='' ? "active":'' )}>
+                {
+                    <span className="info-search">
+                        {this.state.infoSearch}
+                    </span>
+                }
+                <div onClick={() => {this.setState({value:'',data:[],infoSearch:''});this.props.callback([], true);} } className={"btn-clear " + (this.state.value !='' ? "active":'' )}>
                     <i className="fa fa-times" aria-hidden="true"></i>
                 </div>
                 {showList &&

@@ -77203,6 +77203,7 @@ function (_Component) {
           break;
       }
 
+      data[field] = value;
       this.setState({
         data: data,
         error: error
@@ -77217,6 +77218,8 @@ function (_Component) {
       var error = this.state.error;
       var checked = true;
       Object.keys(error).map(function (k, id) {
+        console.log(error);
+        console.log(data);
         if (error[k] != '' || data[k] == '') checked = false;
       });
       this.setState({
@@ -77237,6 +77240,7 @@ function (_Component) {
       var _this4 = this;
 
       var divClassName = 'mb-3';
+      var urlVideo = this.props.url + '/video/search';
       var urlFornitore = this.props.url + '/fornitori/search';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_1__["default"], {
         size: "md",
@@ -77254,13 +77258,13 @@ function (_Component) {
         placeholder: "Cerca un Film",
         searchClassName: "w-100",
         showList: true,
-        url: urlFornitore,
+        url: urlVideo,
         patternList: {
           id: 'id',
           fields: {
             titolo: [],
-            indirizzo: [],
-            comune: ['nome', 'prov']
+            categoria: [],
+            durata: []
           }
         } //id di ritorno; i fields vengono usati come titolo
         ,
@@ -77309,7 +77313,7 @@ function (_Component) {
           fields: {
             titolo: [],
             indirizzo: [],
-            comune: ['nome', 'prov']
+            comune: []
           }
         } //id di ritorno; i fields vengono usati come titolo
         ,
@@ -77709,14 +77713,36 @@ function (_Component) {
       }
     }
   }, {
+    key: "moreInfoTable",
+    value: function moreInfoTable() {
+      var _this7 = this;
+
+      var multiSelect = this.props.multiSelect !== undefined ? this.props.multiSelect : false;
+      var elSize = this.state.selectedList.length;
+      if (multiSelect) return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "more-info-table text-right py-2"
+      }, elSize > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        title: "deseleziona tutto",
+        className: "btn-clear d-inline-block",
+        onClick: function onClick() {
+          return _this7.setState({
+            selectedList: []
+          });
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-times mr-2",
+        "aria-hidden": "true"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, elSize, " elementi selezionati")));
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this7 = this;
+      var _this8 = this;
 
       var data = this.state.data;
       var columns = data.columns != null ? data.columns : [];
       var rows = this.props.externalRows != null && this.props.externalRows instanceof Array ? this.props.externalRows : data.rows;
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, this.moreInfoTable(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         className: "table"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, columns.map(function (column, id) {
         if (rows[0] !== undefined && rows[0][column.field] === undefined) return;else return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
@@ -77725,12 +77751,12 @@ function (_Component) {
         }, column.title);
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, rows.map(function (row, id) {
         var idField = row.id;
-        var sl = _this7.state.selectedList;
+        var sl = _this8.state.selectedList;
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           className: sl.indexOf(idField) > -1 ? 'active' : '',
           key: id,
           onClick: function onClick() {
-            return _this7._handleMultiSelection(idField);
+            return _this8._handleMultiSelection(idField);
           }
         }, columns.map(function (column, id) {
           //console.log(row[column.field]);
@@ -77743,7 +77769,7 @@ function (_Component) {
             key: id
           }, cell);
         }));
-      })));
+      }))));
     }
   }]);
 
@@ -77804,7 +77830,8 @@ function (_Component) {
     _this.state = {
       value: '',
       data: [],
-      loader: false
+      loader: false,
+      infoSearch: ''
     };
     _this.getRemoteData = _this.getRemoteData.bind(_assertThisInitialized(_this));
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
@@ -77852,8 +77879,11 @@ function (_Component) {
       });
 
       this._timeOut(value).then(function (data) {
-        return _this3.setState({
-          data: data == null ? [] : data,
+        var size = data.data !== undefined ? data.data.length : data.length;
+
+        _this3.setState({
+          data: size == 0 ? [] : data,
+          infoSearch: size == 0 ? 'nessun risultato' : '',
           loader: false
         });
       });
@@ -77892,7 +77922,8 @@ function (_Component) {
 
       var reload = this.props.reloadOnClick !== undefined ? this.props.reloadOnClick : true;
       if (!reload) this.setState({
-        data: []
+        data: [],
+        infoSearch: ''
       });else this._timeOut(txt, 0).then(function (data) {
         if (data != null) _this4.setState({
           data: [],
@@ -77949,11 +77980,14 @@ function (_Component) {
         className: "img-loader " + (this.state.loader ? "active" : '')
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
         src: "../img/loader.gif"
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "info-search"
+      }, this.state.infoSearch), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         onClick: function onClick() {
           _this6.setState({
             value: '',
-            data: []
+            data: [],
+            infoSearch: ''
           });
 
           _this6.props.callback([], true);

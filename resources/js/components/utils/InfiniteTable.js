@@ -138,6 +138,27 @@ export default class InfiniteTable extends Component {
 
     }
 
+    moreInfoTable(){
+        let multiSelect = this.props.multiSelect!==undefined ? this.props.multiSelect : false;
+        let elSize = this.state.selectedList.length;
+
+        if(multiSelect)
+            return(
+                <div className="more-info-table text-right py-2">
+                    { elSize > 0 &&
+                            <Fragment>
+                                <div title="deseleziona tutto" className="btn-clear d-inline-block" onClick={() => this.setState({selectedList:[]})}>
+                                    <i className="fa fa-times mr-2" aria-hidden="true"></i>
+                                </div>
+                                <span>
+                                    {elSize} elementi selezionati
+                                </span>
+                            </Fragment>
+                    }
+                </div>
+            );
+    }
+
 
     render(){
 
@@ -146,52 +167,57 @@ export default class InfiniteTable extends Component {
         let rows = this.props.externalRows!=null &&  this.props.externalRows instanceof Array ? this.props.externalRows : data.rows;
 
         return(
+            <Fragment>
 
-            <table className="table">
-                <thead>
-                    <tr>
+                { this.moreInfoTable() }
 
+                <table className="table">
+                    <thead>
+                        <tr>
+
+                            {
+
+                            columns.map((column,id) => {
+                                if(rows[0]!== undefined && rows[0][column.field]=== undefined)
+                                    return;
+                                else
+                                return(
+                                    <th key={id} className="text-center" >{column.title}</th>
+                                );
+                            })
+
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
                         {
-
-                        columns.map((column,id) => {
-                            if(rows[0]!== undefined && rows[0][column.field]=== undefined)
-                                return;
-                            else
-                            return(
-                                <th key={id} className="text-center" >{column.title}</th>
-                            );
-                        })
-
+                            rows.map((row,id) => {
+                                let idField = row.id;
+                                let sl = this.state.selectedList;
+                                return(
+                                    <tr className={sl.indexOf(idField)>-1 ? 'active':''} key={id} onClick={() => this._handleMultiSelection(idField)}>
+                                        {
+                                            columns.map((column,id) => {
+                                                //console.log(row[column.field]);
+                                                let cell = row[column.field];
+                                                if(rows[0][column.field]=== undefined)
+                                                    return;
+                                                else if(column.render != undefined)
+                                                    return(<td key={id}>{column.render(cell,row)}</td>);
+                                                return(
+                                                    <td style={column.style!==undefined?column.style:{}} key={id}>{cell}</td>
+                                                );
+                                            })
+                                        }
+                                    </tr>
+                                );
+                            })
                         }
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        rows.map((row,id) => {
-                            let idField = row.id;
-                            let sl = this.state.selectedList;
-                            return(
-                                <tr className={sl.indexOf(idField)>-1 ? 'active':''} key={id} onClick={() => this._handleMultiSelection(idField)}>
-                                    {
-                                        columns.map((column,id) => {
-                                            //console.log(row[column.field]);
-                                            let cell = row[column.field];
-                                            if(rows[0][column.field]=== undefined)
-                                                return;
-                                            else if(column.render != undefined)
-                                                return(<td key={id}>{column.render(cell,row)}</td>);
-                                            return(
-                                                <td style={column.style!==undefined?column.style:{}} key={id}>{cell}</td>
-                                            );
-                                        })
-                                    }
-                                </tr>
-                            );
-                        })
-                    }
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+
+            </Fragment>
         );
     }
 
