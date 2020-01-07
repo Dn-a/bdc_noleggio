@@ -7,7 +7,7 @@ import Video from './view/Video';
 import Clienti from './view/Clienti';
 import Dipendenti from './view/Dipendenti';
 import Magazzino from './view/Magazzino';
-import Incassi from './view/Magazzino';
+import Incassi from './view/Incassi';
 
 const routes = [
     {path: "/", name:"Home",title:'Home', icon:'fa-home', Component:Home},
@@ -62,7 +62,7 @@ export default class Main extends Component {
                                 routes.map(({path, name, icon},key) => {
                                     return(
                                         <li key={key} >
-                                            <NavLink exact to={path}>
+                                            <NavLink exact to={path} title={name}>
                                                 <i className={"fa "+icon} aria-hidden="true"></i>
                                                 <span>{name}</span>
                                             </NavLink>

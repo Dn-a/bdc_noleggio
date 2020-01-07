@@ -17,7 +17,7 @@ class CreateStoricoNoleggiTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('id_dipendente');
             $table->unsignedInteger('id_cliente');
-            $table->unsignedInteger('id_copia');
+            $table->unsignedInteger('id_magazzino');
             $table->unsignedInteger('id_tariffa');
             $table->float('prezzo_tot');
             $table->float('prezzo_extra');
@@ -29,7 +29,7 @@ class CreateStoricoNoleggiTable extends Migration
         Schema::table('storico_noleggi', function($table) {
         	$table->foreign('id_cliente')->references('id')->on('clienti')->onDelete('restrict');
         	$table->foreign('id_dipendente')->references('id')->on('dipendenti')->onDelete('restrict');
-            $table->foreign('id_copia')->references('id')->on('copie')->onDelete('restrict');
+            $table->foreign('id_magazzino')->references('id')->on('magazzino')->onDelete('restrict');
         	$table->foreign('id_tariffa')->references('id')->on('tariffe')->onDelete('restrict');
         });
     }

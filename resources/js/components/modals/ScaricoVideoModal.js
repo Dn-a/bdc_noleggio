@@ -3,27 +3,19 @@ import React, { Component , Fragment } from 'react';
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
 import InputField from '../utils/form/InputField';
-import DataField from '../utils/form/DataField';
 import DropDownSelect from '../utils/form/DropdownSelect';
 import INFO_ERROR from '../utils/form/InfoError';
-import FileField from '../utils/form/FileField';
 
-const email_reg_exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const whitespace_reg_ex = /^[^\s].*/;
 
 const FIELDS = [
-    'nome',
-    'cognome',
-    'matricola',
-    'email',
-    'id_ruolo',
-    'id_pt_vendita',
-    'password',
-    'confirm_password'
+    'id_video',
+    'id_fornitore',
+    'quantita',
 ];
 
 const HIDE_FIELD = [
-    'confirm_password'
+
 ]
 
 export default class DipendentiModal extends Component {
@@ -65,7 +57,6 @@ export default class DipendentiModal extends Component {
         };
 
         let data = this.state.data;
-
 
         let formData = new FormData();
 
@@ -118,44 +109,13 @@ export default class DipendentiModal extends Component {
             error[field] = '';
 
         switch(field){
-            case 'nome':
-                if( value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.nome = INFO_ERROR['caratteri'];
-                break;
-            case 'cognome':
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.cognome = INFO_ERROR['caratteri'];
-                break;
-            case 'matricola':
-                value = value.toUpperCase();
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.matricola = INFO_ERROR['caratteri'];
-                break;
-            case 'email':
-                if(value.length < 8 )
-                    error.email = INFO_ERROR['email_1'];
-                else if(!email_reg_exp.test(value))
-                    error.email = INFO_ERROR['email_2'];
-                break;
-            case 'password':
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.password = INFO_ERROR['caratteri'];
-                else if(value.length > 0 && value.length < 8)
-                    error.password = INFO_ERROR['password'];
-                else if(this.state.data.confirm_password!='' && value != this.state.data.confirm_password)
-                    error.confirm_password = INFO_ERROR['confirm_password'];
-                else
-                    error.confirm_password = '';
-                break;
-            case 'confirm_password':
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.confirm_password = INFO_ERROR['caratteri'];
-                else if( value.length > 0 && value.length < 8 || value != this.state.data.password)
-                    error.confirm_password = INFO_ERROR['confirm_password'];
+            case 'quantita':
+                if( !/^\d+$/.test(value) )
+                    error.quantita = INFO_ERROR['numero'];
+                else if(value <= 0)
+                    error.quantita = INFO_ERROR['numero_2'];
                 break;
         }
-
-        data[field] = field!='privacy'? value.trim() : value;
 
         this.setState({data,error},()  => this.checked());
     }
@@ -184,12 +144,9 @@ export default class DipendentiModal extends Component {
 
     render(){
 
-        let objFid = {'3':'Addetto','2':'Responsabile',
-            '1':'Admin'
-        };
         let divClassName = 'mb-3';
 
-        let urlPtVendita = this.props.url+'/punti-vendita/search';
+        let urlFornitore = this.props.url+'/fornitori/search';
 
         return(
             <AddEditModal size="md"
@@ -198,33 +155,26 @@ export default class DipendentiModal extends Component {
                 loader={this.state.loader}
                 onConfirm={this._handleOnSave}
                 disabledConfirmButton={!this.state.checked}
-                title="Dipendente" type="Nuovo"
+                title="Nuovi Video" type="Scarico"
             >
 
                 <form>
 
-                    <div className="form-group">
-                        <InputField name="nome" divClassName={divClassName} className="form-control" label="Nome"
-                        helperText={this.showError('nome')} handleChange={this._handleChange} />
-                        <InputField name="cognome" divClassName={divClassName} className="form-control" label="Cognome"
-                        helperText={this.showError('cognome')} handleChange={this._handleChange} />
-                    </div>
-
-                    <div className="form-group">
+                <div className="form-group">
                         <SearchField
-                            label="Punto Vendita"
-                            placeholder='Cerca un Punto Vendita'
+                            label="Film"
+                            placeholder='Cerca un Film'
                             searchClassName='w-100'
                             showList={true}
-                            url={urlPtVendita}
+                            url={urlFornitore}
                             patternList={{id:'id', fields:{titolo:[],indirizzo:[],comune:['nome','prov']} } }//id di ritorno; i fields vengono usati come titolo
                             reloadOnClick={false}
                             onClick={(val) => {
                                     //console.log(val);
                                     let data = this.state.data;
                                     let error = this.state.error;
-                                    data.id_pt_vendita = val.id;
-                                    error.id_pt_vendita = '';
+                                    data.id_video = val.id;
+                                    error.id_video = '';
                                     this.setState({data,error},() => this.checked());
                                 }
                             }
@@ -232,37 +182,53 @@ export default class DipendentiModal extends Component {
                                     //console.log(val);
                                     let data = this.state.data;
                                     let error = this.state.error;
-                                    data.id_pt_vendita = '';
+                                    data.id_video = '';
                                     if(val.length==0){
-                                        error.id_pt_vendita = INFO_ERROR['pt_vendita'];
+                                        error.id_video = INFO_ERROR['film'];
                                     }
                                     this.setState({data,error},() => this.checked());
                                 }
                             }
                         />
-                        {this.showError('id_pt_vendita')}
+                        {this.showError('id_video')}
                     </div>
 
                     <div className="form-group">
-                        <InputField name="matricola" divClassName={divClassName} className="form-control" label="Matricola"
-                        helperText={this.showError('matricola')} handleChange={this._handleChange} />
-                        <InputField name="email" autocomplete='on' className="form-control" label="E-mail"
-                        helperText={this.showError('email')} handleChange={this._handleChange} />
+                        <SearchField
+                            label="Fornitore"
+                            placeholder='Cerca un Fornitore'
+                            searchClassName='w-100'
+                            showList={true}
+                            url={urlFornitore}
+                            patternList={{id:'id', fields:{titolo:[],indirizzo:[],comune:['nome','prov']} } }//id di ritorno; i fields vengono usati come titolo
+                            reloadOnClick={false}
+                            onClick={(val) => {
+                                    //console.log(val);
+                                    let data = this.state.data;
+                                    let error = this.state.error;
+                                    data.id_fornitore = val.id;
+                                    error.id_fornitore = '';
+                                    this.setState({data,error},() => this.checked());
+                                }
+                            }
+                            callback={(val) => {
+                                    //console.log(val);
+                                    let data = this.state.data;
+                                    let error = this.state.error;
+                                    data.id_fornitore = '';
+                                    if(val.length==0){
+                                        error.id_fornitore = INFO_ERROR['fornitore'];
+                                    }
+                                    this.setState({data,error},() => this.checked());
+                                }
+                            }
+                        />
+                        {this.showError('id_fornitore')}
                     </div>
 
                     <div className="form-group">
-                        <DropDownSelect placeholder="Scegli un valore"
-                        name="id_ruolo" className="form-control" label="Ruolo"
-                        values={objFid}
-                        selected='default'
-                        handleChange={this._handleChange} />
-                    </div>
-
-                    <div className="form-group">
-                        <InputField type="password" name='password' divClassName={divClassName} className="form-control"
-                        helperText={this.showError('password')} handleChange={this._handleChange} label="Password" />
-                        <InputField type="password" name='confirm_password' divClassName={divClassName} className="form-control"
-                        helperText={this.showError('confirm_password')} handleChange={this._handleChange} label="Conferma Password" />
+                        <InputField name="quantita" divClassName={divClassName} className="form-control" label="Quantità" placeholder="Numero maggiore di zero - MAX 50"
+                        helperText={this.showError('quantita')} handleChange={this._handleChange} />
                     </div>
 
                 </form>

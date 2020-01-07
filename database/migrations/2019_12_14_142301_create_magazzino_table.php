@@ -3,8 +3,9 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-class CreateCopieTable extends Migration
+class CreateMagazzinoTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,21 +14,28 @@ class CreateCopieTable extends Migration
      */
     public function up()
     {
-        Schema::create('copie', function (Blueprint $table) {
+        Schema::create('magazzino', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('id_video');
             $table->unsignedInteger('id_pt_vendita');
             $table->unsignedInteger('id_fornitore');
             $table->unsignedInteger('id_dipendente');
-            $table->date('data_scarico')->useCurrent();
-            $table->date('data_ritiro');
-            $table->date('data_prenotazione_noleggio');
+            $table->dateTime('data_scarico')->useCurrent();
+            $table->dateTime('data_ritiro')->default(
+                /*DB::raw(
+                    'CREATE TRIGGER setDefaultDate
+                    BEFORE INSERT ON magazzino
+                    FOR EACH ROW
+                    SET NEW.data_ritiro = ADDDATE(curdate(), INTERVAL 90 DAY)'
+                )*/
+            );
+            $table->date('data_prenotazione_noleggio')->nullable();
             $table->boolean('danneggiato');
-            $table->boolean('restituito');
+            $table->boolean('restituito_al_fornitore');
             $table->boolean('noleggiato');
         });
 
-        Schema::table('copie', function($table) {
+        Schema::table('magazzino', function($table) {
         	$table->foreign('id_dipendente')->references('id')->on('dipendenti')->onDelete('restrict');
         	$table->foreign('id_fornitore')->references('id')->on('fornitori')->onDelete('restrict');
         	$table->foreign('id_video')->references('id')->on('video')->onDelete('restrict');
@@ -42,6 +50,6 @@ class CreateCopieTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('copie');
+        Schema::dropIfExists('magazzino');
     }
 }

@@ -1,8 +1,7 @@
 import React, { Component , Fragment } from 'react';
-import axios from 'axios';
 
 import SearchField from '../utils/SearchField';
-import { Button } from '../utils/Button';
+import { Button, AddButton } from '../utils/Button';
 import InfiniteTable from '../utils/InfiniteTable';
 import DipendentiModal from '../modals/DipendentiModal';
 
@@ -75,7 +74,7 @@ export default class Dipendenti extends Component {
 
         return (
             <div className="container-fluid pl-3">
-                <div className="row text-right mb-3 px-2">
+                <div className="row mb-3 px-2">
 
                     <div className="col-md-6">
                         <SearchField showList={false} patternList={{id:'id',fields:['nome','cognome']}}
@@ -84,10 +83,10 @@ export default class Dipendenti extends Component {
                         />
                     </div>
 
-                    <div className="col-md-6 ">
-                        <Button onClick={this._handleShowModal}>
+                    <div className="col-md-6 text-right">
+                        <AddButton onClick={this._handleShowModal}>
                         <i className="fa fa-plus-circle" aria-hidden="true"></i>
-                        &nbsp;Nuovo Dipendente</Button>
+                        &nbsp;Nuovo Dipendente</AddButton>
 
                         <DipendentiModal url={this.props.url}
                         show={this.state.show} onHide={this._handleCloseModal}

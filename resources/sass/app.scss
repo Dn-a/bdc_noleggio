@@ -27,7 +27,16 @@ ul{
     overflow: hidden;
     height: 100vh;
 }
-
+/*--- BUTTON ---*/
+    .btn-info,
+    .btn-danger,
+    .btn-success,
+    .btn-warning {
+        color: #fff !important;
+    }
+    .btn-info {
+        background:#3490dc;
+    }
 /*--- SIDEBAR ---*/
     #sidebar {
         padding-top:55px;

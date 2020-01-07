@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Magazzino extends Model
 {
-    protected $table = 'copie';
+    protected $table = 'magazzino';
 
     public function puntoVendita()
     {

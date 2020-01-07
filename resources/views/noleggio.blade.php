@@ -37,20 +37,33 @@
 
                     <ul class="navbar-nav ml-auto">
 
-                            <li style="font-size: 0.8em;" class="nav-item pt-2 mt-1 mr-5" >
-                                Punto Vendita:
+                            <!--<li>Punto Vendita:
                                 <span style="color: rgba(0, 0, 0, 0.5); ">
                                 {{Auth::user()->puntoVendita->titolo}} -
                                 {{Auth::user()->puntoVendita->indirizzo}} -
                                 {{Auth::user()->puntoVendita->comune->nome}}
                                 ({{Auth::user()->puntoVendita->comune->prov}})
-                                </span>
+                                </span></li>-->
+
+                            <li class="nav-item mr-4 dropdown" >
+                                <a id="positionDropdown" class="nav-link dropdown-toggle d-inline-block" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre="false">
+                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                </a>
+                                <div class="dropdown-menu px-3 dropdown-menu-right position-absolute" aria-labelledby="positionDropdown">
+                                    Punto Vendita:
+                                    <span style="color: rgba(0, 0, 0, 0.5); ">
+                                    {{Auth::user()->puntoVendita->titolo}} -
+                                    {{Auth::user()->puntoVendita->indirizzo}} -
+                                    {{Auth::user()->puntoVendita->comune->nome}}
+                                    ({{Auth::user()->puntoVendita->comune->prov}})
+                                    </span>
+                                </div>
                             </li>
 
                             <li class="nav-item dropdown">
                                 <span>{{ Auth::user()->ruolo->titolo }}: </span>
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle d-inline-block" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre="false">
-                                    {{ ucfirst(Auth::user()->nome) }} <span class="caret"></span>
+                                    {{ ucfirst(Auth::user()->nome) }} {{ ucfirst(Auth::user()->cognome) }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right position-absolute" aria-labelledby="navbarDropdown">

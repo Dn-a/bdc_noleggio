@@ -1,10 +1,9 @@
 import React, { Component , Fragment } from 'react';
-import axios from 'axios';
 
 import SearchField from '../utils/SearchField';
 import { Button } from '../utils/Button';
 import InfiniteTable from '../utils/InfiniteTable';
-import DipendentiModal from '../modals/DipendentiModal';
+import ScaricoVideoModal from '../modals/ScaricoVideoModal';
 
 
 const COLUMNS = [
@@ -13,10 +12,10 @@ const COLUMNS = [
     { title: 'P.to Vendita', field: 'pt_vendita', style: {textTransform:'capitalize'} },
     { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} },
     { title: 'Fornitore', field: 'fornitore',style: {textTransform:'capitalize'} },
-    { title: 'Data Scarico', field: 'data_scarico',render: cell => new Date(cell).toLocaleDateString("it-IT") },
+    { title: 'Data Scarico', field: 'data_scarico',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"2-digit",month:"2-digit", day:"2-digit"}) },
     { title: 'Giorni al Ritiro', field:'ritiro'},
-    { title: 'Noleggiato', field:'noleggiato'},
-    { title: 'Danneggiato', field:'danneggiato'},
+    { title: 'Noleggiato', field:'noleggiato', render: cell => cell==0?'No':'SI'},
+    { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':'SI'},
   ];
 
 
@@ -37,6 +36,7 @@ export default class Magazzino extends Component {
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
         this._handleCheckDataModal = this._handleCheckDataModal.bind(this);
         this._handleSearchFieldClick = this._handleSearchFieldClick.bind(this);
+        this._handleCaricoVideo = this._handleCaricoVideo.bind(this);
     }
 
 
@@ -45,6 +45,10 @@ export default class Magazzino extends Component {
     }
     _handleShowModal (){
         this.setState({show : true});
+    }
+
+    _handleCaricoVideo(e){
+        console.log(e)
     }
 
     _handleCheckDataModal(e){
@@ -76,7 +80,7 @@ export default class Magazzino extends Component {
 
         return (
             <div className="container-fluid pl-3">
-                <div className="row text-right mb-3 px-2">
+                <div className="row mb-3 px-2">
 
                     <div className="col-md-6">
                         <SearchField showList={false} patternList={{id:'id',fields:['nome','cognome']}}
@@ -85,12 +89,16 @@ export default class Magazzino extends Component {
                         />
                     </div>
 
-                    <div className="col-md-6 ">
-                        <Button onClick={this._handleShowModal}>
-                        <i className="fa fa-plus-circle" aria-hidden="true"></i>
-                        &nbsp;Nuovo Dipendente</Button>
+                    <div className="col-md-6 text-right">
+                        <Button className="btn-danger mr-3" onClick={this._handleCaricoVideo}>
+                        <i className="fa fa-upload" aria-hidden="true"></i>
+                        &nbsp;Carico Video</Button>
 
-                        <DipendentiModal url={this.props.url}
+                        <Button className="btn-success" onClick={this._handleShowModal}>
+                        <i className="fa fa-download" aria-hidden="true"></i>
+                        &nbsp;Scarico Video</Button>
+
+                        <ScaricoVideoModal url={this.props.url}
                         show={this.state.show} onHide={this._handleCloseModal}
                         callback={
                             (row) => {
@@ -107,7 +115,11 @@ export default class Magazzino extends Component {
                             url={this.url}
                             columns={COLUMNS}
                             externalRows={this.state.rows}
-                            //multiSelect={true}
+                            multiSelect={true}
+                            multiSelectCallback={ (list) =>{
+                                if(list.length>0)
+                                    console.log(list)
+                            }}
                         />
                     </div>
                 </div>

@@ -13,6 +13,13 @@ const ConfirmButton = ({ className='', onClick, children, disabled=false}) => (
   </a>
 );
 
+const AddButton = ({ className='', onClick, children, disabled=false}) => (
+    <a className={"btn btn-info waves-effect waves-light light-green darken-2 "+className +(disabled?' disabled':'')}
+      onClick={() => onClick()}>
+      {children}
+    </a>
+  );
+
 const BackButton = ({ className='', onClick, children }) => (
   <a className={"btn waves-effect waves-light blue-grey lighten-4  "+className} onClick={() => onClick()}>
     {children}
@@ -20,7 +27,7 @@ const BackButton = ({ className='', onClick, children }) => (
 );
 
 const CloseButton = ({ className='', onClick, children }) => (
-  <a className={"btn waves-effect waves-light red darken-1 "+className} onClick={() => onClick()}>
+  <a className={"btn  btn-danger waves-effect waves-light red darken-1 "+className} onClick={() => onClick()}>
     {children}
   </a>
 );
@@ -31,4 +38,4 @@ const NextButton = ({ className='', onClick, children }) => (
   </a>
 );
 
-export {Button, ConfirmButton, BackButton, NextButton, CloseButton};
+export {Button, ConfirmButton, BackButton, NextButton, CloseButton, AddButton};

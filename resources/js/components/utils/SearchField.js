@@ -62,7 +62,7 @@ export default class SearchField extends Component {
         this._timeOut(value).then((data) => this.setState({ data: data==null? []: data, loader:false }) );
     }
 
-    // Click item dell'elenco dei risultati
+    // Click sugli elementi della lista risultati
     _handleClick(val){
         let patternList = this.props.patternList!== undefined ? this.props.patternList : {id:'',fields:[]};
         let txt ='';
@@ -90,6 +90,7 @@ export default class SearchField extends Component {
         //console.log(txt)
         this.setState({value:txt});
 
+        // Effettua una nuova ricerca con l'elemento della lista selezionato
         let reload = this.props.reloadOnClick!== undefined ? this.props.reloadOnClick : true;
 
         if(!reload)
@@ -131,7 +132,7 @@ export default class SearchField extends Component {
 
         return(
             <div className={"search-field "+searchClassName}>
-                <InputField value={this.state.value} autocomplete='on'  divClassName="d-inline" className="form-control" name="search_field"
+                <InputField value={this.state.value} autocomplete='on'  divClassName="d-inline" className="form-control d-inline-block" name="search_field"
                 placeholder={this.props.placeholder!== undefined? this.props.placeholder:"Cerca"}
                 label={this.props.label!== undefined? this.props.label:''}
                 handleChange={this._handleChange} />

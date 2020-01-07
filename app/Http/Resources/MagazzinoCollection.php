@@ -9,14 +9,14 @@ class MagazzinoCollection extends ResourceCollection
     protected $withFields = [
         'id',
         'video',
-        'pt_vendita',
+        //'pt_vendita',
         'fornitore',
-        'dipendente',
+        //'dipendente',
         'data_scarico',
         'ritiro',
         'noleggiato',
         'danneggiato',
-        'restituito'
+        //'restituito_al_fornitore'
     ];
     protected $withPagination;
 
@@ -62,18 +62,14 @@ class MagazzinoCollection extends ResourceCollection
             .' - '. (string) $item->puntoVendita->comune->nome
             .' ('. (string) $item->puntoVendita->comune->prov.')';
 
-        unset(
-            $item['punto_vendita'],
-            $item['id_pt_vendita'],
-            $item['email_verified_at'],
-            //$item['created_at'],
-            $item['updated_at'],
-            $item['id_ruolo'],
-            $item['ruolo']
-        );
+        date_default_timezone_set("Europe/Rome");
+        $ritiro = round( (strtotime($item->data_ritiro) - time()) / 86400 );
 
-        $item['ruolo'] = $ruolo;
+        $item['video'] = $video;
         $item['pt_vendita'] = $ptVendita;
+        $item['fornitore'] = $fornitore;
+        $item['dipendente'] = $dipendente;
+        $item['ritiro'] = $ritiro;
 
         if(empty($this->withFields)) return $item;
 

@@ -12,7 +12,6 @@ export default class InfiniteTable extends Component {
                 page : 0,
                 total : 0,
                 perPage : 0,
-                selected: []
             },
             selectedList:[],
             moreData:true,
@@ -97,7 +96,10 @@ export default class InfiniteTable extends Component {
         else
             selectedList.push(id);
 
-        this.setState({selectedList});
+        this.setState({selectedList},() => {
+            if(this.props.multiSelectCallback !==undefined)
+                this.props.multiSelectCallback(selectedList);
+        });
 
         //console.log(id)
     }
@@ -152,6 +154,9 @@ export default class InfiniteTable extends Component {
                         {
 
                         columns.map((column,id) => {
+                            if(rows[0]!== undefined && rows[0][column.field]=== undefined)
+                                return;
+                            else
                             return(
                                 <th key={id} className="text-center" >{column.title}</th>
                             );
@@ -171,7 +176,9 @@ export default class InfiniteTable extends Component {
                                         columns.map((column,id) => {
                                             //console.log(row[column.field]);
                                             let cell = row[column.field];
-                                            if(column.render != undefined)
+                                            if(rows[0][column.field]=== undefined)
+                                                return;
+                                            else if(column.render != undefined)
                                                 return(<td key={id}>{column.render(cell,row)}</td>);
                                             return(
                                                 <td style={column.style!==undefined?column.style:{}} key={id}>{cell}</td>
