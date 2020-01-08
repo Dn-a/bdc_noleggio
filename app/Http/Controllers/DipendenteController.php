@@ -6,6 +6,7 @@ use App\Dipendente;
 use App\Http\Resources\DipendenteCollection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DipendenteController extends Controller
 {
@@ -14,7 +15,16 @@ class DipendenteController extends Controller
     {
         $page = $request->input('per-page') ?: 10;
 
-        $dipendente = Dipendente::orderBy('id','DESC')->paginate($page);
+        $user = Auth::user();
+        $ruolo = $user->ruolo->titolo;
+        $idPtVendita = $ruolo=='Admin'? null: ($ruolo=='Addetto'? -1 :$user->id_pt_vendita);
+
+        $dipendente = Dipendente::
+        where(function($query) use($idPtVendita) {
+            if( $idPtVendita!=null )
+                $query->where('id_pt_vendita',$idPtVendita);
+        })->
+        orderBy('id','DESC')->paginate($page);
 
         return new DipendenteCollection($dipendente, true);
     }
@@ -27,45 +37,51 @@ class DipendenteController extends Controller
         //var_dump($arr);exit;
         //echo "cerca: ".$val;exit;
 
+        $user = Auth::user();
+        $ruolo = $user->ruolo->titolo;
+        $idPtVendita = $ruolo=='Admin'? null: ($ruolo=='Addetto'? -1 :$user->id_pt_vendita);
+
         $dipendente = Dipendente::
-        //where('nome','like',"$arr[0]%")
-        orWhere(function($query) use($arr) {
-            if(count($arr)==1)
-                $query->where('nome','like',$arr[0].'%');
+        where(function($query) use($idPtVendita) {
+            if( $idPtVendita!=null )
+                $query->where('id_pt_vendita',$idPtVendita);
         })
-        ->orWhere(function($query) use($arr) {
-            if(count($arr)==1)
-                $query->where('cognome','like',$arr[0].'%');
-        })
-        ->orWhere(function($query) use($arr) {
-            if(isset($arr[1]))
-                $query->where('cognome','like',$arr[1].'%')
-                ->where('nome','like',$arr[0].'%');
-        })
-        ->orWhere(function($query) use($arr) {
-            if(isset($arr[1]))
-                $query->where('nome','like',$arr[1].'%')
-                ->where('cognome','like',$arr[0].'%');
+        ->where(function($query) use($arr) {
+            $query->where('nome',$arr[0])
+            ->orWhere('cognome',$arr[0])
+            ->orWhere('nome','like',$arr[0].'%')
+            ->orWhere('cognome','like',$arr[0].'%')
+            ->orWhere(function($query) use($arr) {
+                if(count($arr)==2)
+                    $query->where('cognome','like',$arr[0].'%');
+            })
+            ->orWhere(function($query) use($arr) {
+                if(isset($arr[1]))
+                    $query->where('cognome','like',$arr[1].'%')
+                    ->where('nome','like',$arr[0].'%');
+            })
+            ->orWhere('email','like',"$arr[0]%")
+            ->orWhere('matricola','like',"$arr[0]%")
+            ->orWhereHas('ruolo',function($query) use($arr) {
+                $query->where('titolo','like',$arr[0].'%');
+            })
+            ->orWhereHas('puntoVendita',function($query) use($arr) {
+                $query->where('titolo','like',$arr[0].'%');
+            });
+
         })
         // Nel caso di due nomi
-        ->orWhere(function($query) use($arr) {
+        /*->orWhere(function($query) use($arr) {
             if(isset($arr[1]))
                 $query->where('nome','like',$arr[0].' '.$arr[1].'%');
-        })
+        })*/
         // Nel caso di due nomi e cognome
-        ->orWhere(function($query) use($arr) {
+        /*->orWhere(function($query) use($arr) {
             if(isset($arr[2]))
                 $query->where('nome','like',$arr[0].' '.$arr[1].'%')
                 ->where('cognome','like',$arr[2].'%');
-        })
-        ->orWhere('email','like',"$arr[0]%")
-        ->orWhere('matricola','like',"$arr[0]%")
-        ->orWhereHas('ruolo',function($query) use($arr) {
-            $query->where('titolo','like',$arr[0].'%');
-        })
-        ->orWhereHas('puntoVendita',function($query) use($arr) {
-            $query->where('titolo','like',$arr[0].'%');
-        })->limit(10)->get();
+        })        */
+        ->limit(10)->get();
 
         return new DipendenteCollection($dipendente);
     }

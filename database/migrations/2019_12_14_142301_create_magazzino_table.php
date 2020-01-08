@@ -20,8 +20,8 @@ class CreateMagazzinoTable extends Migration
             $table->unsignedInteger('id_pt_vendita');
             $table->unsignedInteger('id_fornitore');
             $table->unsignedInteger('id_dipendente');
-            $table->dateTime('data_scarico')->useCurrent();
-            $table->dateTime('data_ritiro')->default(
+            $table->timestamp('data_scarico')->useCurrent();
+            $table->timestamp('data_ritiro')->default(
                 /*DB::raw(
                     'CREATE TRIGGER setDefaultDate
                     BEFORE INSERT ON magazzino
@@ -29,10 +29,10 @@ class CreateMagazzinoTable extends Migration
                     SET NEW.data_ritiro = ADDDATE(curdate(), INTERVAL 90 DAY)'
                 )*/
             );
-            $table->date('data_prenotazione_noleggio')->nullable();
-            $table->boolean('danneggiato');
-            $table->boolean('restituito_al_fornitore');
-            $table->boolean('noleggiato');
+            $table->timestamp('data_prenotazione_noleggio')->nullable();
+            $table->boolean('danneggiato')->default(0);
+            $table->boolean('restituito_al_fornitore')->default(0);
+            $table->boolean('noleggiato')->default(0);
         });
 
         Schema::table('magazzino', function($table) {

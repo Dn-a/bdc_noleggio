@@ -26,7 +26,7 @@ if(request()->header('accept')!='application/json')
     ->where('name','(|home|clienti|dipendenti|video|magazzino|noleggi|restituzioni|incassi|setting)');
 
 
-//Route::middleware(['auth'])->group( function () {
+Route::middleware(['auth'])->group( function () {
 //Route::group(['middleware' => ['guest','auth']], function () {
 
     // Video
@@ -52,7 +52,8 @@ if(request()->header('accept')!='application/json')
 
     // Magazzino
     Route::get('magazzino/search/{val}', 'MagazzinoController@search')->name('magazzino.search');
+    Route::post('magazzino/carico', 'MagazzinoController@carico')->name('magazzino.carico');
     Route::resource('magazzino', 'MagazzinoController',['as' => 'magazzino']);
 
 
-//});
+});

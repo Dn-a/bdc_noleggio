@@ -8,6 +8,13 @@ class Magazzino extends Model
 {
     protected $table = 'magazzino';
 
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_video', 'id_fornitore', 'id_dipendente', 'id_pt_vendita','id_dipendente',
+        'data_prenotazione_noleggio', 'danneggiato', 'restituito_al_fornitore', 'noleggiato'
+    ];
+
     public function puntoVendita()
     {
         return $this->belongsTo('App\PuntoVendita','id_pt_vendita');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\MagazzinoCollection;
 use App\Magazzino;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MagazzinoController extends Controller
 {
@@ -13,38 +14,71 @@ class MagazzinoController extends Controller
     {
         $page = $request->input('per-page') ?: 5;
 
-        $dipendente = Magazzino::orderBy('id','DESC')->paginate($page);
+        $user = Auth::user();
+        $ruolo = $user->ruolo->titolo;
+        $idPtVendita = $ruolo=='Admin'? null: $user->id_pt_vendita;
 
-        return new MagazzinoCollection($dipendente, true);
+        $magazzino = Magazzino::where('restituito_al_fornitore',0)
+        ->where(function($query) use($idPtVendita) {
+            if( $idPtVendita!=null )
+                $query->where('id_pt_vendita',$idPtVendita);
+        })
+        ->orderBy('id','DESC')->paginate($page);
+
+        $moreFields = [
+            //'pt_vendita',
+            $idPtVendita==null? 'dipendente':'',
+            //'restituito_al_fornitore'
+        ];
+
+        return new MagazzinoCollection($magazzino, true, $moreFields);
     }
 
     public function search(Request $request, $val)
     {
         $arr = explode(' ',$val);
 
-        $magazzino = Magazzino::
-        whereHas('video',function($query) use($arr) {
-            $query->where('titolo','like',$arr[0].'%');
+        $user = Auth::user();
+        $ruolo = $user->ruolo->titolo;
+        $idPtVendita = $ruolo=='Admin'? null: $user->id_pt_vendita;
+
+        $magazzino = Magazzino::where('restituito_al_fornitore',0)
+        ->where(function($query) use($idPtVendita) {
+            if( $idPtVendita!=null )
+                $query->where('id_pt_vendita',$idPtVendita);
         })
-        ->orWhereHas('puntoVendita',function($query) use($arr) {
-            $query->where('titolo','like',$arr[0].'%');
-        })
-        ->orWhereHas('fornitore',function($query) use($arr) {
-            $query->where('titolo','like',$arr[0].'%')
-            ->orWhere('indirizzo','like',$arr[0].'%')
-            ->orWhereHas('comune',function($query) use($arr) {
-                if(isset($arr[1]))
+        ->where(function($query) use($arr) {
+            $query->whereHas('video',function($query) use($arr) {
+                $query->where('titolo','like',$arr[0].'%');
+            })
+            ->orWhereHas('puntoVendita',function($query) use($arr) {
+                $query->where('titolo','like',$arr[0].'%');
+            })
+            ->orWhereHas('dipendente',function($query) use($arr) {
+                if(count($arr)==2)
                     $query->where('nome','like',$arr[0].'%')
-                    ->where('prov','like',$arr[1].'%');
-                elseif(isset($arr[0]))
-                    $query->where('nome','like',$arr[0].'%');
+                    ->where('cognome','like',$arr[1].'%');
+                else
+                    $query->where('nome','like',$arr[0].'%')
+                    ->orWhere('cognome','like',$arr[0].'%');
+            })
+            ->orWhereHas('fornitore',function($query) use($arr) {
+                $query->where('titolo','like',$arr[0].'%')
+                ->orWhere('indirizzo','like',$arr[0].'%')
+                ->orWhereHas('comune',function($query) use($arr) {
+                    if(isset($arr[1]))
+                        $query->where('nome','like',$arr[0].'%')
+                        ->where('prov','like',$arr[1].'%');
+                    elseif(isset($arr[0]))
+                        $query->where('nome','like',$arr[0].'%');
+                });
             });
         })
-        ->limit(5)->get();
+        ->limit(10)->get();
 
         $moreFields = [
             //'pt_vendita',
-            //'dipendente',
+            $idPtVendita==null? 'dipendente':'',
             //'restituito_al_fornitore'
         ];
 
@@ -62,33 +96,71 @@ class MagazzinoController extends Controller
     {
 
         try{
-            return response()->json($request->all(),201);exit;
+            //return response()->json([$request->all()],402);exit;
             //Validate
             $request->validate([
-                'nome' => 'required|string|min:1|max:50',
-                'cognome' => 'required|string|min:1|max:50',
-                'matricola' => 'required|string|min:1|max:20',
-                'email' => 'required|string|email|max:50',
-                'password' => 'required|string|min:8|max:255',
-                'id_ruolo' => 'required|integer',
-                'id_pt_vendita' => 'required|integer',
+                'id_video' => 'required|integer',
+                'id_fornitore' => 'required|integer',
+                'quantita' => 'required|integer|min:1|max:30',
             ]);
-
 
             $input = $request->all();
 
-            $input['matricola'] = strtoupper($request->matricola);
+            $idPtVendita = Auth::user()->id_pt_vendita;
+            $idUser = Auth::user()->id;
 
-            $input['password'] = Hash::make($input['password']);
+            $input['id_pt_vendita'] = $idPtVendita;
+            $input['id_dipendente'] = $idUser;
 
-            $dipendente = new Dipendente();
+            // quantità di film da inserire
+            $cnt = $input['quantita'];
 
-            $dipendente->fill($input)->save();
+            // tolgo i campi superflui
+            unset($input['_token'], $input['quantita']);
+
+            $array = [];
+            for($i = 0 ; $i < $cnt ; $i++)
+                $array[$i] = $input;
+
+            $magazzino = new Magazzino();
+
+            //$magazzino->fill($array)->save();
+            $magazzino->insert($array);
 
             return response()->json(['msg' =>'added'],201);
 
         }catch( \Illuminate\Database\QueryException $e){
-            return response()->json(['msg' => $e->getMessage() ],200);
+            return response()->json(['msg' => $e->getMessage() ],500);
+        }
+    }
+
+
+    public function carico(Request $request)
+    {
+
+        try{
+            //return response()->json([$request->all()],402);exit;
+            //Validate
+            $request->validate([
+                'array_id_magazzino' => 'required|array',
+                'array_id_magazzino.*' => 'required|integer',
+                'restituito_al_fornitore' => 'required|integer'
+            ]);
+
+            $arrayIDM = $request['array_id_magazzino'];
+
+            $restituito = $request['restituito_al_fornitore'];
+
+            //return response()->json($request->all(),500);exit;
+
+            $magazzino = new Magazzino();
+
+            $magazzino->whereIn('id',$arrayIDM)->update(['restituito_al_fornitore' => $restituito]);
+
+            return response()->json(['msg' =>'update carico video'],201);
+
+        }catch( \Illuminate\Database\QueryException $e){
+            return response()->json(['msg' => $e->getMessage() ],500);
         }
     }
 
@@ -107,7 +179,7 @@ class MagazzinoController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+
     }
 
 

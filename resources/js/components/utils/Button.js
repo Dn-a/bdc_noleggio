@@ -1,7 +1,7 @@
 import React from "react";
 
-const Button = ({ className=null, onClick, children }) => (
-  <a className={"btn waves-effect waves-light "+className+" grey lighten-5"} onClick={() => onClick()}>
+const Button = ({ className=null, onClick, children, disabled=false}) => (
+  <a className={"btn waves-effect waves-light "+className+" grey lighten-5" +(disabled?' disabled':'')} onClick={() => onClick()}>
     {children}
   </a>
 );
@@ -20,20 +20,20 @@ const AddButton = ({ className='', onClick, children, disabled=false}) => (
     </a>
   );
 
-const BackButton = ({ className='', onClick, children }) => (
-  <a className={"btn waves-effect waves-light blue-grey lighten-4  "+className} onClick={() => onClick()}>
+const BackButton = ({ className='', onClick, children, disabled=false}) => (
+  <a className={"btn waves-effect waves-light blue-grey lighten-4  "+className +(disabled?' disabled':'')} onClick={() => onClick()}>
     {children}
   </a>
 );
 
-const CloseButton = ({ className='', onClick, children }) => (
-  <a className={"btn  btn-danger waves-effect waves-light red darken-1 "+className} onClick={() => onClick()}>
+const CloseButton = ({ className='', onClick, children, disabled=false}) => (
+  <a className={"btn  btn-danger waves-effect waves-light red darken-1 "+className +(disabled?' disabled':'')} onClick={() => onClick()}>
     {children}
   </a>
 );
 
-const NextButton = ({ className='', onClick, children }) => (
-  <a className={"btn waves-effect waves-light light-blue darken-3 "+className} onClick={() => onClick()}>
+const NextButton = ({ className='', onClick, children, disabled=false}) => (
+  <a className={"btn waves-effect waves-light light-blue darken-3 "+className +(disabled?' disabled':'')} onClick={() => onClick()}>
     {children}
   </a>
 );

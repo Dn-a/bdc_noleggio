@@ -233,7 +233,25 @@ ul{
         cursor: pointer;
     }
 }
-.more-info-table {
+.more-info-table > div {
+    cursor: pointer;
+    color: #333;
+    font-weight: 600;
+    &.disable{
+        cursor: inherit;
+        color: #aaa;
+        &:hover{
+            color: #aaa;
+        }
+    }
+    &:hover{
+        color: #666;
+    }
+    &:active{
+        color: #111;
+    }
+}
+.more-info-table span {
     color: #3490dc;
 }
 .more-info-table .btn-clear {

@@ -62,8 +62,10 @@ export default class SearchField extends Component {
 
         this._timeOut(value).then((data) =>
             {
-                let size = data.data !== undefined ? data.data.length: data.length;
-                this.setState({ data: size==0? []: data, infoSearch: size==0? 'nessun risultato':'', loader:false })}
+                //console.log(data==null)
+                let size = data!=null && data.data !== undefined ? data.data: data;
+
+                this.setState({ data: size==null? []: data, infoSearch: size==0? 'nessun risultato':'', loader:false })}
         );
     }
 

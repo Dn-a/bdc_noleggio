@@ -11632,7 +11632,30 @@ footer:hover {
   cursor: pointer;
 }
 
-.more-info-table {
+.more-info-table > div {
+  cursor: pointer;
+  color: #333;
+  font-weight: 600;
+}
+
+.more-info-table > div.disable {
+  cursor: inherit;
+  color: #aaa;
+}
+
+.more-info-table > div.disable:hover {
+  color: #aaa;
+}
+
+.more-info-table > div:hover {
+  color: #666;
+}
+
+.more-info-table > div:active {
+  color: #111;
+}
+
+.more-info-table span {
   color: #3490dc;
 }
 

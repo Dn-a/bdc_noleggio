@@ -47,7 +47,7 @@ export default class DipendentiModal extends Component {
 
     setRemoteStore() {
 
-        let url = this.props.url+'/dipendenti';
+        let url = this.props.url+'/magazzino';
 
         let headers = {headers: {'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -128,8 +128,6 @@ export default class DipendentiModal extends Component {
 
         let checked = true;
         Object.keys(error).map((k,id) => {
-            console.log(error);
-            console.log(data);
             if(error[k]!='' || data[k]=='')
                 checked = false;
         });
@@ -233,7 +231,7 @@ export default class DipendentiModal extends Component {
                     </div>
 
                     <div className="form-group">
-                        <InputField name="quantita" divClassName={divClassName} className="form-control" label="Quantità" placeholder="Numero maggiore di zero - MAX 50"
+                        <InputField name="quantita" divClassName={divClassName} className="form-control" label="Quantità" placeholder="Numero maggiore di zero"
                         helperText={this.showError('quantita')} handleChange={this._handleChange} />
                     </div>
 

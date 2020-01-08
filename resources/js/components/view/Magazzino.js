@@ -27,6 +27,7 @@ export default class Magazzino extends Component {
         this.state = {
             rows: '',
             show:false,
+            selectedList: [],
             reloadInfiniteTable:0
         };
 
@@ -34,7 +35,6 @@ export default class Magazzino extends Component {
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
-        this._handleCheckDataModal = this._handleCheckDataModal.bind(this);
         this._handleSearchFieldClick = this._handleSearchFieldClick.bind(this);
         this._handleCaricoVideo = this._handleCaricoVideo.bind(this);
     }
@@ -48,11 +48,55 @@ export default class Magazzino extends Component {
     }
 
     _handleCaricoVideo(e){
-        console.log(e)
+        if(confirm("Confermi il carico dei video selezionati?"))
+            this.setRemoteUpdate();
     }
 
-    _handleCheckDataModal(e){
-        console.log(e.target.value);
+    setRemoteUpdate() {
+
+        let url = this.props.url+'/magazzino/carico';
+
+        let headers = {headers: {'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            }
+        };
+
+        let list = this.state.selectedList;
+
+        let formData = new FormData();
+
+        let data = {
+            array_id_magazzino : list,
+            restituito_al_fornitore : 1,
+            _token : CSRF_TOKEN
+        };
+
+        //console.log(FormData);return;
+
+        //formData.append('_token',CSRF_TOKEN);
+
+        this.setState({loader:true});
+
+        return axios.post(url,data,headers)
+        .then(result => {
+
+            //console.log(result.data);
+
+            this.setState({rows:'', selectedList:[], reload: ++this.state.reloadInfiniteTable})
+            /*
+            list.map((id,k) => {
+                list.splice( list.indexOf('foo'), 1 );
+            });*/
+
+            return result;
+        }).catch((error) => {
+          console.error(error.response.data);
+          this.setState({errorRemoteStore:error.response.status});
+          if(error.response.status==401)
+            if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
+              window.location.href=this.home + '/login';
+          throw error;
+        });
     }
 
     _handleSearchFieldCallback(data,reset){
@@ -90,7 +134,7 @@ export default class Magazzino extends Component {
                     </div>
 
                     <div className="col-md-6 text-right">
-                        <Button className="btn-danger mr-3" onClick={this._handleCaricoVideo}>
+                        <Button className="btn-danger mr-3" disabled={this.state.selectedList.length>0?false:true} onClick={this._handleCaricoVideo}>
                         <i className="fa fa-upload" aria-hidden="true"></i>
                         &nbsp;Carico Video</Button>
 
@@ -116,9 +160,10 @@ export default class Magazzino extends Component {
                             columns={COLUMNS}
                             externalRows={this.state.rows}
                             multiSelect={true}
+                            selectedList={this.state.selectedList}
                             multiSelectCallback={ (list) =>{
-                                if(list.length>0)
-                                    console.log(list)
+                                this.setState({selectedList:list})
+                                //console.log(list)
                             }}
                         />
                     </div>

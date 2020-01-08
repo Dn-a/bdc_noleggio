@@ -77140,7 +77140,7 @@ function (_Component) {
     value: function setRemoteStore() {
       var _this2 = this;
 
-      var url = this.props.url + '/dipendenti';
+      var url = this.props.url + '/magazzino';
       var headers = {
         headers: {
           'Accept': 'application/json',
@@ -77218,8 +77218,6 @@ function (_Component) {
       var error = this.state.error;
       var checked = true;
       Object.keys(error).map(function (k, id) {
-        console.log(error);
-        console.log(data);
         if (error[k] != '' || data[k] == '') checked = false;
       });
       this.setState({
@@ -77356,7 +77354,7 @@ function (_Component) {
         divClassName: divClassName,
         className: "form-control",
         label: "Quantit\xE0",
-        placeholder: "Numero maggiore di zero - MAX 50",
+        placeholder: "Numero maggiore di zero",
         helperText: this.showError('quantita'),
         handleChange: this._handleChange
       }))));
@@ -77436,9 +77434,11 @@ var Button = function Button(_ref) {
   var _ref$className = _ref.className,
       className = _ref$className === void 0 ? null : _ref$className,
       _onClick = _ref.onClick,
-      children = _ref.children;
+      children = _ref.children,
+      _ref$disabled = _ref.disabled,
+      disabled = _ref$disabled === void 0 ? false : _ref$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn waves-effect waves-light " + className + " grey lighten-5",
+    className: "btn waves-effect waves-light " + className + " grey lighten-5" + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick();
     }
@@ -77479,9 +77479,11 @@ var BackButton = function BackButton(_ref4) {
   var _ref4$className = _ref4.className,
       className = _ref4$className === void 0 ? '' : _ref4$className,
       _onClick4 = _ref4.onClick,
-      children = _ref4.children;
+      children = _ref4.children,
+      _ref4$disabled = _ref4.disabled,
+      disabled = _ref4$disabled === void 0 ? false : _ref4$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn waves-effect waves-light blue-grey lighten-4  " + className,
+    className: "btn waves-effect waves-light blue-grey lighten-4  " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick4();
     }
@@ -77492,9 +77494,11 @@ var CloseButton = function CloseButton(_ref5) {
   var _ref5$className = _ref5.className,
       className = _ref5$className === void 0 ? '' : _ref5$className,
       _onClick5 = _ref5.onClick,
-      children = _ref5.children;
+      children = _ref5.children,
+      _ref5$disabled = _ref5.disabled,
+      disabled = _ref5$disabled === void 0 ? false : _ref5$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn  btn-danger waves-effect waves-light red darken-1 " + className,
+    className: "btn  btn-danger waves-effect waves-light red darken-1 " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick5();
     }
@@ -77505,9 +77509,11 @@ var NextButton = function NextButton(_ref6) {
   var _ref6$className = _ref6.className,
       className = _ref6$className === void 0 ? '' : _ref6$className,
       _onClick6 = _ref6.onClick,
-      children = _ref6.children;
+      children = _ref6.children,
+      _ref6$disabled = _ref6.disabled,
+      disabled = _ref6$disabled === void 0 ? false : _ref6$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn waves-effect waves-light light-blue darken-3 " + className,
+    className: "btn waves-effect waves-light light-blue darken-3 " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick6();
     }
@@ -77612,6 +77618,10 @@ function (_Component) {
     key: "componentDidUpdate",
     value: function componentDidUpdate() {
       var _this3 = this;
+
+      if (this.props.selectedList !== undefined && this.props.selectedList instanceof Array) {
+        this.state.selectedList = this.props.selectedList;
+      }
 
       if (this.props.reload !== undefined && this.props.reload > this.state.reload) {
         this.state.reload = this.props.reload;
@@ -77720,19 +77730,36 @@ function (_Component) {
       var multiSelect = this.props.multiSelect !== undefined ? this.props.multiSelect : false;
       var elSize = this.state.selectedList.length;
       if (multiSelect) return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "more-info-table text-right py-2"
-      }, elSize > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        title: "deseleziona tutto",
-        className: "btn-clear d-inline-block",
+        className: "more-info-table text-left py-2"
+      }, elSize > -1 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        title: "seleziona tutto",
+        className: "d-inline-block mr-3",
         onClick: function onClick() {
-          return _this7.setState({
-            selectedList: []
+          var rows = _this7.props.externalRows != null && _this7.props.externalRows instanceof Array ? _this7.props.externalRows : _this7.state.data.rows;
+          var selectedList = [];
+          rows.map(function (row, key) {
+            selectedList.push(row.id);
           });
+
+          _this7.setState({
+            selectedList: selectedList
+          });
+
+          if (_this7.props.multiSelectCallback !== undefined) _this7.props.multiSelectCallback(selectedList);
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fa fa-times mr-2",
-        "aria-hidden": "true"
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, elSize, " elementi selezionati")));
+      }, "Seleziona tutto"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        title: "deseleziona tutto",
+        className: "d-inline-block mr-3 " + (elSize > 0 ? '' : 'disable'),
+        onClick: function onClick() {
+          if (elSize > 0) {
+            _this7.setState({
+              selectedList: []
+            });
+
+            if (_this7.props.multiSelectCallback !== undefined) _this7.props.multiSelectCallback([]);
+          }
+        }
+      }, "Deseleziona tutto"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, elSize, " elementi selezionati")));
     }
   }, {
     key: "render",
@@ -77879,10 +77906,11 @@ function (_Component) {
       });
 
       this._timeOut(value).then(function (data) {
-        var size = data.data !== undefined ? data.data.length : data.length;
+        //console.log(data==null)
+        var size = data != null && data.data !== undefined ? data.data : data;
 
         _this3.setState({
-          data: size == 0 ? [] : data,
+          data: size == null ? [] : data,
           infoSearch: size == 0 ? 'nessun risultato' : '',
           loader: false
         });
@@ -79035,13 +79063,13 @@ function (_Component) {
     _this.state = {
       rows: '',
       show: false,
+      selectedList: [],
       reloadInfiniteTable: 0
     };
     _this.url = _this.props.url + '/magazzino';
     _this._handleCloseModal = _this._handleCloseModal.bind(_assertThisInitialized(_this));
     _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
-    _this._handleCheckDataModal = _this._handleCheckDataModal.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldClick = _this._handleSearchFieldClick.bind(_assertThisInitialized(_this));
     _this._handleCaricoVideo = _this._handleCaricoVideo.bind(_assertThisInitialized(_this));
     return _this;
@@ -79064,12 +79092,56 @@ function (_Component) {
   }, {
     key: "_handleCaricoVideo",
     value: function _handleCaricoVideo(e) {
-      console.log(e);
+      if (confirm("Confermi il carico dei video selezionati?")) this.setRemoteUpdate();
     }
   }, {
-    key: "_handleCheckDataModal",
-    value: function _handleCheckDataModal(e) {
-      console.log(e.target.value);
+    key: "setRemoteUpdate",
+    value: function setRemoteUpdate() {
+      var _this2 = this;
+
+      var url = this.props.url + '/magazzino/carico';
+      var headers = {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      };
+      var list = this.state.selectedList;
+      var formData = new FormData();
+      var data = {
+        array_id_magazzino: list,
+        restituito_al_fornitore: 1,
+        _token: CSRF_TOKEN
+      }; //console.log(FormData);return;
+      //formData.append('_token',CSRF_TOKEN);
+
+      this.setState({
+        loader: true
+      });
+      return axios.post(url, data, headers).then(function (result) {
+        //console.log(result.data);
+        _this2.setState({
+          rows: '',
+          selectedList: [],
+          reload: ++_this2.state.reloadInfiniteTable
+        });
+        /*
+        list.map((id,k) => {
+            list.splice( list.indexOf('foo'), 1 );
+        });*/
+
+
+        return result;
+      })["catch"](function (error) {
+        console.error(error.response.data);
+
+        _this2.setState({
+          errorRemoteStore: error.response.status
+        });
+
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
+        throw error;
+      });
     }
   }, {
     key: "_handleSearchFieldCallback",
@@ -79096,7 +79168,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
@@ -79117,6 +79189,7 @@ function (_Component) {
         className: "col-md-6 text-right"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
         className: "btn-danger mr-3",
+        disabled: this.state.selectedList.length > 0 ? false : true,
         onClick: this._handleCaricoVideo
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-upload",
@@ -79132,8 +79205,8 @@ function (_Component) {
         show: this.state.show,
         onHide: this._handleCloseModal,
         callback: function callback(row) {
-          _this2.setState({
-            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+          _this3.setState({
+            reloadInfiniteTable: ++_this3.state.reloadInfiniteTable
           });
         }
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -79146,8 +79219,12 @@ function (_Component) {
         columns: COLUMNS,
         externalRows: this.state.rows,
         multiSelect: true,
+        selectedList: this.state.selectedList,
         multiSelectCallback: function multiSelectCallback(list) {
-          if (list.length > 0) console.log(list);
+          _this3.setState({
+            selectedList: list
+          }); //console.log(list)
+
         }
       }))));
     }

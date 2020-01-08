@@ -39,6 +39,9 @@ export default class InfiniteTable extends Component {
     }
 
     componentDidUpdate(){
+        if(this.props.selectedList !== undefined && this.props.selectedList instanceof Array){
+            this.state.selectedList = this.props.selectedList;
+        }
         if(this.props.reload!==undefined && this.props.reload > this.state.reload){
             this.state.reload = this.props.reload;
             this.state.data.rows = [];
@@ -144,11 +147,37 @@ export default class InfiniteTable extends Component {
 
         if(multiSelect)
             return(
-                <div className="more-info-table text-right py-2">
-                    { elSize > 0 &&
+                <div className="more-info-table text-left py-2">
+                    { elSize > -1 &&
                             <Fragment>
-                                <div title="deseleziona tutto" className="btn-clear d-inline-block" onClick={() => this.setState({selectedList:[]})}>
-                                    <i className="fa fa-times mr-2" aria-hidden="true"></i>
+                                <div title="seleziona tutto" className="d-inline-block mr-3"
+                                onClick={() =>
+                                    {
+                                        let rows = this.props.externalRows!=null &&  this.props.externalRows instanceof Array ? this.props.externalRows : this.state.data.rows;
+                                        let selectedList = [];
+
+                                        rows.map((row,key) => {
+                                            selectedList.push(row.id);
+                                        });
+
+                                        this.setState({selectedList});
+
+                                        if(this.props.multiSelectCallback !==undefined)
+                                            this.props.multiSelectCallback(selectedList);
+                                    }
+                                }>
+                                    Seleziona tutto
+                                </div>
+                                <div title="deseleziona tutto" className={"d-inline-block mr-3 "+(elSize>0 ?'':'disable')}
+                                onClick={() => {
+                                    if(elSize>0) {
+                                        this.setState({selectedList:[]})
+                                        if(this.props.multiSelectCallback !==undefined)
+                                                this.props.multiSelectCallback([]);
+                                    }
+                                }
+                                }>
+                                    Deseleziona tutto
                                 </div>
                                 <span>
                                     {elSize} elementi selezionati
