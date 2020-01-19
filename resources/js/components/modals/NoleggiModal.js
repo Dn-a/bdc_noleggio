@@ -19,7 +19,7 @@ const HIDE_FIELD = [
 
 ]
 
-export default class ScaricoVideoModal extends Component {
+export default class DipendentiModal extends Component {
 
     constructor(props){
         super(props);

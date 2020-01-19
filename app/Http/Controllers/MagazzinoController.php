@@ -14,35 +14,37 @@ class MagazzinoController extends Controller
     {
         $page = $request->input('per-page') ?: 5;
 
+        $only = $request->input('only') ?: '';
+
+        $caricati = in_array('caricati', explode('-',$only));
+
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $ruolo=='Admin'? null: $user->id_pt_vendita;
 
-        $magazzino = Magazzino::where('restituito_al_fornitore',0)
+        $magazzino = Magazzino::where('restituito_al_fornitore', $caricati? 1:0 )
         ->where(function($query) use($idPtVendita) {
             if( $idPtVendita!=null )
                 $query->where('id_pt_vendita',$idPtVendita);
         })
         ->orderBy('id','DESC')->paginate($page);
 
-        $moreFields = [
-            //'pt_vendita',
-            $idPtVendita==null? 'dipendente':'',
-            //'restituito_al_fornitore'
-        ];
 
-        return new MagazzinoCollection($magazzino, true, $moreFields);
+        return new MagazzinoCollection($magazzino, true, $this->moreField($ruolo));
     }
 
     public function search(Request $request, $val)
     {
         $arr = explode(' ',$val);
 
+        $only = $request->input('only') ?: '';
+        $caricati = in_array('caricati', explode('-',$only));
+
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $ruolo=='Admin'? null: $user->id_pt_vendita;
 
-        $magazzino = Magazzino::where('restituito_al_fornitore',0)
+        $magazzino = Magazzino::where('restituito_al_fornitore', $caricati? 1:0 )
         ->where(function($query) use($idPtVendita) {
             if( $idPtVendita!=null )
                 $query->where('id_pt_vendita',$idPtVendita);
@@ -76,13 +78,19 @@ class MagazzinoController extends Controller
         })
         ->limit(10)->get();
 
+
+        return  new MagazzinoCollection($magazzino,false,$this->moreField($ruolo));
+    }
+
+    private function moreField($ruolo)
+    {
         $moreFields = [
-            //'pt_vendita',
-            $idPtVendita==null? 'dipendente':'',
-            //'restituito_al_fornitore'
         ];
 
-        return  new MagazzinoCollection($magazzino,false,$moreFields);
+        if($ruolo=='Admin')
+            $moreFields =  array_merge($moreFields,['dipendente','pt_vendita']);
+
+        return $moreFields;
     }
 
 

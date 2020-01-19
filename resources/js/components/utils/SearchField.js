@@ -24,7 +24,13 @@ export default class SearchField extends Component {
 
     getRemoteData(val){
 
-        let url = this.props.url + '/' + val;
+        let query = this.props.query !== undefined ? this.props.query :'';
+        let qStrings = '';
+
+        if(query!='')
+            qStrings = '?&'+query;
+
+        let url = this.props.url + '/' + val + qStrings;
         let headers = {headers: {
             'Accept': 'application/json',
             //'Content-Type': 'application/json'
@@ -32,7 +38,7 @@ export default class SearchField extends Component {
         };
 
         this.setState({loader:true});
-
+        //console.log(url);
         return axios.get(url, headers )
 			.then(res => {
                 let data = res.data;

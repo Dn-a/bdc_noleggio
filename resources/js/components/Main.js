@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Switch, Route, Link, NavLink} from "react-router-dom";
 
 import Home from './view/Home';
+import Noleggi from './view/Noleggi';
 import Video from './view/Video';
 import Clienti from './view/Clienti';
 import Dipendenti from './view/Dipendenti';
@@ -11,7 +12,7 @@ import Incassi from './view/Incassi';
 
 const routes = [
     {path: "/", name:"Home",title:'Home', icon:'fa-home', Component:Home},
-    {path: "/noleggi", name:"Noleggi",title:'Gestione Noleggi', icon:'fa-film', Component: Video},
+    {path: "/noleggi", name:"Noleggi",title:'Gestione Noleggi', icon:'fa-film', Component: Noleggi},
     {path: "/clienti", name:"Clienti",title:'Gestione Clienti', icon:'fa-address-card-o', Component: Clienti},
     {path: "/dipendenti", name:"Dipendenti",title:'Gestione Dipendenti', icon:'fa-users', Component: Dipendenti},
     {path: "/incassi", name:"Incassi",title:'Report Incassi giornalieri', icon:'fa-area-chart', Component: Incassi},
@@ -52,7 +53,7 @@ export default class Main extends Component {
     }
 
     render() {
-
+        let menu = USER_CONFIG.menu !== undefined?USER_CONFIG.menu:[];
         return (
             <Router>
                 <aside id="sidebar" className="shadow">
@@ -60,6 +61,7 @@ export default class Main extends Component {
                         <ul>
                             {
                                 routes.map(({path, name, icon},key) => {
+                                    if(menu.indexOf(name.toLowerCase())==-1) return;
                                     return(
                                         <li key={key} >
                                             <NavLink exact to={path} title={name}>
@@ -67,7 +69,7 @@ export default class Main extends Component {
                                                 <span>{name}</span>
                                             </NavLink>
                                         </li>
-                                    )
+                                    );
                                 })
                             }
                         </ul>

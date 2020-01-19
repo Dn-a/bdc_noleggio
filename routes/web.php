@@ -26,12 +26,16 @@ if(request()->header('accept')!='application/json')
     ->where('name','(|home|clienti|dipendenti|video|magazzino|noleggi|restituzioni|incassi|setting)');
 
 
-Route::middleware(['auth'])->group( function () {
+//Route::middleware(['auth'])->group( function () {
 //Route::group(['middleware' => ['guest','auth']], function () {
 
     // Video
     Route::get('video/search/{val}', 'VideoController@search')->name('video.search');
     Route::resource('video', 'VideoController',['as' => 'video']);
+
+    // Noleggio
+    Route::get('noleggi/search/{val}', 'NoleggioController@search')->name('noleggi.search');
+    Route::resource('noleggi', 'NoleggioController',['as' => 'noleggi']);
 
     // Fornitori
     Route::get('fornitori/search/{val}', 'FornitoreController@search')->name('fornitori.search');
@@ -56,4 +60,4 @@ Route::middleware(['auth'])->group( function () {
     Route::resource('magazzino', 'MagazzinoController',['as' => 'magazzino']);
 
 
-});
+//});

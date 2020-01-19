@@ -39,10 +39,7 @@
 
                             <!--<li>Punto Vendita:
                                 <span style="color: rgba(0, 0, 0, 0.5); ">
-                                {{Auth::user()->puntoVendita->titolo}} -
-                                {{Auth::user()->puntoVendita->indirizzo}} -
-                                {{Auth::user()->puntoVendita->comune->nome}}
-                                ({{Auth::user()->puntoVendita->comune->prov}})
+
                                 </span></li>-->
 
                             <li class="nav-item mr-4 dropdown" >
@@ -109,5 +106,20 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+
+    @php
+        $array = array('home', 'noleggi', 'clienti', 'magazzino');
+        $ruolo = Auth::user()->ruolo->titolo;
+        if($ruolo != 'Addetto')
+            $array = array_merge($array,['dipendenti','incassi']);
+
+        echo "<script>
+                let array =".json_encode($array).'; '.
+                "const USER_CONFIG = {
+                    ruolo:'".$ruolo."',".
+                    'menu:array
+                }; //console.log(USER_CONFIG)'.
+            "</script>";
+    @endphp
 
 @endsection

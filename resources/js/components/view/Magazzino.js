@@ -26,8 +26,10 @@ export default class Magazzino extends Component {
 
         this.state = {
             rows: '',
+            rowsCaricati: '',
             show:false,
             selectedList: [],
+            selectedListCaricati: [],
             reloadInfiniteTable:0
         };
 
@@ -35,8 +37,9 @@ export default class Magazzino extends Component {
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
-        this._handleSearchFieldClick = this._handleSearchFieldClick.bind(this);
+        this._handleSearchFieldCaricatiCallback = this._handleSearchFieldCaricatiCallback.bind(this);
         this._handleCaricoVideo = this._handleCaricoVideo.bind(this);
+        this._handleRipristinoCaricati = this._handleRipristinoCaricati.bind(this);
     }
 
 
@@ -52,7 +55,13 @@ export default class Magazzino extends Component {
             this.setRemoteUpdate();
     }
 
-    setRemoteUpdate() {
+    _handleRipristinoCaricati(e){
+        //console.log("suca")
+        if(confirm("Confermi il ripristino dei video selezionati?"))
+            this.setRemoteUpdate('ripristina');
+    }
+
+    setRemoteUpdate(type) {
 
         let url = this.props.url+'/magazzino/carico';
 
@@ -61,13 +70,13 @@ export default class Magazzino extends Component {
             }
         };
 
-        let list = this.state.selectedList;
+        let list = type!='ripristina'? this.state.selectedList : this.state.selectedListCaricati;
 
         let formData = new FormData();
 
         let data = {
             array_id_magazzino : list,
-            restituito_al_fornitore : 1,
+            restituito_al_fornitore : type=='ripristina'?0:1,
             _token : CSRF_TOKEN
         };
 
@@ -82,7 +91,7 @@ export default class Magazzino extends Component {
 
             //console.log(result.data);
 
-            this.setState({rows:'', selectedList:[], reload: ++this.state.reloadInfiniteTable})
+            this.setState({rows:'', selectedList:[],selectedListCaricati:[], reload: ++this.state.reloadInfiniteTable})
             /*
             list.map((id,k) => {
                 list.splice( list.indexOf('foo'), 1 );
@@ -115,60 +124,131 @@ export default class Magazzino extends Component {
 
     }
 
-    _handleSearchFieldClick(data){
-        console.log(data)
-    }
+    _handleSearchFieldCaricatiCallback(data,reset){
 
+        //console.log(rows);
+
+        let rowsCaricati = this.state.rowsCaricati;
+
+        rowsCaricati = data.data;
+        this.setState({rowsCaricati});
+
+        if(reset){
+            rowsCaricati = '';
+            this.setState({rowsCaricati});
+        }
+
+    }
 
     render() {
 
         return (
-            <div className="container-fluid pl-3">
-                <div className="row mb-3 px-2">
+            <Fragment>
+                <nav>
+                <div className="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a className="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Carico/Scarico</a>
+                    <a className="nav-item nav-link" id="nav-caricati-tab" data-toggle="tab" href="#nav-caricati" role="tab" aria-controls="nav-caricati" aria-selected="false">Video Caricati</a>
+                </div>
+                </nav>
 
-                    <div className="col-md-6">
-                        <SearchField showList={false} patternList={{id:'id',fields:['nome','cognome']}}
-                        url={this.url+'/search'} callback={this._handleSearchFieldCallback}
-                        onClick={this._handleSearchFieldClick}
-                        />
+                <div className="tab-content pt-4" id="nav-tabContent">
+
+                    <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+                        <div className="container-fluid pl-3">
+                            <div className="row mb-3 px-2">
+
+                                    <div className="col-md-6">
+                                        <SearchField key="s-carico-scarico" id="s-carico-scarico" showList={false} patternList={{id:'id',fields:['nome','cognome']}}
+                                        url={this.url+'/search'} callback={this._handleSearchFieldCallback}
+                                        //onClick={this._handleSearchFieldClick}
+                                        />
+                                    </div>
+
+                                    <div className="col-md-6 text-right">
+                                        <Button className="btn-danger mr-3" disabled={this.state.selectedList.length>0?false:true} onClick={this._handleCaricoVideo}>
+                                        <i className="fa fa-upload" aria-hidden="true"></i>
+                                        &nbsp;Carico Video</Button>
+
+                                        <Button className="btn-success" onClick={this._handleShowModal}>
+                                        <i className="fa fa-download" aria-hidden="true"></i>
+                                        &nbsp;Scarico Video</Button>
+
+                                        <ScaricoVideoModal url={this.props.url}
+                                        show={this.state.show} onHide={this._handleCloseModal}
+                                        callback={
+                                            (row) => {
+                                                this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                                            }
+                                        } />
+                                    </div>
+
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <InfiniteTable key="carico-scarico"
+                                            id="carico-scarico"
+                                            reload={this.state.reloadInfiniteTable}
+                                            url={this.url}
+                                            columns={COLUMNS}
+                                            externalRows={this.state.rows}
+                                            multiSelect={true}
+                                            selectedList={this.state.selectedList}
+                                            multiSelectCallback={ (list) =>{
+                                                this.setState({selectedList:list})
+                                                //console.log(list)
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                        </div>
                     </div>
 
-                    <div className="col-md-6 text-right">
-                        <Button className="btn-danger mr-3" disabled={this.state.selectedList.length>0?false:true} onClick={this._handleCaricoVideo}>
-                        <i className="fa fa-upload" aria-hidden="true"></i>
-                        &nbsp;Carico Video</Button>
+                    <div className="tab-pane fade" id="nav-caricati" role="tabpanel" aria-labelledby="nav-caricati-tab">
+                        <div className="container-fluid pl-3">
+                            <div className="row mb-3 px-2">
 
-                        <Button className="btn-success" onClick={this._handleShowModal}>
-                        <i className="fa fa-download" aria-hidden="true"></i>
-                        &nbsp;Scarico Video</Button>
+                                    <div className="col-md-6">
+                                        <SearchField key="s-caricati" id="s-caricati" showList={false} patternList={{id:'id',fields:['nome','cognome']}}
+                                        url={this.url+'/search'} query='only=caricati' callback={this._handleSearchFieldCaricatiCallback}
+                                        //onClick={this._handleSearchFieldClick}
+                                        />
+                                    </div>
 
-                        <ScaricoVideoModal url={this.props.url}
-                        show={this.state.show} onHide={this._handleCloseModal}
-                        callback={
-                            (row) => {
-                                this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
-                            }
-                        } />
+                                    <div className="col-md-6 text-right">
+                                        <Button className="btn-warning mr-3" disabled={this.state.selectedListCaricati.length>0?false:true}
+                                        onClick={this._handleRipristinoCaricati}>
+                                        <i className="fa fa-upload" aria-hidden="true"></i>
+                                        &nbsp;Ripristina Selezionati</Button>
+
+                                    </div>
+
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <InfiniteTable key="caricati"
+                                            id='caricati'
+                                            reload={this.state.reloadInfiniteTable}
+                                            url={this.url}
+                                            query='only=caricati'
+                                            columns={COLUMNS}
+                                            externalRows={this.state.rowsCaricati}
+                                            multiSelect={true}
+                                            selectedList={this.state.selectedListCaricati}
+                                            multiSelectCallback={ (list) =>{
+                                                this.setState({selectedListCaricati:list})
+                                                //console.log(list)
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                        </div>
                     </div>
 
                 </div>
-                <div className="row">
-                    <div className="col-md-12">
-                        <InfiniteTable
-                            reload={this.state.reloadInfiniteTable}
-                            url={this.url}
-                            columns={COLUMNS}
-                            externalRows={this.state.rows}
-                            multiSelect={true}
-                            selectedList={this.state.selectedList}
-                            multiSelectCallback={ (list) =>{
-                                this.setState({selectedList:list})
-                                //console.log(list)
-                            }}
-                        />
-                    </div>
-                </div>
-            </div>
+
+            </Fragment>
+
         );
     }
 }

@@ -49,8 +49,17 @@ export default class DipendentiModal extends Component {
         this._handleOnSave = this._handleOnSave.bind(this);
     }
 
-    componentWillUnmount () {
-        this.state.data= this.state.error = {};
+    _resetAfterClose () {
+        let data = {};
+        let error = {};
+
+        FIELDS.map((fd,id) => {
+            data[fd] = error[fd]= '';
+        });
+        this.state.data= data;
+        this.state.error = error;
+        this.state.loader = false;
+        this.state.checked = false;
     }
 
     setRemoteStore() {
@@ -194,7 +203,7 @@ export default class DipendentiModal extends Component {
         return(
             <AddEditModal size="md"
                 show={this.props.show}
-                onHide={this.props.onHide}
+                onHide={(a) => {this.props.onHide(a);this._resetAfterClose();}}
                 loader={this.state.loader}
                 onConfirm={this._handleOnSave}
                 disabledConfirmButton={!this.state.checked}

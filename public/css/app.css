@@ -11632,6 +11632,25 @@ footer:hover {
   cursor: pointer;
 }
 
+/*-- IMG VIDEO --*/
+
+.img-video {
+  width: 80px;
+  display: inline-block;
+  margin: 0 25px 0 0;
+  height: 90px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.img-video img {
+  width: 100%;
+  border-radius: 5px;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
 .more-info-table > div {
   cursor: pointer;
   color: #333;

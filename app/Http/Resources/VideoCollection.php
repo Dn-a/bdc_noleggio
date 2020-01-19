@@ -59,6 +59,7 @@ class VideoCollection extends ResourceCollection
         $item['regista'] = $regista;
 
         $item['durata'] = (string) $item->durata .' minuti';
+        //$item['prezzo'] = (string) $item->prezzo .' €';
 
         if(empty($this->withFields)) return $item;
 

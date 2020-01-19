@@ -4,21 +4,22 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class DipendenteCollection extends ResourceCollection
+class NoleggioCollection extends ResourceCollection
 {
     protected $withFields = [
         'id',
-        'nome',
-        'cognome',
-        'email',
-        'matricola',
-        'ruolo',
-        'created_at'
+        'dipendente',
+        'cliente',
+        'video',
+        'prezzo_tot',
+        'prezzo_extra',
+        'data_inizio',
+        'data_fine',
     ];
     protected $withPagination;
 
 
-    public function __construct($items, $withPagination=false,$fields=null)
+    public function __construct($items, $withPagination=false, $fields=null)
     {
         parent::__construct($items);
         if($fields!=null && is_array($fields))
@@ -30,8 +31,8 @@ class DipendenteCollection extends ResourceCollection
     // return array
     public function toArray($request)
     {
-        $collection = $this->collection->transform(function($dipendente){
-                return $this->filterFields($dipendente);
+        $collection = $this->collection->transform(function($copia){
+                return $this->filterFields($copia);
             });
 
         if($this->withPagination )
@@ -52,25 +53,13 @@ class DipendenteCollection extends ResourceCollection
     protected function filterFields($item)
     {
 
-        $ruolo = ' '.  (string) $item->ruolo->titolo.'';
-        $ptVendita = ' '. (string) $item->puntoVendita->titolo
-        .' - '. (string) $item->puntoVendita->indirizzo
-        .' - '. (string) $item->puntoVendita->comune->nome
-        .' ('. (string) $item->puntoVendita->comune->prov.')';
+        $video = (string) $item->magazzino->video->titolo;
+        $dipendente = (string) $item->dipendente->nome.' '.
+            (string) $item->dipendente->cognome;
 
 
-        unset(
-            $item['punto_vendita'],
-            $item['id_pt_vendita'],
-            $item['email_verified_at'],
-            //$item['created_at'],
-            $item['updated_at'],
-            $item['id_ruolo'],
-            $item['ruolo']
-        );
-
-        $item['ruolo'] = $ruolo;
-        $item['pt_vendita'] = $ptVendita;
+        $item['video'] = $video;
+        $item['dipendente'] = $dipendente;
 
         if(empty($this->withFields)) return $item;
 

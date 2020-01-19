@@ -26,7 +26,7 @@ class DipendenteController extends Controller
         })->
         orderBy('id','DESC')->paginate($page);
 
-        return new DipendenteCollection($dipendente, true);
+        return new DipendenteCollection($dipendente, true, $this->moreField($ruolo));
     }
 
 
@@ -83,9 +83,19 @@ class DipendenteController extends Controller
         })        */
         ->limit(10)->get();
 
-        return new DipendenteCollection($dipendente);
+        return new DipendenteCollection($dipendente,false,$this->moreField($ruolo));
     }
 
+    private function moreField($ruolo)
+    {
+        $moreFields = [
+        ];
+
+        if($ruolo=='Admin')
+            $moreFields =  array_merge($moreFields,['pt_vendita']);
+
+        return $moreFields;
+    }
 
     public function create()
     {
@@ -96,6 +106,11 @@ class DipendenteController extends Controller
     public function store(Request $request)
     {
         //return $request->all();
+        $user = Auth::user();
+        $ruolo = $user->ruolo->titolo;
+
+        if($ruolo!='Admin')
+            return response()->json(['msg' => 'forbidden'],500);
 
         try{
             //return response()->json($request->all(),201);exit;
@@ -124,7 +139,7 @@ class DipendenteController extends Controller
             return response()->json(['msg' =>'added'],201);
 
         }catch( \Illuminate\Database\QueryException $e){
-            return response()->json(['msg' => $e->getMessage() ],200);
+            return response()->json(['msg' => $e->getMessage() ],500);
         }
     }
 

@@ -84,9 +84,11 @@ export default class Dipendenti extends Component {
                     </div>
 
                     <div className="col-md-6 text-right">
-                        <AddButton onClick={this._handleShowModal}>
-                        <i className="fa fa-plus-circle" aria-hidden="true"></i>
-                        &nbsp;Nuovo Dipendente</AddButton>
+                        {USER_CONFIG.ruolo=='Admin' &&
+                            <AddButton onClick={this._handleShowModal}>
+                            <i className="fa fa-plus-circle" aria-hidden="true"></i>
+                            &nbsp;Nuovo Dipendente</AddButton>
+                        }
 
                         <DipendentiModal url={this.props.url}
                         show={this.state.show} onHide={this._handleCloseModal}

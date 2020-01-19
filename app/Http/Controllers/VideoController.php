@@ -5,13 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Resources\VideoCollection;
 use App\Video;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VideoController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $page = $request->input('per-page') ?: 5;
+
+        $video = Video::orderBy('id','DESC')->paginate($page);
+
+        return new VideoCollection($video, true);
     }
 
     public function search(Request $request, $val)

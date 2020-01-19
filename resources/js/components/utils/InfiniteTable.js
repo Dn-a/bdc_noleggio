@@ -52,15 +52,24 @@ export default class InfiniteTable extends Component {
 
     getRemoteData(page){
 
-        let qString = page!=null ? '?page='+page : '';
+        let query = this.props.query !== undefined ? this.props.query :'';
+        let qStrings = '';
 
-        let url = this.props.url+qString;
+        if(query!='' || page!=null){
+            qStrings = '?';
+            if(page!=null)
+                qStrings += 'page='+page;
+            if(query!='')
+                qStrings += '&'+query;
+        }
+
+        let url = this.props.url+qStrings;
         let headers = {headers: {
             'Accept': 'application/json',
             //'Content-Type': 'application/json'
             }
         };
-
+        //console.log(url);
         return axios.get(url, headers )
 			.then(res => {
                 let data = this.state.data;
@@ -115,7 +124,10 @@ export default class InfiniteTable extends Component {
         let scroll = e.srcElement.scrollTop;
         let percent = scroll/(sh-oh);
 
-        //console.log(percent)
+        //console.log(this._isDescendant())
+        // in caso di una view con più tabelle, il check evita il loading dei dati remoti
+        // della tabella momentaneamente invisibile
+        if(!this._isDescendant()) return;
 
         if(percent > 0.65 && this.state.moreData){
             let page = this.state.data.page;
@@ -123,6 +135,22 @@ export default class InfiniteTable extends Component {
             console.log("Scroll loading");
             this.getRemoteData(++page);
         }
+    }
+
+    _isDescendant() {
+        if(this.props.id === undefined)
+            return false;
+
+        let node = document.getElementById(this.props.id).parentNode;
+        let parent = document.getElementsByClassName('show active')[0];
+
+        while (node != null) {
+            if (node == parent) {
+                return true;
+            }
+            node = node.parentNode;
+        }
+        return false;
     }
 
     //Di default nella fase iniziale vengono recuperati un numero fisso di righe.
@@ -194,16 +222,16 @@ export default class InfiniteTable extends Component {
         let data = this.state.data;
         let columns = data.columns!= null ?  data.columns : [];
         let rows = this.props.externalRows!=null &&  this.props.externalRows instanceof Array ? this.props.externalRows : data.rows;
+        let idTable = this.props.id !== undefined? this.props.id:'';
 
         return(
             <Fragment>
 
                 { this.moreInfoTable() }
 
-                <table className="table">
+                <table className="table" id={idTable}>
                     <thead>
                         <tr>
-
                             {
 
                             columns.map((column,id) => {
@@ -227,14 +255,31 @@ export default class InfiniteTable extends Component {
                                     <tr className={sl.indexOf(idField)>-1 ? 'active':''} key={id} onClick={() => this._handleMultiSelection(idField)}>
                                         {
                                             columns.map((column,id) => {
-                                                //console.log(row[column.field]);
+                                                //console.log(row['img']);
                                                 let cell = row[column.field];
+
+                                                let img = column.img !== undefined
+                                                &&  row['img']!== undefined ? row['img']:'';
+
+                                                let value = '';
                                                 if(rows[0][column.field]=== undefined)
                                                     return;
                                                 else if(column.render != undefined)
-                                                    return(<td key={id}>{column.render(cell,row)}</td>);
+                                                    value = column.render(cell,row);
+                                                else
+                                                    value = cell;
+
+
+
                                                 return(
-                                                    <td style={column.style!==undefined?column.style:{}} key={id}>{cell}</td>
+                                                    <td style={column.style!==undefined?column.style:{}} key={id}>
+                                                        {img!='' &&
+                                                            <div className="img-video">
+                                                                <img src={img} />
+                                                            </div>
+                                                        }
+                                                        {value}
+                                                    </td>
                                                 );
                                             })
                                         }
