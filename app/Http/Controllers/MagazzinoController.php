@@ -14,6 +14,7 @@ class MagazzinoController extends Controller
     {
         $page = $request->input('per-page') ?: 5;
 
+        // seconda view che mostra i video restituiti al fornitore
         $only = $request->input('only') ?: '';
 
         $caricati = in_array('caricati', explode('-',$only));

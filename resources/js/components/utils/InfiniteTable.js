@@ -97,7 +97,7 @@ export default class InfiniteTable extends Component {
     }
 
     // Multiselezione righe
-    _handleMultiSelection(id){
+    _handleMultiSelection(id,row){
         let selectedList = this.state.selectedList;
 
         if(this.props.multiSelect===undefined || !this.props.multiSelect) return;
@@ -108,9 +108,17 @@ export default class InfiniteTable extends Component {
         else
             selectedList.push(id);
 
+        let rows = this.state.data.rows;
+        let selectedListRows = [];
+
+        rows.map((row,k) => {
+            if(selectedList.indexOf(row.id)>-1)
+                selectedListRows.push(row);
+        });
+
         this.setState({selectedList},() => {
             if(this.props.multiSelectCallback !==undefined)
-                this.props.multiSelectCallback(selectedList);
+                this.props.multiSelectCallback(selectedList,selectedListRows);
         });
 
         //console.log(id)
@@ -191,7 +199,7 @@ export default class InfiniteTable extends Component {
                                         this.setState({selectedList});
 
                                         if(this.props.multiSelectCallback !==undefined)
-                                            this.props.multiSelectCallback(selectedList);
+                                            this.props.multiSelectCallback(selectedList,rows);
                                     }
                                 }>
                                     Seleziona tutto
@@ -201,7 +209,7 @@ export default class InfiniteTable extends Component {
                                     if(elSize>0) {
                                         this.setState({selectedList:[]})
                                         if(this.props.multiSelectCallback !==undefined)
-                                                this.props.multiSelectCallback([]);
+                                                this.props.multiSelectCallback([],[]);
                                     }
                                 }
                                 }>
@@ -252,7 +260,7 @@ export default class InfiniteTable extends Component {
                                 let idField = row.id;
                                 let sl = this.state.selectedList;
                                 return(
-                                    <tr className={sl.indexOf(idField)>-1 ? 'active':''} key={id} onClick={() => this._handleMultiSelection(idField)}>
+                                    <tr className={sl.indexOf(idField)>-1 ? 'active':''} key={id} onClick={() => this._handleMultiSelection(idField,row)}>
                                         {
                                             columns.map((column,id) => {
                                                 //console.log(row['img']);

@@ -32,4 +32,21 @@ class Video extends Model
     {
         return $this->belongsTo('App\Regista','id_regista');
     }
+
+    public function magazzino()
+    {
+        return $this->hasMany('App\Magazzino','id_video','id');
+    }
+
+    /*
+    public function puntoVendita()
+    {
+        return $this->hasManyThrough('App\PuntoVendita','App\Magazzino',
+            'id_pt_vendita', // Foreign key on users table...
+            'id',
+            'id', // Foreign key on history table...
+            'id_video' // Local key on suppliers table...
+            //'id' // Local key on users table...
+        );
+    }*/
 }

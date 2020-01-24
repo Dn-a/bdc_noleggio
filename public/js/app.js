@@ -76094,9 +76094,11 @@ __webpack_require__(/*! ./components/Main */ "./resources/js/components/Main.js"
 $(document).ready(function () {
   var lts = localStorage.getItem('sideCollapse');
   var sidebar = $('#sidebar');
-  var content = $('#content');
+  var content = $('#content'); //localStorage.clear();
 
-  if (lts == 'active') {
+  console.log(lts);
+
+  if (lts == 'active' || lts == null) {
     sidebar.addClass('active');
     content.addClass('active');
   }
@@ -76107,7 +76109,7 @@ $(document).ready(function () {
 
     if (sidebar.hasClass('active')) {
       localStorage.setItem('sideCollapse', 'active');
-    } else localStorage.removeItem('sideCollapse', '');
+    } else localStorage.setItem('sideCollapse', 'off');
   });
 });
 
@@ -77130,7 +77132,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 var whitespace_reg_ex = /^[^\s].*/;
-var FIELDS = ['id_video', 'id_fornitore', 'quantita'];
+var FIELDS = ['id_cliente', 'prezzo_tot', 'data_inizio', 'data_fine', 'quantita'];
 var HIDE_FIELD = [];
 
 var DipendentiModal =
@@ -77232,7 +77234,8 @@ function (_Component) {
       var _this3 = this;
 
       var value = e.target.value.toLowerCase();
-      var field = e.target.name;
+      var field = e.target.name; //console.log(this.props.custom);
+
       var error = this.state.error;
       var data = this.state.data;
       if (value == '') error[field] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_5__["default"]['vuoto'];else error[field] = '';
@@ -77291,8 +77294,8 @@ function (_Component) {
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
         disabledConfirmButton: !this.state.checked,
-        title: "Nuovi Video",
-        type: "Scarico"
+        title: "Video",
+        type: "Noleggio"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -78055,17 +78058,22 @@ function (_Component) {
 
   }, {
     key: "_handleMultiSelection",
-    value: function _handleMultiSelection(id) {
+    value: function _handleMultiSelection(id, row) {
       var _this5 = this;
 
       var selectedList = this.state.selectedList;
       if (this.props.multiSelect === undefined || !this.props.multiSelect) return;
       var index = selectedList.indexOf(id);
       if (index >= 0) selectedList.splice(index, 1);else selectedList.push(id);
+      var rows = this.state.data.rows;
+      var selectedListRows = [];
+      rows.map(function (row, k) {
+        if (selectedList.indexOf(row.id) > -1) selectedListRows.push(row);
+      });
       this.setState({
         selectedList: selectedList
       }, function () {
-        if (_this5.props.multiSelectCallback !== undefined) _this5.props.multiSelectCallback(selectedList);
+        if (_this5.props.multiSelectCallback !== undefined) _this5.props.multiSelectCallback(selectedList, selectedListRows);
       }); //console.log(id)
     } // quando la barra di scorrimento verticale supera una certa percentuale,
     // vengono recuperati i dati dal server remoto, incrementando la pagina di uno step.
@@ -78149,7 +78157,7 @@ function (_Component) {
             selectedList: selectedList
           });
 
-          if (_this7.props.multiSelectCallback !== undefined) _this7.props.multiSelectCallback(selectedList);
+          if (_this7.props.multiSelectCallback !== undefined) _this7.props.multiSelectCallback(selectedList, rows);
         }
       }, "Seleziona tutto"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         title: "deseleziona tutto",
@@ -78160,7 +78168,7 @@ function (_Component) {
               selectedList: []
             });
 
-            if (_this7.props.multiSelectCallback !== undefined) _this7.props.multiSelectCallback([]);
+            if (_this7.props.multiSelectCallback !== undefined) _this7.props.multiSelectCallback([], []);
           }
         }
       }, "Deseleziona tutto"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, elSize, " elementi selezionati")));
@@ -78189,7 +78197,7 @@ function (_Component) {
           className: sl.indexOf(idField) > -1 ? 'active' : '',
           key: id,
           onClick: function onClick() {
-            return _this8._handleMultiSelection(idField);
+            return _this8._handleMultiSelection(idField, row);
           }
         }, columns.map(function (column, id) {
           //console.log(row['img']);
@@ -79844,7 +79852,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-var COLUMNS = [{
+var COLUMNS_VIDEO = [{
   title: 'id',
   field: 'id',
   align: 'right'
@@ -79852,34 +79860,21 @@ var COLUMNS = [{
   title: 'Titolo',
   field: 'titolo',
   img: '',
-  style: {
-    textTransform: 'capitalize',
-    fontWeight: '600'
-  }
-}, {
-  title: 'Durata',
-  field: 'durata',
-  style: {
-    textTransform: 'capitalize'
-  }
-}, {
-  title: 'Categoria',
-  field: 'categoria',
-  style: {
-    textTransform: 'capitalize'
-  }
-}, {
-  title: 'Dettagli',
-  field: 'dettagli'
-}, {
-  title: 'Data Uscita',
-  field: 'data_uscita',
-  render: function render(cell) {
-    return new Date(cell).toLocaleDateString("it-IT", {
+  render: function render(cell, row) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      style: {
+        display: 'inline-block'
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      style: {
+        textTransform: 'capitalize',
+        fontWeight: '600'
+      }
+    }, row['titolo']), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['durata']), " -\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['categoria']), " -\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['regista']), " -\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, new Date(row['data_uscita']).toLocaleDateString("it-IT", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
-    });
+    }))));
   }
 }, {
   title: 'Prezzo',
@@ -79888,13 +79883,21 @@ var COLUMNS = [{
     return parseFloat(cell).toFixed(2) + ' €';
   }
 }, {
-  title: 'In Uscita',
-  field: 'in_uscita',
-  render: function render(cell) {
-    cell == 0 ? 'No' : 'Si';
+  title: 'Disponibilità',
+  field: 'qta_disponibili',
+  style: {
+    textAlign: 'center'
+  },
+  render: function render(cell, row) {
+    var dsp = row['qta_disponibili'];
+    var mgz = row['qta_magazzino'];
+    var css = dsp > 20 ? 'more' : dsp > 5 ? 'half' : 'less';
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: 'bar ' + css
+    }, dsp + ' / ' + mgz);
   }
 }];
-var COLUMNS_2 = [{
+var COLUMNS_NOLEGGI = [{
   title: 'id',
   field: 'id',
   align: 'right'
@@ -79956,10 +79959,11 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Noleggi).call(this, props));
     _this.state = {
-      rows: '',
+      rowsVideo: '',
       rowsNoleggi: '',
       show: false,
-      selectedList: [],
+      selectedListVideo: [],
+      rowsSelectedListVideo: [],
       selectedListNoleggi: [],
       reloadInfiniteTable: 0
     };
@@ -79994,17 +79998,17 @@ function (_Component) {
   }, {
     key: "_handleSearchFieldCallback",
     value: function _handleSearchFieldCallback(data, reset) {
-      //console.log(rows);
-      var rows = this.state.rows;
-      rows = data.data;
+      //console.log(data);
+      var rowsVideo = this.state.rowsVideo;
+      rowsVideo = data.data;
       this.setState({
-        rows: rows
+        rowsVideo: rowsVideo
       });
 
       if (reset) {
-        rows = '';
+        rowsVideo = '';
         this.setState({
-          rows: rows
+          rowsVideo: rowsVideo
         });
       }
     }
@@ -80072,19 +80076,20 @@ function (_Component) {
           id: 'id',
           fields: ['nome', 'cognome']
         },
-        url: urlVideo + '/search',
+        url: urlVideo + '/search-noleggi',
         callback: this._handleSearchFieldCallback
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
         className: "btn-success mr-3",
-        disabled: this.state.selectedList.length > 0 ? false : true,
-        onClick: this._handleCaricoVideo
+        disabled: this.state.selectedListVideo.length > 0 ? false : true,
+        onClick: this._handleShowModal
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-upload",
         "aria-hidden": "true"
       }), "\xA0Noleggia"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_NoleggiModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
         url: this.props.url,
+        custom: this.state.rowsSelectedListVideo,
         show: this.state.show,
         onHide: this._handleCloseModal,
         callback: function callback(row) {
@@ -80099,16 +80104,17 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
         key: "video",
         id: "video",
-        reload: this.state.rel1oadInfiniteTable,
+        reload: this.state.reloadInfiniteTable,
         url: urlVideo,
-        columns: COLUMNS,
-        externalRows: this.state.rows,
+        columns: COLUMNS_VIDEO,
+        externalRows: this.state.rowsVideo,
         multiSelect: true,
-        selectedList: this.state.selectedList,
-        multiSelectCallback: function multiSelectCallback(list) {
+        selectedList: this.state.selectedListVideo,
+        multiSelectCallback: function multiSelectCallback(list, row) {
           _this2.setState({
-            selectedList: list
-          }); //console.log(list)
+            selectedListVideo: list,
+            rowsSelectedListVideo: row
+          }); //console.log(row)
 
         }
       }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -80134,16 +80140,15 @@ function (_Component) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
-        className: "btn-success mr-3",
-        disabled: this.state.selectedList.length > 0 ? false : true,
+        className: "btn-warning mr-3",
+        disabled: this.state.selectedListNoleggi.length > 0 ? false : true,
         onClick: this._handleCaricoVideo
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-download",
         "aria-hidden": "true"
       }), "\xA0Restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_NoleggiModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
-        url: this.props.url,
-        show: this.state.show,
-        onHide: this._handleCloseModal,
+        url: this.props.url //show={this.state.show} onHide={this._handleCloseModal}
+        ,
         callback: function callback(row) {
           _this2.setState({
             reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
@@ -80158,7 +80163,7 @@ function (_Component) {
         id: "noleggi",
         reload: this.state.reloadInfiniteTable,
         url: this.url,
-        columns: COLUMNS_2,
+        columns: COLUMNS_NOLEGGI,
         externalRows: this.state.rowsNoleggi,
         multiSelect: true,
         selectedList: this.state.selectedListNoleggi,

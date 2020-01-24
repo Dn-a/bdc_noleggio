@@ -12,7 +12,7 @@ class NoleggioController extends Controller
 
     public function index(Request $request)
     {
-        $page = $request->input('per-page') ?: 5;
+        $page = $request->input('per-page') ?: 15;
 
         //$user = Auth::user();
         //$ruolo = $user->ruolo->titolo;

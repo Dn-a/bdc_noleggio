@@ -12,11 +12,21 @@ class VideoController extends Controller
 
     public function index(Request $request)
     {
-        $page = $request->input('per-page') ?: 5;
+        $page = $request->input('per-page') ?: 15;
 
-        $video = Video::orderBy('id','DESC')->paginate($page);
+        $user = Auth::user();
+        $ruolo = $user->ruolo->titolo;
+        $idPtVendita = $ruolo=='Admin'? null: $user->id_pt_vendita;
 
-        return new VideoCollection($video, true);
+        $video = Video::whereHas('magazzino',function($query) use($idPtVendita) {
+            //$query->where('restituito_al_fornitore',0);
+            if($idPtVendita!=null)
+                $query->where('id_pt_vendita',$idPtVendita);
+        })->orderBy('id','DESC')->paginate($page);
+
+        return new VideoCollection($video, true
+            //,$this->moreField($ruolo)
+        );
     }
 
     public function search(Request $request, $val)
@@ -24,8 +34,8 @@ class VideoController extends Controller
         $arr = explode(' ',$val);
 
         $video = Video::
-        where('titolo',$arr[0])
-        ->orWhere('titolo','like',$val.'%')
+        //where('titolo',$arr[0])
+        where('titolo','like',$val.'%')
         /*->orWhere(function($query) use($arr) {
             if(isset($arr[1]))
                 $query->where('nome','like',$arr[0].'%')
@@ -36,6 +46,37 @@ class VideoController extends Controller
         ->limit(5)->get();
 
         return  new VideoCollection($video);
+    }
+
+    public function searchVideoNoleggi(Request $request, $val)
+    {
+        $arr = explode(' ',$val);
+
+        $idPtVendita = null;
+        $user = Auth::user();
+        $idPtVendita = $user->id_pt_vendita;
+
+        $video = Video::whereHas('magazzino',function($query) use($idPtVendita) {
+            if($idPtVendita!=null)
+                $query->where('id_pt_vendita',$idPtVendita);
+        })
+        //->where('titolo',$arr[0])
+        ->where('titolo','like',$val.'%')
+        ->limit(5)->get();
+
+        return  new VideoCollection($video);
+    }
+
+    private function moreField($ruolo)
+    {
+        $moreFields = [
+
+        ];
+
+        if($ruolo=='Admin')
+            $moreFields =  array_merge($moreFields,['pt_vendita']);
+
+        return $moreFields;
     }
 
 

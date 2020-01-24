@@ -20,7 +20,9 @@ $(document).ready(function () {
     let sidebar = $('#sidebar');
     let content = $('#content');
 
-    if(lts=='active'){
+    //localStorage.clear();
+    console.log(lts);
+    if(lts=='active' || lts==null){
         sidebar.addClass('active');
         content.addClass('active');
     }
@@ -33,7 +35,7 @@ $(document).ready(function () {
         if(sidebar.hasClass('active')){
             localStorage.setItem('sideCollapse', 'active');
         }else
-            localStorage.removeItem('sideCollapse','');
+            localStorage.setItem('sideCollapse','off');
     });
 
 });

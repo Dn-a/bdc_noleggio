@@ -6,18 +6,39 @@ import InfiniteTable from '../utils/InfiniteTable';
 import NoleggiModal from '../modals/NoleggiModal';
 
 
-const COLUMNS = [
+const COLUMNS_VIDEO = [
     { title: 'id', field: 'id' , align:'right'},
-    { title: 'Titolo', field: 'titolo', img:'', style: {textTransform:'capitalize',fontWeight:'600'}  },
-    { title: 'Durata', field: 'durata', style: {textTransform:'capitalize'} },
-    { title: 'Categoria', field: 'categoria', style: {textTransform:'capitalize'} },
-    { title: 'Dettagli', field: 'dettagli'},
-    { title: 'Data Uscita', field: 'data_uscita',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Titolo', field: 'titolo', img:'',
+        render: (cell,row) => {
+            return(
+                <div style={{display: 'inline-block'}}>
+                    <span style={{textTransform:'capitalize',fontWeight:'600'}}>{row['titolo']}</span>
+                    <div>
+                        <span>{row['durata']}</span> -&nbsp;
+                        <span>{row['categoria']}</span> -&nbsp;
+                        <span>{row['regista']}</span> -&nbsp;
+                        <span>{new Date(row['data_uscita']).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})}</span>
+                    </div>
+                </div>
+            );
+        }
+    },
     { title: 'Prezzo', field: 'prezzo', render: cell => parseFloat(cell).toFixed(2) +' €' },
-    { title: 'In Uscita', field: 'in_uscita',render: cell => {(cell==0)? 'No':'Si'} },
+    { title: 'Disponibilità', field: 'qta_disponibili',style: {textAlign:'center'},
+        render: (cell,row) => {
+            let dsp = row['qta_disponibili'];
+            let mgz = row['qta_magazzino'];
+            let css = dsp > 20 ? 'more': (dsp > 5 ? 'half':'less');
+            return(
+                <div className={'bar '+css}>
+                    {dsp + ' / ' + mgz}
+                </div>
+            );
+        }
+    },
   ];
 
-const COLUMNS_2 = [
+const COLUMNS_NOLEGGI = [
     { title: 'id', field: 'id' , align:'right'},
     { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },
     { title: 'Cliente', field: 'cliente', style: {textTransform:'capitalize'} },
@@ -34,10 +55,11 @@ export default class Noleggi extends Component {
         super(props);
 
         this.state = {
-            rows: '',
+            rowsVideo: '',
             rowsNoleggi: '',
             show:false,
-            selectedList: [],
+            selectedListVideo: [],
+            rowsSelectedListVideo: [],
             selectedListNoleggi: [],
             reloadInfiniteTable:0
         };
@@ -66,16 +88,16 @@ export default class Noleggi extends Component {
 
     _handleSearchFieldCallback(data,reset){
 
-        //console.log(rows);
+        //console.log(data);
 
-        let rows = this.state.rows;
+        let rowsVideo = this.state.rowsVideo;
 
-        rows = data.data;
-        this.setState({rows});
+        rowsVideo = data.data;
+        this.setState({rowsVideo});
 
         if(reset){
-            rows = '';
-            this.setState({rows});
+            rowsVideo = '';
+            this.setState({rowsVideo});
         }
 
     }
@@ -123,23 +145,25 @@ export default class Noleggi extends Component {
 
                                     <div className="col-md-6">
                                         <SearchField key="s-video" showList={false} patternList={{id:'id',fields:['nome','cognome']}}
-                                        url={urlVideo+'/search'} callback={this._handleSearchFieldCallback}
+                                        url={urlVideo+'/search-noleggi'} callback={this._handleSearchFieldCallback}
                                         />
                                     </div>
 
                                     <div className="col-md-6 text-right">
-                                        <Button className="btn-success mr-3" disabled={this.state.selectedList.length>0?false:true} onClick={this._handleCaricoVideo}>
+                                        <Button className="btn-success mr-3" disabled={this.state.selectedListVideo.length>0?false:true} onClick={this._handleShowModal}>
                                         <i className="fa fa-upload" aria-hidden="true"></i>
                                         &nbsp;Noleggia</Button>
 
 
                                         <NoleggiModal url={this.props.url}
-                                        show={this.state.show} onHide={this._handleCloseModal}
-                                        callback={
-                                            (row) => {
-                                                this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                                            custom={this.state.rowsSelectedListVideo}
+                                            show={this.state.show} onHide={this._handleCloseModal}
+                                            callback={
+                                                (row) => {
+                                                    this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                                                }
                                             }
-                                        } />
+                                        />
                                     </div>
 
                                 </div>
@@ -147,15 +171,15 @@ export default class Noleggi extends Component {
                                     <div className="col-md-12">
                                         <InfiniteTable key="video"
                                             id="video"
-                                            reload={this.state.rel1oadInfiniteTable}
+                                            reload={this.state.reloadInfiniteTable}
                                             url={urlVideo}
-                                            columns={COLUMNS}
-                                            externalRows={this.state.rows}
+                                            columns={COLUMNS_VIDEO}
+                                            externalRows={this.state.rowsVideo}
                                             multiSelect={true}
-                                            selectedList={this.state.selectedList}
-                                            multiSelectCallback={ (list) =>{
-                                                this.setState({selectedList:list})
-                                                //console.log(list)
+                                            selectedList={this.state.selectedListVideo}
+                                            multiSelectCallback={ (list,row) =>{
+                                                this.setState({selectedListVideo:list, rowsSelectedListVideo:row})
+                                                //console.log(row)
                                             }}
                                         />
                                     </div>
@@ -174,13 +198,13 @@ export default class Noleggi extends Component {
                                     </div>
 
                                     <div className="col-md-6 text-right">
-                                        <Button className="btn-success mr-3" disabled={this.state.selectedList.length>0?false:true} onClick={this._handleCaricoVideo}>
+                                        <Button className="btn-warning mr-3" disabled={this.state.selectedListNoleggi.length>0?false:true} onClick={this._handleCaricoVideo}>
                                         <i className="fa fa-download" aria-hidden="true"></i>
                                         &nbsp;Restituzione</Button>
 
 
                                         <NoleggiModal url={this.props.url}
-                                        show={this.state.show} onHide={this._handleCloseModal}
+                                        //show={this.state.show} onHide={this._handleCloseModal}
                                         callback={
                                             (row) => {
                                                 this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
@@ -195,7 +219,7 @@ export default class Noleggi extends Component {
                                             id="noleggi"
                                             reload={this.state.reloadInfiniteTable}
                                             url={this.url}
-                                            columns={COLUMNS_2}
+                                            columns={COLUMNS_NOLEGGI}
                                             externalRows={this.state.rowsNoleggi}
                                             multiSelect={true}
                                             selectedList={this.state.selectedListNoleggi}

@@ -62,7 +62,8 @@ class MagazzinoCollection extends ResourceCollection
             .' ('. (string) $item->puntoVendita->comune->prov.')';
 
         date_default_timezone_set("Europe/Rome");
-        $ritiro = round( (strtotime($item->data_ritiro) - time()) / 86400 );
+        $gg = round( (strtotime($item->data_ritiro) - time()) / 86400 );
+        $ritiro = $gg>=0 ? $gg : 0;
 
         $item['video'] = $video;
         $item['pt_vendita'] = $ptVendita;

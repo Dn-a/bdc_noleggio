@@ -7,6 +7,10 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
+body {
+    background-color: #ecf3f7;
+}
+
 ul{
     padding: 0;
     margin: 0;
@@ -30,8 +34,9 @@ ul{
 /*--- BUTTON ---*/
     .btn-info,
     .btn-danger,
-    .btn-success,
-    .btn-warning {
+    .btn-success
+    /*,.btn-warning*/
+    {
         color: #fff !important;
     }
     .btn-info {
@@ -233,7 +238,24 @@ ul{
         cursor: pointer;
     }
 }
-    /*-- IMG VIDEO --*/
+    /*-- VIDEO --*/
+    .bar {
+        text-align: center;
+        padding: 5px 14px 4px;
+        border-radius: 20px;
+        color: #fff;
+        display: inline-block;
+        margin: auto;
+    }
+    .bar.more{
+        background-color: #67e145;
+    }
+    .bar.half{
+        background-color: #e1ba45;
+    }
+    .bar.less{
+        background-color: #e17845;
+    }
     .img-video {
         width: 80px;
         display: inline-block;

@@ -10,9 +10,11 @@ import RangeField from '../utils/form/RangeField';
 const whitespace_reg_ex = /^[^\s].*/;
 
 const FIELDS = [
-    'id_video',
-    'id_fornitore',
-    'quantita',
+    'id_cliente',
+    'prezzo_tot',
+    'data_inizio',
+    'data_fine',
+    'quantita'
 ];
 
 const HIDE_FIELD = [
@@ -113,6 +115,7 @@ export default class DipendentiModal extends Component {
         let value = e.target.value.toLowerCase();
         let field = e.target.name;
 
+        //console.log(this.props.custom);
 
         let error = this.state.error;
         let data = this.state.data;
@@ -173,7 +176,7 @@ export default class DipendentiModal extends Component {
                 loader={this.state.loader}
                 onConfirm={this._handleOnSave}
                 disabledConfirmButton={!this.state.checked}
-                title="Nuovi Video" type="Scarico"
+                title="Video" type="Noleggio"
             >
 
                 <form>

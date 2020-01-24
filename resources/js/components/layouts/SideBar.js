@@ -8,7 +8,7 @@ const style = {
 const SideBar = () =>{
     return(
         <Router>
-        <aside id="sidebar" className="shadow">
+        <aside id="sidebar" className="shadow active">
             <nav className="menu py-3" >
                 <ul>
                     <li >

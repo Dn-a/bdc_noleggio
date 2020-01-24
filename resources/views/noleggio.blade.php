@@ -45,6 +45,7 @@
                             <li class="nav-item mr-4 dropdown" >
                                 <a id="positionDropdown" class="nav-link dropdown-toggle d-inline-block" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre="false">
                                     <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                    {{Auth::user()->puntoVendita->titolo}}
                                 </a>
                                 <div class="dropdown-menu px-3 dropdown-menu-right position-absolute" aria-labelledby="positionDropdown">
                                     Punto Vendita:

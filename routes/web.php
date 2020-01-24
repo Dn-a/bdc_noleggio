@@ -31,10 +31,12 @@ if(request()->header('accept')!='application/json')
 
     // Video
     Route::get('video/search/{val}', 'VideoController@search')->name('video.search');
+    Route::get('video/search-noleggi/{val}', 'VideoController@searchVideoNoleggi')->name('video.searchNoleggi');//ricerca video disponibili per il noleggio
     Route::resource('video', 'VideoController',['as' => 'video']);
 
     // Noleggio
     Route::get('noleggi/search/{val}', 'NoleggioController@search')->name('noleggi.search');
+    Route::get('noleggi/video', 'NoleggioController@video')->name('noleggi.video');
     Route::resource('noleggi', 'NoleggioController',['as' => 'noleggi']);
 
     // Fornitori
