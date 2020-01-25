@@ -9,7 +9,7 @@ const whitespace_reg_ex = /^[^\s].*/;
 
 const FIELDS = [
     'id_cliente',
-    'id_film',
+    'id_video',
     'prezzo_tot',
     'data_fine'
 ];
@@ -63,13 +63,11 @@ export default class DipendentiModal extends Component {
     }
 
     componentDidUpdate (){
-        //console.log(this.props.show) return
         if(this.props.show)
             this._onOpenModal();
     }
 
     _onOpenModal(){
-        //console.log("openModal")
         if(this.state.openModal) return
         let externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
         let data = this.state.data;
@@ -77,7 +75,7 @@ export default class DipendentiModal extends Component {
 
         FIELDS.map((fd,id) => {
             switch(fd){
-                case 'id_film':
+                case 'id_video':
                     externalRows.map((row,key) => {
                         data[fd][key] = row.id;
                         error[fd][key] = '';
@@ -107,34 +105,24 @@ export default class DipendentiModal extends Component {
 
     setRemoteStore() {
 
-        let url = this.props.url+'/magazzino';
+        let url = this.props.url+'/noleggi';
 
         let headers = {headers: {'Accept': 'application/json',
             'Content-Type': 'application/json'
-            //'Content-Type': 'multipart/form-data'
-            //'Content-Type': 'application/x-www-form-urlencoded'
             }
         };
 
         let data = this.state.data;
 
-        let formData = new FormData();
+        data['_token'] = CSRF_TOKEN;
 
-        Object.keys(data).map((k,id) => {
-            if(!HIDE_FIELD.includes(k)){
-                formData.append(k,data[k]);
-            }
-        });
-
-        //console.log(FormData);return;
-
-        formData.append('_token',CSRF_TOKEN);
+        //console.log(data);return;
 
         this.setState({loader:true});
 
-        return axios.post(url,formData,headers)
+        return axios.post(url,data,headers)
         .then(result => {
-            //console.log(result);
+            console.log(result);return;
             if(this.props.callback !== undefined)
                 this.props.callback(data);
             this.props.onHide();
@@ -171,14 +159,15 @@ export default class DipendentiModal extends Component {
             case 'data_fine':
                 let today = new Date();
                 today = new Date(today.toDateString()).getTime();
-                let date = new Date(value);
+                let date = value==''?new Date():new Date(value);
                 date = new Date(date.toDateString()).getTime();
-                if(date <= today)
+                if(value=='')
+                    error[field][key] = INFO_ERROR['vuoto'];
+                else if(date <= today )
                     error[field][key] = INFO_ERROR['data'];
                 else {
-                let giorni = Math.round((date-(new Date()).getTime())/(3600000*24));
+                    let giorni = Math.ceil((date-(new Date()).getTime())/(3600000*24));
                     data.prezzo_tot[key] = giorni * row.prezzo;
-                    console.log(giorni)
                 }
                 break;
         }
@@ -197,6 +186,7 @@ export default class DipendentiModal extends Component {
             if(k=='id_cliente' && (error[k]!='' || data[k]==''))
                 checked = false;
             else if(error[k] instanceof Array)
+                // some ritorna true se all'interno del loop viene soddisfatta la condizione
                 if(
                     !error[k].some((v) =>{
                         if(v!=''){
@@ -285,7 +275,6 @@ export default class DipendentiModal extends Component {
                     {this.showError('id_cliente')}
                 </div>
 
-
                 <div className="form-group">
                         <div className='table-responsive'>
                             <label>Film selezionati</label>
@@ -305,7 +294,7 @@ export default class DipendentiModal extends Component {
                                         externalRows.map((row,key) => {
                                             let data = this.state.data;
                                             let date = data.data_fine[key]==null || data.data_fine[key]==''?'000-00-00':data.data_fine[key];
-                                            let giorni = date=='000-00-00' || Date.parse(date)<=(new Date()).getTime() ? 0 : Math.round((Date.parse(date)-(new Date()).getTime())/(3600000*24));
+                                            let giorni = date=='000-00-00' || Date.parse(date)<=(new Date()).getTime() ? 0 : Math.ceil((Date.parse(date)-(new Date()).getTime())/(3600000*24));
                                             //console.log((Date.parse(date)-(new Date()).getTime())/(3600000*24))
                                             return(
                                                 <tr key={key}>

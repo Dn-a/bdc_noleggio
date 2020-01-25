@@ -8,13 +8,13 @@ class NoleggioCollection extends ResourceCollection
 {
     protected $withFields = [
         'id',
-        'dipendente',
         'cliente',
         'video',
         'prezzo_tot',
         'prezzo_extra',
         'data_inizio',
         'data_fine',
+        'giorni'
     ];
     protected $withPagination;
 
@@ -54,12 +54,26 @@ class NoleggioCollection extends ResourceCollection
     {
 
         $video = (string) $item->magazzino->video->titolo;
-        $dipendente = (string) $item->dipendente->nome.' '.
-            (string) $item->dipendente->cognome;
+        $dipendente = ucfirst((string) $item->dipendente->nome).' '.
+            ucfirst((string) $item->dipendente->cognome);
+        $cliente = ucfirst((string) $item->cliente->nome).' '.
+            ucfirst((string) $item->cliente->cognome);
+        $ptVendita = ' '. (string) $item->magazzino->puntoVendita->titolo
+            .' - '. (string) $item->magazzino->puntoVendita->indirizzo
+            .' - '. (string) $item->magazzino->puntoVendita->comune->nome
+            .' ('. (string) $item->magazzino->puntoVendita->comune->prov.')';
 
 
-        $item['video'] = $video;
         $item['dipendente'] = $dipendente;
+        $item['cliente'] = $cliente;
+        $item['video'] = $video;
+        $item['pt_vendita'] = $ptVendita;
+
+        date_default_timezone_set("Europe/Rome");
+        $gg = ceil( (strtotime($item->data_fine) - time()) / 86400 );
+        $giorni = $gg>=0 ? $gg : 0;
+
+        $item['giorni'] = $giorni;
 
         if(empty($this->withFields)) return $item;
 

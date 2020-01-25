@@ -77128,7 +77128,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 var whitespace_reg_ex = /^[^\s].*/;
-var FIELDS = ['id_cliente', 'id_film', 'prezzo_tot', 'data_fine'];
+var FIELDS = ['id_cliente', 'id_video', 'prezzo_tot', 'data_fine'];
 var HIDE_FIELD = [];
 
 var DipendentiModal =
@@ -77180,20 +77180,18 @@ function (_Component) {
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate() {
-      //console.log(this.props.show) return
       if (this.props.show) this._onOpenModal();
     }
   }, {
     key: "_onOpenModal",
     value: function _onOpenModal() {
-      //console.log("openModal")
       if (this.state.openModal) return;
       var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
       var data = this.state.data;
       var error = this.state.error;
       FIELDS.map(function (fd, id) {
         switch (fd) {
-          case 'id_film':
+          case 'id_video':
             externalRows.map(function (row, key) {
               data[fd][key] = row.id;
               error[fd][key] = '';
@@ -77230,29 +77228,22 @@ function (_Component) {
     value: function setRemoteStore() {
       var _this2 = this;
 
-      var url = this.props.url + '/magazzino';
+      var url = this.props.url + '/noleggi';
       var headers = {
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json' //'Content-Type': 'multipart/form-data'
-          //'Content-Type': 'application/x-www-form-urlencoded'
-
+          'Content-Type': 'application/json'
         }
       };
       var data = this.state.data;
-      var formData = new FormData();
-      Object.keys(data).map(function (k, id) {
-        if (!HIDE_FIELD.includes(k)) {
-          formData.append(k, data[k]);
-        }
-      }); //console.log(FormData);return;
+      data['_token'] = CSRF_TOKEN; //console.log(data);return;
 
-      formData.append('_token', CSRF_TOKEN);
       this.setState({
         loader: true
       });
-      return axios.post(url, formData, headers).then(function (result) {
-        //console.log(result);
+      return axios.post(url, data, headers).then(function (result) {
+        console.log(result);
+        return;
         if (_this2.props.callback !== undefined) _this2.props.callback(data);
 
         _this2.props.onHide();
@@ -77291,12 +77282,11 @@ function (_Component) {
         case 'data_fine':
           var today = new Date();
           today = new Date(today.toDateString()).getTime();
-          var date = new Date(value);
+          var date = value == '' ? new Date() : new Date(value);
           date = new Date(date.toDateString()).getTime();
-          if (date <= today) error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_3__["default"]['data'];else {
-            var giorni = Math.round((date - new Date().getTime()) / (3600000 * 24));
+          if (value == '') error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_3__["default"]['vuoto'];else if (date <= today) error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_3__["default"]['data'];else {
+            var giorni = Math.ceil((date - new Date().getTime()) / (3600000 * 24));
             data.prezzo_tot[key] = giorni * row.prezzo;
-            console.log(giorni);
           }
           break;
       }
@@ -77316,17 +77306,18 @@ function (_Component) {
       var error = this.state.error;
       var checked = true;
       Object.keys(error).map(function (k, id) {
-        if (k == 'id_cliente' && (error[k] != '' || data[k] == '')) checked = false;else if (error[k] instanceof Array) if (!error[k].some(function (v) {
-          if (v != '') {
-            checked = false;
-            return true;
-          }
-        })) data[k].some(function (v) {
-          if (v == '') {
-            checked = false;
-            return true;
-          }
-        });
+        if (k == 'id_cliente' && (error[k] != '' || data[k] == '')) checked = false;else if (error[k] instanceof Array) // some ritorna true se all'interno del loop viene soddisfatta la condizione
+          if (!error[k].some(function (v) {
+            if (v != '') {
+              checked = false;
+              return true;
+            }
+          })) data[k].some(function (v) {
+            if (v == '') {
+              checked = false;
+              return true;
+            }
+          });
       });
       this.setState({
         checked: checked
@@ -77425,7 +77416,7 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "N"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Data restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo complessivo"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
         var data = _this4.state.data;
         var date = data.data_fine[key] == null || data.data_fine[key] == '' ? '000-00-00' : data.data_fine[key];
-        var giorni = date == '000-00-00' || Date.parse(date) <= new Date().getTime() ? 0 : Math.round((Date.parse(date) - new Date().getTime()) / (3600000 * 24)); //console.log((Date.parse(date)-(new Date()).getTime())/(3600000*24))
+        var giorni = date == '000-00-00' || Date.parse(date) <= new Date().getTime() ? 0 : Math.ceil((Date.parse(date) - new Date().getTime()) / (3600000 * 24)); //console.log((Date.parse(date)-(new Date()).getTime())/(3600000*24))
 
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: key
@@ -79680,7 +79671,7 @@ var COLUMNS = [{
   field: 'data_scarico',
   render: function render(cell) {
     return new Date(cell).toLocaleDateString("it-IT", {
-      year: "2-digit",
+      year: "numeric",
       month: "2-digit",
       day: "2-digit"
     });
@@ -80074,7 +80065,7 @@ var COLUMNS_VIDEO = [{
   render: function render(cell, row) {
     var dsp = row['qta_disponibili'];
     var mgz = row['qta_magazzino'];
-    var css = dsp > 20 ? 'more' : dsp > 5 ? 'half' : 'less';
+    var css = dsp > mgz / 2 ? 'more' : dsp > mgz / 4 ? 'half' : 'less';
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       className: 'bar ' + css
     }, dsp + ' / ' + mgz);
@@ -80102,18 +80093,13 @@ var COLUMNS_NOLEGGI = [{
   style: {
     textTransform: 'capitalize'
   }
-}, {
-  title: 'Tariffa',
-  field: 'tariffa',
-  style: {
-    textTransform: 'capitalize'
-  }
-}, {
+}, //{ title: 'Prezzo Extra', field: 'prezzo_extra', render: cell => parseFloat(cell).toFixed(2) +' €'},
+{
   title: 'Data Inizio',
   field: 'data_inizio',
   render: function render(cell) {
     return new Date(cell).toLocaleDateString("it-IT", {
-      year: "2-digit",
+      year: "numeric",
       month: "2-digit",
       day: "2-digit"
     });
@@ -80123,10 +80109,19 @@ var COLUMNS_NOLEGGI = [{
   field: 'data_fine',
   render: function render(cell) {
     return new Date(cell).toLocaleDateString("it-IT", {
-      year: "2-digit",
+      year: "numeric",
       month: "2-digit",
       day: "2-digit"
     });
+  }
+}, {
+  title: 'Giorni',
+  field: 'giorni'
+}, {
+  title: 'Costo Tot.',
+  field: 'prezzo_tot',
+  render: function render(cell) {
+    return parseFloat(cell).toFixed(2) + ' €';
   }
 }];
 
@@ -80319,7 +80314,7 @@ function (_Component) {
           fields: ['nome', 'cognome']
         },
         url: this.url + '/search',
-        callback: this._handleSearchFieldCallback
+        callback: this._handleSearchFieldNoleggiCallback
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {

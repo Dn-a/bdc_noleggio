@@ -28,7 +28,7 @@ const COLUMNS_VIDEO = [
         render: (cell,row) => {
             let dsp = row['qta_disponibili'];
             let mgz = row['qta_magazzino'];
-            let css = dsp > 20 ? 'more': (dsp > 5 ? 'half':'less');
+            let css = dsp > mgz/2 ? 'more': (dsp > mgz/4 ? 'half':'less');
             return(
                 <div className={'bar '+css}>
                     {dsp + ' / ' + mgz}
@@ -43,9 +43,11 @@ const COLUMNS_NOLEGGI = [
     { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },
     { title: 'Cliente', field: 'cliente', style: {textTransform:'capitalize'} },
     { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} },
-    { title: 'Tariffa', field: 'tariffa',style: {textTransform:'capitalize'} },
-    { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"2-digit",month:"2-digit", day:"2-digit"}) },
-    { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"2-digit",month:"2-digit", day:"2-digit"}) },
+    //{ title: 'Prezzo Extra', field: 'prezzo_extra', render: cell => parseFloat(cell).toFixed(2) +' €'},
+    { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Giorni', field: 'giorni'},
+    { title: 'Costo Tot.', field: 'prezzo_tot', render: cell => parseFloat(cell).toFixed(2) +' €'},
 ];
 
 
@@ -193,7 +195,7 @@ export default class Noleggi extends Component {
 
                                     <div className="col-md-6">
                                         <SearchField key="s-noleggi" showList={false} patternList={{id:'id',fields:['nome','cognome']}}
-                                        url={this.url+'/search'} callback={this._handleSearchFieldCallback}
+                                        url={this.url+'/search'} callback={this._handleSearchFieldNoleggiCallback}
                                         />
                                     </div>
 

@@ -21,7 +21,7 @@ class CreateNoleggiTable extends Migration
             //$table->unsignedInteger('id_tariffa');
             $table->float('prezzo_tot');
             $table->float('prezzo_extra');
-            $table->date('data_inizio');
+            $table->timestamp('data_inizio')->useCurrent();
             $table->date('data_fine');
         });
 

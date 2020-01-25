@@ -18,12 +18,12 @@ class Noleggio extends Model
 
     public function magazzino()
     {
-        return $this->hasOne('App\Magazzino','id_magazzino');
+        return $this->belongsTo('App\Magazzino','id_magazzino');
     }
 
     public function cliente()
     {
-        return $this->hasOne('App\Cliente','id_cliente');
+        return $this->belongsTo('App\Cliente','id_cliente');
     }
 
     public function dipendente()

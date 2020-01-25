@@ -12,7 +12,7 @@ const COLUMNS = [
     { title: 'P.to Vendita', field: 'pt_vendita', style: {textTransform:'capitalize'} },
     { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} },
     { title: 'Fornitore', field: 'fornitore',style: {textTransform:'capitalize'} },
-    { title: 'Data Scarico', field: 'data_scarico',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"2-digit",month:"2-digit", day:"2-digit"}) },
+    { title: 'Data Scarico', field: 'data_scarico',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Giorni al Ritiro', field:'ritiro'},
     { title: 'Noleggiato', field:'noleggiato', render: cell => cell==0?'No':'SI'},
     { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':'SI'},
