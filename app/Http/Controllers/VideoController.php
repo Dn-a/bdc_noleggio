@@ -12,14 +12,15 @@ class VideoController extends Controller
 
     public function index(Request $request)
     {
-        $page = $request->input('per-page') ?: 15;
+        $page = $request->input('per-page') ?: 10;
 
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
-        $idPtVendita = $ruolo=='Admin'? null: $user->id_pt_vendita;
+        // Vengono visualizzati solo
+        // i video disponibili al momento in magazzino  nello specifico p.to vendita
+        $idPtVendita =  $user->id_pt_vendita;//$ruolo=='Admin'? null:
 
         $video = Video::whereHas('magazzino',function($query) use($idPtVendita) {
-            //$query->where('restituito_al_fornitore',0);
             if($idPtVendita!=null)
                 $query->where('id_pt_vendita',$idPtVendita);
         })->orderBy('id','DESC')->paginate($page);
@@ -43,16 +44,18 @@ class VideoController extends Controller
             elseif(isset($arr[0]))
                 $query->where('nome','like',$arr[0].'%');
         })*/
-        ->limit(5)->get();
+        ->limit(10)->get();
 
         return  new VideoCollection($video);
     }
 
+
+    // Campo ricerca della sezione noleggi
+    // visualizza solo i video disponibili in magazzino
     public function searchVideoNoleggi(Request $request, $val)
     {
         $arr = explode(' ',$val);
 
-        $idPtVendita = null;
         $user = Auth::user();
         $idPtVendita = $user->id_pt_vendita;
 
@@ -62,7 +65,7 @@ class VideoController extends Controller
         })
         //->where('titolo',$arr[0])
         ->where('titolo','like',$val.'%')
-        ->limit(5)->get();
+        ->limit(10)->get();
 
         return  new VideoCollection($video);
     }

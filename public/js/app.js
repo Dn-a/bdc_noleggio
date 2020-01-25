@@ -77102,10 +77102,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _utils_AddEditModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/AddEditModal */ "./resources/js/components/utils/AddEditModal.js");
 /* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
-/* harmony import */ var _utils_form_InputField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/form/InputField */ "./resources/js/components/utils/form/InputField.js");
-/* harmony import */ var _utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/form/DropdownSelect */ "./resources/js/components/utils/form/DropdownSelect.js");
-/* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
-/* harmony import */ var _utils_form_RangeField__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/RangeField */ "./resources/js/components/utils/form/RangeField.js");
+/* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
+/* harmony import */ var _utils_form_DataField__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/form/DataField */ "./resources/js/components/utils/form/DataField.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -77129,10 +77127,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-
-
 var whitespace_reg_ex = /^[^\s].*/;
-var FIELDS = ['id_cliente', 'prezzo_tot', 'data_inizio', 'data_fine', 'quantita'];
+var FIELDS = ['id_cliente', 'id_film', 'prezzo_tot', 'data_fine'];
 var HIDE_FIELD = [];
 
 var DipendentiModal =
@@ -77149,13 +77145,16 @@ function (_Component) {
     var data = {};
     var error = {};
     FIELDS.map(function (fd, id) {
-      data[fd] = error[fd] = '';
-      if (fd == 'quantita') data[fd] = 0;
+      if (fd == 'id_cliente') data[fd] = error[fd] = '';else {
+        data[fd] = [];
+        error[fd] = [];
+      }
     });
     _this.state = {
       data: data,
       error: error,
       checked: false,
+      openModal: false,
       loader: false
     };
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
@@ -77169,13 +77168,62 @@ function (_Component) {
       var data = {};
       var error = {};
       FIELDS.map(function (fd, id) {
-        data[fd] = error[fd] = '';
-        if (fd == 'quantita') data[fd] = 0;
+        data[fd] = [];
+        error[fd] = [];
       });
       this.state.data = data;
       this.state.error = error;
       this.state.loader = false;
       this.state.checked = false;
+      this.state.openModal = false;
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      //console.log(this.props.show) return
+      if (this.props.show) this._onOpenModal();
+    }
+  }, {
+    key: "_onOpenModal",
+    value: function _onOpenModal() {
+      //console.log("openModal")
+      if (this.state.openModal) return;
+      var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
+      var data = this.state.data;
+      var error = this.state.error;
+      FIELDS.map(function (fd, id) {
+        switch (fd) {
+          case 'id_film':
+            externalRows.map(function (row, key) {
+              data[fd][key] = row.id;
+              error[fd][key] = '';
+            });
+            break;
+
+          case 'prezzo_tot':
+            //let giorni = Math.round((Date.parse(tomorrow)-(new Date()).getTime())/8640000);
+            externalRows.map(function (row, key) {
+              data[fd][key] = row.prezzo;
+              error[fd][key] = '';
+            });
+            break;
+
+          case 'data_fine':
+            var tomorrow = new Date();
+            tomorrow.setDate(new Date().getDate() + 1); //tomorrow = tomorrow.toJSON().slice(0, 10);
+
+            tomorrow = tomorrow.getFullYear() + '-' + ("0" + (tomorrow.getMonth() + 1)).slice(-2) + '-' + tomorrow.getDate();
+            externalRows.map(function (row, key) {
+              error[fd][key] = '';
+              data[fd][key] = tomorrow;
+            });
+        }
+      });
+      this.setState({
+        data: data,
+        error: error,
+        openModal: true
+      });
     }
   }, {
     key: "setRemoteStore",
@@ -77230,23 +77278,30 @@ function (_Component) {
     }
   }, {
     key: "_handleChange",
-    value: function _handleChange(e) {
+    value: function _handleChange(e, key, row) {
       var _this3 = this;
 
       var value = e.target.value.toLowerCase();
-      var field = e.target.name; //console.log(this.props.custom);
-
+      var field = e.target.name;
       var error = this.state.error;
       var data = this.state.data;
-      if (value == '') error[field] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_5__["default"]['vuoto'];else error[field] = '';
+      if (value == '') error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_3__["default"]['vuoto'];else error[field][key] = '';
 
       switch (field) {
-        case 'quantita':
-          if (!/^\d+$/.test(value)) error.quantita = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_5__["default"]['numero'];else if (value <= 0) error.quantita = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_5__["default"]['numero_2'];
+        case 'data_fine':
+          var today = new Date();
+          today = new Date(today.toDateString()).getTime();
+          var date = new Date(value);
+          date = new Date(date.toDateString()).getTime();
+          if (date <= today) error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_3__["default"]['data'];else {
+            var giorni = Math.round((date - new Date().getTime()) / (3600000 * 24));
+            data.prezzo_tot[key] = giorni * row.prezzo;
+            console.log(giorni);
+          }
           break;
       }
 
-      data[field] = value;
+      data[field][key] = value;
       this.setState({
         data: data,
         error: error
@@ -77261,7 +77316,17 @@ function (_Component) {
       var error = this.state.error;
       var checked = true;
       Object.keys(error).map(function (k, id) {
-        if (error[k] != '' || data[k] == '') checked = false;
+        if (k == 'id_cliente' && (error[k] != '' || data[k] == '')) checked = false;else if (error[k] instanceof Array) if (!error[k].some(function (v) {
+          if (v != '') {
+            checked = false;
+            return true;
+          }
+        })) data[k].some(function (v) {
+          if (v == '') {
+            checked = false;
+            return true;
+          }
+        });
       });
       this.setState({
         checked: checked
@@ -77269,8 +77334,9 @@ function (_Component) {
     }
   }, {
     key: "showError",
-    value: function showError(field) {
-      var error = this.state.error[field] !== undefined ? this.state.error[field] : '';
+    value: function showError(field, key) {
+      var error = '';
+      if (this.state.error[field][key] !== undefined) error = this.state.error[field][key];else if (this.state.error[field] != undefined) error = this.state.error[field];
       if (error != '') return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "error-div"
       }, error);
@@ -77281,10 +77347,14 @@ function (_Component) {
       var _this4 = this;
 
       var divClassName = 'mb-3';
-      var urlVideo = this.props.url + '/video/search';
-      var urlFornitore = this.props.url + '/fornitori/search';
+      var urlCliente = this.props.url + '/clienti/search';
+      var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
+      var totPagare = 0;
+      this.state.data.prezzo_tot.map(function (val) {
+        return totPagare += val;
+      });
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_1__["default"], {
-        size: "md",
+        size: "lg",
         show: this.props.show,
         onHide: function onHide(a) {
           _this4.props.onHide(a);
@@ -77293,23 +77363,24 @@ function (_Component) {
         },
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
+        txtConfirmButton: "Noleggia",
         disabledConfirmButton: !this.state.checked,
         title: "Video",
         type: "Noleggio"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group w-50 mb-4"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        label: "Film",
-        placeholder: "Cerca un Film",
+        label: "Cliente",
+        placeholder: "Cerca un Cliente",
         searchClassName: "w-100",
         showList: true,
-        url: urlVideo,
+        url: urlCliente,
         patternList: {
           id: 'id',
           fields: {
-            titolo: [],
-            categoria: [],
-            durata: []
+            nome: [],
+            cognome: [],
+            cf: []
           }
         } //id di ritorno; i fields vengono usati come titolo
         ,
@@ -77318,8 +77389,8 @@ function (_Component) {
           //console.log(val);
           var data = _this4.state.data;
           var error = _this4.state.error;
-          data.id_video = val.id;
-          error.id_video = '';
+          data.id_cliente = val.id;
+          error.id_cliente = '';
 
           _this4.setState({
             data: data,
@@ -77332,10 +77403,10 @@ function (_Component) {
           //console.log(val);
           var data = _this4.state.data;
           var error = _this4.state.error;
-          data.id_video = '';
+          data.id_cliente = '';
 
           if (val.length == 0) {
-            error.id_video = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_5__["default"]['film'];
+            error.id_cliente = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_3__["default"]['cliente'];
           }
 
           _this4.setState({
@@ -77345,68 +77416,34 @@ function (_Component) {
             return _this4.checked();
           });
         }
-      }), this.showError('id_video')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), this.showError('id_cliente')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        label: "Fornitore",
-        placeholder: "Cerca un Fornitore",
-        searchClassName: "w-100",
-        showList: true,
-        url: urlFornitore,
-        patternList: {
-          id: 'id',
-          fields: {
-            titolo: [],
-            indirizzo: [],
-            comune: []
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "table-responsive"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Film selezionati"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+        className: "table"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "N"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Data restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo complessivo"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
+        var data = _this4.state.data;
+        var date = data.data_fine[key] == null || data.data_fine[key] == '' ? '000-00-00' : data.data_fine[key];
+        var giorni = date == '000-00-00' || Date.parse(date) <= new Date().getTime() ? 0 : Math.round((Date.parse(date) - new Date().getTime()) / (3600000 * 24)); //console.log((Date.parse(date)-(new Date()).getTime())/(3600000*24))
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+          key: key
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, key + 1), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.titolo), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(row.prezzo).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DataField__WEBPACK_IMPORTED_MODULE_4__["default"], {
+          name: "data_fine",
+          className: "form-control",
+          placeholder: "data fine",
+          helperText: _this4.showError('data_fine', key),
+          value: date,
+          handleChange: function handleChange(e) {
+            return _this4._handleChange(e, key, row);
           }
-        } //id di ritorno; i fields vengono usati come titolo
-        ,
-        reloadOnClick: false,
-        onClick: function onClick(val) {
-          //console.log(val);
-          var data = _this4.state.data;
-          var error = _this4.state.error;
-          data.id_fornitore = val.id;
-          error.id_fornitore = '';
-
-          _this4.setState({
-            data: data,
-            error: error
-          }, function () {
-            return _this4.checked();
-          });
-        },
-        callback: function callback(val) {
-          //console.log(val);
-          var data = _this4.state.data;
-          var error = _this4.state.error;
-          data.id_fornitore = '';
-
-          if (val.length == 0) {
-            error.id_fornitore = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_5__["default"]['fornitore'];
-          }
-
-          _this4.setState({
-            data: data,
-            error: error
-          }, function () {
-            return _this4.checked();
-          });
-        }
-      }), this.showError('id_fornitore')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, giorni), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(data.prezzo_tot[key]).toFixed(2) + ' €'));
+      }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RangeField__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        name: "quantita",
-        min: "0",
-        max: "40",
-        value: this.state.data.quantita,
-        divClassName: divClassName,
-        className: "form-control",
-        label: "Quantit\xE0",
-        helperText: this.showError('quantita'),
-        handleChange: this._handleChange
-      }), "numero: ", this.state.data.quantita)));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "text-right p-2 px-4"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Totale da pagare:"), " ", parseFloat(totPagare).toFixed(2) + ' €')));
     }
   }]);
 
@@ -77780,7 +77817,7 @@ function AddEditModal(props) {
     disabled: props.disabledConfirmButton !== undefined ? props.disabledConfirmButton : false,
     className: "btn-success",
     onClick: props.onConfirm
-  }, "Aggiungi ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+  }, props.txtConfirmButton !== undefined ? props.txtConfirmButton : 'Aggiungi', " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
     className: "loader-2" + (props.loader == true ? ' d-inline-block' : ''),
     src: "../img/loader_2.gif"
   }))));
@@ -77913,6 +77950,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return InfiniteTable; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _SearchField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SearchField */ "./resources/js/components/utils/SearchField.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -77941,6 +77979,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var InfiniteTable =
 /*#__PURE__*/
 function (_Component) {
@@ -77963,13 +78002,20 @@ function (_Component) {
       selectedList: [],
       moreData: true,
       loader: false,
-      reload: 0
+      reload: 0,
+      searchValue: '',
+      searchLoader: false,
+      searchInfo: ''
     };
-    _this.timeOut = 500; // timeout before remote call
-
     _this._handleScroll = _this._handleScroll.bind(_assertThisInitialized(_this));
     _this._moreData = _this._moreData.bind(_assertThisInitialized(_this));
-    _this._handleMultiSelection = _this._handleMultiSelection.bind(_assertThisInitialized(_this));
+    _this._handleMultiSelection = _this._handleMultiSelection.bind(_assertThisInitialized(_this)); // Search field
+
+    _this.timeOut = 500; // timeout before remote call
+
+    _this._handleChangeSearch = _this._handleChangeSearch.bind(_assertThisInitialized(_this));
+    _this._onClickItemSearch = _this._onClickItemSearch.bind(_assertThisInitialized(_this));
+    _this._timeOutSearch = _this._timeOutSearch.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -78135,8 +78181,8 @@ function (_Component) {
       }
     }
   }, {
-    key: "moreInfoTable",
-    value: function moreInfoTable() {
+    key: "_moreInfoTable",
+    value: function _moreInfoTable() {
       var _this7 = this;
 
       var multiSelect = this.props.multiSelect !== undefined ? this.props.multiSelect : false;
@@ -78172,17 +78218,106 @@ function (_Component) {
           }
         }
       }, "Deseleziona tutto"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, elSize, " elementi selezionati")));
+    } // SEARCH FIELD
+    // dopo aver inserito un carattere nel campo
+
+  }, {
+    key: "_handleChangeSearch",
+    value: function _handleChangeSearch(e) {
+      var _this8 = this;
+
+      //console.log(e.target.value);
+      var value = e.target.value;
+      this.setState({
+        value: value
+      });
+
+      this._timeOut(value).then(function (data) {
+        //console.log(data==null)
+        var size = data != null && data.data !== undefined ? data.data : data;
+
+        _this8.setState({
+          data: size == null ? [] : data,
+          infoSearch: size == 0 ? 'nessun risultato' : '',
+          loader: false
+        });
+      });
+    } // Click sugli elementi della lista risultati
+
+  }, {
+    key: "_onClickItemSearch",
+    value: function _onClickItemSearch(val) {
+      var _this9 = this;
+
+      var patternList = this.props.patternList !== undefined ? this.props.patternList : {
+        id: '',
+        fields: []
+      };
+      var txt = '';
+      var fieldsKey = Object.keys(patternList.fields);
+      fieldsKey.map(function (field, key) {
+        if (patternList.fields[field].length == 0) {
+          txt += val[field];
+          txt += fieldsKey.length > key + 1 ? ' ' : '';
+        } else patternList.fields[field].map(function (f, k) {
+          txt += val[field][f];
+          txt += patternList.fields[field].length > k + 1 ? ' ' : '';
+        });
+      });
+      /*
+      patternList.fields.map((field,key) => {
+          txt += val[field];
+          txt += patternList.fields.length > (key+1) ? ' ':'';
+      })*/
+      //console.log(txt)
+
+      this.setState({
+        value: txt
+      }); // Effettua una nuova ricerca con l'elemento della lista selezionato
+
+      var reload = this.props.reloadOnClick !== undefined ? this.props.reloadOnClick : true;
+      if (!reload) this.setState({
+        data: [],
+        infoSearch: ''
+      });else this._timeOut(txt, 0).then(function (data) {
+        if (data != null) _this9.setState({
+          data: [],
+          loader: false
+        });
+      });
+      if (this.props.onClick !== undefined) this.props.onClick(val);
+    } // Richiama grtRemoteData dopo un certo tempo T
+
+  }, {
+    key: "_timeOutSearch",
+    value: function _timeOutSearch(value, time) {
+      var _this10 = this;
+
+      var setTime = time !== undefined ? time : this.timeOut;
+      clearTimeout(this.timer);
+      return new Promise(function (resolve, reject) {
+        if (value == '') {
+          if (_this10.props.callback !== undefined) _this10.props.callback([], true); // comunica al componente padre che non ci sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
+
+          return resolve(null);
+        }
+
+        _this10.timer = setTimeout(function () {
+          //console.log("tt");
+          resolve(_this10.getRemoteData(value));
+        }, setTime);
+      });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this8 = this;
+      var _this11 = this;
 
       var data = this.state.data;
       var columns = data.columns != null ? data.columns : [];
       var rows = this.props.externalRows != null && this.props.externalRows instanceof Array ? this.props.externalRows : data.rows;
       var idTable = this.props.id !== undefined ? this.props.id : '';
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, this.moreInfoTable(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, this._moreInfoTable(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         className: "table",
         id: idTable
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, columns.map(function (column, id) {
@@ -78192,12 +78327,12 @@ function (_Component) {
         }, column.title);
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, rows.map(function (row, id) {
         var idField = row.id;
-        var sl = _this8.state.selectedList;
+        var sl = _this11.state.selectedList;
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           className: sl.indexOf(idField) > -1 ? 'active' : '',
           key: id,
           onClick: function onClick() {
-            return _this8._handleMultiSelection(idField, row);
+            return _this11._handleMultiSelection(idField, row);
           }
         }, columns.map(function (column, id) {
           //console.log(row['img']);
@@ -78222,6 +78357,53 @@ function (_Component) {
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 
+
+var TableSearchField = function TableSearchField(props) {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "search-field " + searchClassName
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(InputField, {
+    value: props.value,
+    autocomplete: "on",
+    divClassName: "d-inline",
+    className: "form-control d-inline-block",
+    name: "search_field",
+    placeholder: props.placeholder !== undefined ? props.placeholder : "Cerca",
+    label: props.label !== undefined ? props.label : '',
+    handleChange: props.onChange
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "img-loader " + (props.loader ? "active" : '')
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+    src: "../img/loader.gif"
+  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+    className: "info-search"
+  }, props.infoSearch), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    onClick: props.onClick,
+    className: "btn-clear " + (props.value != '' ? "active" : '')
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fa fa-times",
+    "aria-hidden": "true"
+  })), props.showList && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "search-list text-left"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+    className: "list-group"
+  }, props.data.map(function (val, id) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+      key: id,
+      id: val[patternList.id],
+      onClick: props.onClick,
+      className: "list-group-item"
+    }, Object.keys(props.patternList.fields).map(function (field, key) {
+      if (props.patternList.fields[field].length == 0) return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], {
+        key: key
+      }, val[field], " \xA0");
+      if (val[field] instanceof Object) return props.patternList.fields[field].map(function (f, k) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], {
+          key: key + k
+        }, val[field][f], " \xA0");
+      });
+    }));
+  }))));
+};
 
 /***/ }),
 
@@ -78392,7 +78574,7 @@ function (_Component) {
       clearTimeout(this.timer);
       return new Promise(function (resolve, reject) {
         if (value == '') {
-          if (_this5.props.callback !== undefined) _this5.props.callback([], true); // comunica al componente padre che non vi sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
+          if (_this5.props.callback !== undefined) _this5.props.callback([], true); // comunica al componente padre che non ci sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
 
           return resolve(null);
         }
@@ -78648,13 +78830,14 @@ var FileField = function FileField(_ref) {
 __webpack_require__.r(__webpack_exports__);
 var InfoError = {
   'vuoto': 'campo vuoto',
-  'data': 'inserire una data inferiore a quella corrente',
+  'data': 'inserire una data superiore a quella corrente',
   'caratteri': 'Inserire caratteri validi',
   'password': 'Inserire almeno 8 caratteri',
   'confirm_password': 'Le password non sono uguali',
   'comune': 'inserire un comune valido',
   'pt_vendita': 'inserire un punto vendita valido',
   'fornitore': 'inserire un fornitore valido',
+  'cliente': 'inserire un cliente valido',
   'film': 'inserire un film valido',
   'file': 'Allegare un file valido',
   'caratteri_min': 'Inserire almeno 2 caratteri',
@@ -80089,7 +80272,7 @@ function (_Component) {
         "aria-hidden": "true"
       }), "\xA0Noleggia"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_NoleggiModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
         url: this.props.url,
-        custom: this.state.rowsSelectedListVideo,
+        externalRows: this.state.rowsSelectedListVideo,
         show: this.state.show,
         onHide: this._handleCloseModal,
         callback: function callback(row) {
@@ -80146,15 +80329,7 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-download",
         "aria-hidden": "true"
-      }), "\xA0Restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_NoleggiModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
-        url: this.props.url //show={this.state.show} onHide={this._handleCloseModal}
-        ,
-        callback: function callback(row) {
-          _this2.setState({
-            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
-          });
-        }
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), "\xA0Restituzione"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"

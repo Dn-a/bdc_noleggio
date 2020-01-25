@@ -2,19 +2,16 @@ import React, { Component , Fragment } from 'react';
 
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
-import InputField from '../utils/form/InputField';
-import DropDownSelect from '../utils/form/DropdownSelect';
 import INFO_ERROR from '../utils/form/InfoError';
-import RangeField from '../utils/form/RangeField';
+import DataField from '../utils/form/DataField';
 
 const whitespace_reg_ex = /^[^\s].*/;
 
 const FIELDS = [
     'id_cliente',
+    'id_film',
     'prezzo_tot',
-    'data_inizio',
-    'data_fine',
-    'quantita'
+    'data_fine'
 ];
 
 const HIDE_FIELD = [
@@ -30,15 +27,19 @@ export default class DipendentiModal extends Component {
         let error = {};
 
         FIELDS.map((fd,id) => {
-            data[fd] = error[fd]= '';
-            if(fd=='quantita')
-                data[fd] = 0;
+            if(fd=='id_cliente')
+                data[fd] = error[fd]= '';
+            else{
+                data[fd] = [];
+                error[fd]= [];
+            }
         });
 
         this.state = {
             data: data,
             error: error,
             checked: false,
+            openModal:false,
             loader:false
         };
 
@@ -51,14 +52,57 @@ export default class DipendentiModal extends Component {
         let error = {};
 
         FIELDS.map((fd,id) => {
-            data[fd] = error[fd]= '';
-            if(fd=='quantita')
-                data[fd] = 0;
+            data[fd] = [];
+            error[fd]= [];
         });
         this.state.data=data;
         this.state.error =error;
         this.state.loader = false;
         this.state.checked = false;
+        this.state.openModal = false;
+    }
+
+    componentDidUpdate (){
+        //console.log(this.props.show) return
+        if(this.props.show)
+            this._onOpenModal();
+    }
+
+    _onOpenModal(){
+        //console.log("openModal")
+        if(this.state.openModal) return
+        let externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
+        let data = this.state.data;
+        let error = this.state.error;
+
+        FIELDS.map((fd,id) => {
+            switch(fd){
+                case 'id_film':
+                    externalRows.map((row,key) => {
+                        data[fd][key] = row.id;
+                        error[fd][key] = '';
+                    })
+                    break;
+                case 'prezzo_tot':
+                    //let giorni = Math.round((Date.parse(tomorrow)-(new Date()).getTime())/8640000);
+                    externalRows.map((row,key) => {
+                        data[fd][key] = row.prezzo;
+                        error[fd][key] = '';
+                    })
+                    break;
+                case 'data_fine':
+                    let tomorrow = new Date();
+                    tomorrow.setDate((new Date()).getDate() + 1);
+                    //tomorrow = tomorrow.toJSON().slice(0, 10);
+                    tomorrow = tomorrow.getFullYear()+'-'+("0" + (tomorrow.getMonth() + 1)).slice(-2)+'-'+tomorrow.getDate();
+                    externalRows.map((row,key) => {
+                        error[fd][key] = '';
+                        data[fd][key] = tomorrow;
+                    })
+            }
+        });
+
+        this.setState({data,error,openModal:true});
     }
 
     setRemoteStore() {
@@ -111,30 +155,35 @@ export default class DipendentiModal extends Component {
         this.setRemoteStore();
     }
 
-    _handleChange(e){
+    _handleChange(e,key,row){
         let value = e.target.value.toLowerCase();
         let field = e.target.name;
-
-        //console.log(this.props.custom);
 
         let error = this.state.error;
         let data = this.state.data;
 
         if(value=='')
-            error[field] = INFO_ERROR['vuoto'];
+            error[field][key] = INFO_ERROR['vuoto'];
         else
-            error[field] = '';
+            error[field][key] = '';
 
         switch(field){
-            case 'quantita':
-                if( !/^\d+$/.test(value) )
-                    error.quantita = INFO_ERROR['numero'];
-                else if(value <= 0)
-                    error.quantita = INFO_ERROR['numero_2'];
+            case 'data_fine':
+                let today = new Date();
+                today = new Date(today.toDateString()).getTime();
+                let date = new Date(value);
+                date = new Date(date.toDateString()).getTime();
+                if(date <= today)
+                    error[field][key] = INFO_ERROR['data'];
+                else {
+                let giorni = Math.round((date-(new Date()).getTime())/(3600000*24));
+                    data.prezzo_tot[key] = giorni * row.prezzo;
+                    console.log(giorni)
+                }
                 break;
         }
 
-        data[field] = value;
+        data[field][key] = value;
 
         this.setState({data,error},()  => this.checked());
     }
@@ -145,16 +194,36 @@ export default class DipendentiModal extends Component {
 
         let checked = true;
         Object.keys(error).map((k,id) => {
-            if(error[k]!='' || data[k]=='')
+            if(k=='id_cliente' && (error[k]!='' || data[k]==''))
                 checked = false;
+            else if(error[k] instanceof Array)
+                if(
+                    !error[k].some((v) =>{
+                        if(v!=''){
+                            checked= false;
+                            return true;
+                        }
+                    })
+                )
+                    data[k].some((v) =>{
+                        if(v==''){
+                            checked= false;
+                            return true;
+                        }
+                    })
         });
 
 
         this.setState({checked});
     }
 
-    showError(field){
-        let error = this.state.error[field]!== undefined ? this.state.error[field] : '';
+    showError(field,key){
+        let error = '';
+
+        if(this.state.error[field][key]!== undefined)
+         error = this.state.error[field][key];
+        else if(this.state.error[field]!=undefined)
+            error = this.state.error[field];
 
         if(error != '')
           return(
@@ -165,96 +234,116 @@ export default class DipendentiModal extends Component {
     render(){
 
         let divClassName = 'mb-3';
+        let urlCliente = this.props.url+'/clienti/search';
 
-        let urlVideo = this.props.url+'/video/search';
-        let urlFornitore = this.props.url+'/fornitori/search';
+        let externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
+
+        let totPagare = 0;
+        this.state.data.prezzo_tot.map((val) => totPagare+=val)
 
         return(
-            <AddEditModal size="md"
+            <AddEditModal size="lg"
                 show={this.props.show}
                 onHide={(a) => {this.props.onHide(a);this._resetAfterClose();}}
                 loader={this.state.loader}
                 onConfirm={this._handleOnSave}
+                txtConfirmButton='Noleggia'
                 disabledConfirmButton={!this.state.checked}
                 title="Video" type="Noleggio"
             >
 
-                <form>
+                <div className="form-group w-50 mb-4">
+                    <SearchField
+                        label="Cliente"
+                        placeholder='Cerca un Cliente'
+                        searchClassName='w-100'
+                        showList={true}
+                        url={urlCliente}
+                        patternList={{id:'id', fields:{nome:[],cognome:[],cf:[]} } }//id di ritorno; i fields vengono usati come titolo
+                        reloadOnClick={false}
+                        onClick={(val) => {
+                                //console.log(val);
+                                let data = this.state.data;
+                                let error = this.state.error;
+                                data.id_cliente = val.id;
+                                error.id_cliente = '';
+                                this.setState({data,error},() => this.checked());
+                            }
+                        }
+                        callback={(val) => {
+                                //console.log(val);
+                                let data = this.state.data;
+                                let error = this.state.error;
+                                data.id_cliente = '';
+                                if(val.length==0){
+                                    error.id_cliente = INFO_ERROR['cliente'];
+                                }
+                                this.setState({data,error},() => this.checked());
+                            }
+                        }
+                    />
+                    {this.showError('id_cliente')}
+                </div>
+
 
                 <div className="form-group">
-                        <SearchField
-                            label="Film"
-                            placeholder='Cerca un Film'
-                            searchClassName='w-100'
-                            showList={true}
-                            url={urlVideo}
-                            patternList={{id:'id', fields:{titolo:[],categoria:[],durata:[]} } }//id di ritorno; i fields vengono usati come titolo
-                            reloadOnClick={false}
-                            onClick={(val) => {
-                                    //console.log(val);
-                                    let data = this.state.data;
-                                    let error = this.state.error;
-                                    data.id_video = val.id;
-                                    error.id_video = '';
-                                    this.setState({data,error},() => this.checked());
-                                }
-                            }
-                            callback={(val) => {
-                                    //console.log(val);
-                                    let data = this.state.data;
-                                    let error = this.state.error;
-                                    data.id_video = '';
-                                    if(val.length==0){
-                                        error.id_video = INFO_ERROR['film'];
+                        <div className='table-responsive'>
+                            <label>Film selezionati</label>
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>N</th>
+                                        <th>Titolo</th>
+                                        <th>Prezzo</th>
+                                        <th>Data restituzione</th>
+                                        <th>Giorni</th>
+                                        <th>Prezzo complessivo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        externalRows.map((row,key) => {
+                                            let data = this.state.data;
+                                            let date = data.data_fine[key]==null || data.data_fine[key]==''?'000-00-00':data.data_fine[key];
+                                            let giorni = date=='000-00-00' || Date.parse(date)<=(new Date()).getTime() ? 0 : Math.round((Date.parse(date)-(new Date()).getTime())/(3600000*24));
+                                            //console.log((Date.parse(date)-(new Date()).getTime())/(3600000*24))
+                                            return(
+                                                <tr key={key}>
+                                                    <td>{(key+1)}</td>
+                                                    <td>{row.titolo}</td>
+                                                    <td>{parseFloat(row.prezzo).toFixed(2) +' €'}</td>
+                                                    <td>
+                                                        <DataField
+                                                            name ="data_fine" className="form-control"
+                                                            placeholder='data fine'
+                                                            helperText={this.showError('data_fine',key)}
+                                                            value={date}
+                                                            handleChange={(e) => this._handleChange(e,key,row)}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {giorni}
+                                                    </td>
+                                                    <td>
+                                                        {parseFloat(data.prezzo_tot[key]).toFixed(2) +' €'}
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
                                     }
-                                    this.setState({data,error},() => this.checked());
-                                }
-                            }
-                        />
-                        {this.showError('id_video')}
+                                </tbody>
+                            </table>
                     </div>
+                </div>
 
-                    <div className="form-group">
-                        <SearchField
-                            label="Fornitore"
-                            placeholder='Cerca un Fornitore'
-                            searchClassName='w-100'
-                            showList={true}
-                            url={urlFornitore}
-                            patternList={{id:'id', fields:{titolo:[],indirizzo:[],comune:[]} } }//id di ritorno; i fields vengono usati come titolo
-                            reloadOnClick={false}
-                            onClick={(val) => {
-                                    //console.log(val);
-                                    let data = this.state.data;
-                                    let error = this.state.error;
-                                    data.id_fornitore = val.id;
-                                    error.id_fornitore = '';
-                                    this.setState({data,error},() => this.checked());
-                                }
-                            }
-                            callback={(val) => {
-                                    //console.log(val);
-                                    let data = this.state.data;
-                                    let error = this.state.error;
-                                    data.id_fornitore = '';
-                                    if(val.length==0){
-                                        error.id_fornitore = INFO_ERROR['fornitore'];
-                                    }
-                                    this.setState({data,error},() => this.checked());
-                                }
-                            }
-                        />
-                        {this.showError('id_fornitore')}
+                <div className="form-group">
+                    <div className="text-right p-2 px-4">
+                        <strong>Totale da pagare:</strong> {parseFloat(totPagare).toFixed(2) +' €'}
                     </div>
+                </div>
 
 
-                    <div className="form-group">
-                        <RangeField name="quantita" min='0' max='40' value={this.state.data.quantita} divClassName={divClassName} className="form-control" label="Quantità"
-                        helperText={this.showError('quantita')} handleChange={this._handleChange} />
-                        numero: {this.state.data.quantita}
-                    </div>
 
-                </form>
             </AddEditModal>
         );
     }

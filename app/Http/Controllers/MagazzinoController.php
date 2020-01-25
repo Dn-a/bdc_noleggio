@@ -12,7 +12,7 @@ class MagazzinoController extends Controller
 
     public function index(Request $request)
     {
-        $page = $request->input('per-page') ?: 5;
+        $page = $request->input('per-page') ?: 10;
 
         // seconda view che mostra i video restituiti al fornitore
         $only = $request->input('only') ?: '';

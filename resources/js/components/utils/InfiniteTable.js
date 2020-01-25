@@ -1,4 +1,5 @@
 import React, { Component , Fragment } from 'react';
+import SearchField from './SearchField';
 
 export default class InfiniteTable extends Component {
 
@@ -16,14 +17,23 @@ export default class InfiniteTable extends Component {
             selectedList:[],
             moreData:true,
             loader:false,
-            reload:0
+            reload:0,
+
+            searchValue : '',
+            searchLoader:false,
+            searchInfo:''
         };
 
-        this.timeOut = 500;// timeout before remote call
 
         this._handleScroll = this._handleScroll.bind(this);
         this._moreData = this._moreData.bind(this);
         this._handleMultiSelection = this._handleMultiSelection.bind(this);
+
+        // Search field
+        this.timeOut = 500;// timeout before remote call
+        this._handleChangeSearch = this._handleChangeSearch.bind(this);
+        this._onClickItemSearch = this._onClickItemSearch.bind(this);
+        this._timeOutSearch = this._timeOutSearch.bind(this);
     }
 
     componentDidMount () {
@@ -177,7 +187,7 @@ export default class InfiniteTable extends Component {
 
     }
 
-    moreInfoTable(){
+    _moreInfoTable(){
         let multiSelect = this.props.multiSelect!==undefined ? this.props.multiSelect : false;
         let elSize = this.state.selectedList.length;
 
@@ -224,6 +234,84 @@ export default class InfiniteTable extends Component {
             );
     }
 
+    // SEARCH FIELD
+    // dopo aver inserito un carattere nel campo
+    _handleChangeSearch(e){
+        //console.log(e.target.value);
+        let value = e.target.value;
+
+        this.setState({value:value});
+
+        this._timeOut(value).then((data) =>
+            {
+                //console.log(data==null)
+                let size = data!=null && data.data !== undefined ? data.data: data;
+
+                this.setState({ data: size==null? []: data, infoSearch: size==0? 'nessun risultato':'', loader:false })}
+        );
+    }
+
+    // Click sugli elementi della lista risultati
+    _onClickItemSearch(val){
+        let patternList = this.props.patternList!== undefined ? this.props.patternList : {id:'',fields:[]};
+        let txt ='';
+
+        let fieldsKey = Object.keys(patternList.fields);
+        fieldsKey.map((field,key) => {
+
+            if(patternList.fields[field].length==0){
+                txt += val[field];
+                txt += fieldsKey.length > (key+1) ? ' ':'';
+            }else
+                patternList.fields[field].map((f,k) => {
+                    txt += val[field][f];
+                    txt += patternList.fields[field].length > (k+1) ? ' ':'';
+                })
+
+        });
+
+        /*
+        patternList.fields.map((field,key) => {
+            txt += val[field];
+            txt += patternList.fields.length > (key+1) ? ' ':'';
+        })*/
+
+        //console.log(txt)
+        this.setState({value:txt});
+
+        // Effettua una nuova ricerca con l'elemento della lista selezionato
+        let reload = this.props.reloadOnClick!== undefined ? this.props.reloadOnClick : true;
+
+        if(!reload)
+            this.setState({ data:[], infoSearch:''});
+        else
+            this._timeOut(txt,0).then((data) => { if(data!=null) this.setState({ data:[], loader:false })} );
+
+        if(this.props.onClick!== undefined)
+            this.props.onClick(val);
+    }
+
+    // Richiama grtRemoteData dopo un certo tempo T
+    _timeOutSearch(value,time){
+        let setTime = time!== undefined ? time : this.timeOut;
+
+        clearTimeout(this.timer);
+
+        return new Promise((resolve, reject) => {
+
+            if(value==''){
+                if(this.props.callback!== undefined)
+                    this.props.callback([], true);// comunica al componente padre che non ci sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
+                return resolve(null);
+            }
+
+            this.timer = setTimeout( () => {
+                //console.log("tt");
+                resolve(this.getRemoteData(value));
+            },setTime);
+        });
+    }
+
 
     render(){
 
@@ -235,7 +323,7 @@ export default class InfiniteTable extends Component {
         return(
             <Fragment>
 
-                { this.moreInfoTable() }
+                { this._moreInfoTable() }
 
                 <table className="table" id={idTable}>
                     <thead>
@@ -303,4 +391,62 @@ export default class InfiniteTable extends Component {
         );
     }
 
+}
+
+const TableSearchField = (props) => {
+    return(
+        <div className={"search-field "+searchClassName}>
+            <InputField value={props.value} autocomplete='on'  divClassName="d-inline" className="form-control d-inline-block" name="search_field"
+            placeholder={props.placeholder!== undefined? props.placeholder:"Cerca"}
+            label={props.label!== undefined? props.label:''}
+            handleChange={props.onChange} />
+            <div className={"img-loader " + (props.loader ? "active":'' )}>
+                <img src="../img/loader.gif" />
+            </div>
+            {
+                <span className="info-search">
+                    {props.infoSearch}
+                </span>
+            }
+            <div onClick={props.onClick} className={"btn-clear " + (props.value !='' ? "active":'' )}>
+                <i className="fa fa-times" aria-hidden="true"></i>
+            </div>
+            {props.showList &&
+                <div className="search-list text-left">
+                    <ul className="list-group">
+                        {props.data.map((val,id) => {
+                                return(
+                                    <li key={id} id={val[patternList.id]}
+                                    onClick={props.onClick}
+                                    className="list-group-item">
+                                        {
+                                            Object.keys(props.patternList.fields).map((field,key) => {
+
+                                                if(props.patternList.fields[field].length==0)
+                                                    return(
+                                                        <Fragment key={key}>
+                                                            {val[field]} &nbsp;
+                                                        </Fragment>
+                                                    )
+                                                if(val[field] instanceof Object)
+                                                    return(
+                                                        props.patternList.fields[field].map((f,k) => {
+                                                            return(
+                                                                <Fragment key={key+k}>
+                                                                    {val[field][f]} &nbsp;
+                                                                </Fragment>
+                                                            )
+                                                        })
+                                                    )
+                                            })
+                                        }
+                                    </li>
+                                )
+                            })
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    );
 }

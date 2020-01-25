@@ -6,14 +6,17 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ClienteCollection extends ResourceCollection
 {
-    protected $withFields = [];
+    protected $withFields = [
+
+    ];
     protected $withPagination;
 
 
-    public function __construct($items,array $fields=[],$withPagination=false)
+    public function __construct($items, $withPagination=false, $fields=null)
     {
         parent::__construct($items);
-        $this->withFields = $fields;
+        if($fields!=null && is_array($fields))
+            $this->withFields = array_merge($this->withFields,$fields);
         $this->withPagination = $withPagination;
     }
 
@@ -46,6 +49,10 @@ class ClienteCollection extends ResourceCollection
         $comune = (string) $item->indirizzo .' - '. (string) $item->comune->nome.' ('.(string) $item->comune->prov.')';
         $fidelizzazione = $item->fidelizzazione;
 
+
+        $item['nome'] = ucfirst((string) $item->nome);
+        $item['cognome'] = ucfirst((string) $item->cognome);
+
         $item['recapiti'] = $recapiti;
         $item['residenza'] = $comune;
         $item['fidelizzazione'] = $fidelizzazione;
@@ -58,10 +65,14 @@ class ClienteCollection extends ResourceCollection
         );
 
 
-        return $item;
-        //if(empty($this->withFields)) return $array;
+        if(empty($this->withFields)) return $item;
 
-        //return array_filter($array,function($k) { return in_array($k,$this->withFields); } , ARRAY_FILTER_USE_KEY);
+        $array = [];
+        foreach($this->withFields AS $value){
+            $array[$value] = $item[$value];
+        }
+
+        return $array;
     }
 
 

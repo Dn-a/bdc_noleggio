@@ -15,7 +15,7 @@ class ClienteController extends Controller
 
         $cliente = Cliente::orderBy('id','DESC')->paginate($page);
 
-        return new ClienteCollection($cliente,[],true);
+        return new ClienteCollection($cliente,true);
     }
 
 

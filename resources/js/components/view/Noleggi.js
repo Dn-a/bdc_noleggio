@@ -156,7 +156,7 @@ export default class Noleggi extends Component {
 
 
                                         <NoleggiModal url={this.props.url}
-                                            custom={this.state.rowsSelectedListVideo}
+                                            externalRows={this.state.rowsSelectedListVideo}
                                             show={this.state.show} onHide={this._handleCloseModal}
                                             callback={
                                                 (row) => {
@@ -202,14 +202,6 @@ export default class Noleggi extends Component {
                                         <i className="fa fa-download" aria-hidden="true"></i>
                                         &nbsp;Restituzione</Button>
 
-
-                                        <NoleggiModal url={this.props.url}
-                                        //show={this.state.show} onHide={this._handleCloseModal}
-                                        callback={
-                                            (row) => {
-                                                this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
-                                            }
-                                        } />
                                     </div>
 
                                 </div>

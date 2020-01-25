@@ -125,7 +125,7 @@ export default class SearchField extends Component {
 
             if(value==''){
                 if(this.props.callback!== undefined)
-                    this.props.callback([], true);// comunica al componente padre che non vi sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
+                    this.props.callback([], true);// comunica al componente padre che non ci sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
                 return resolve(null);
             }
 
