@@ -11366,6 +11366,10 @@ ul {
   list-style: none;
 }
 
+.modal-body {
+  overflow: hidden;
+}
+
 .logo {
   width: 75px;
   margin: auto;
@@ -11383,6 +11387,31 @@ ul {
           align-items: stretch;
   overflow: hidden;
   height: 100vh;
+}
+
+.switch {
+  -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
+  transition: opacity 0.3s, -webkit-transform 0.3s;
+  transition: opacity 0.3s, transform 0.3s;
+  transition: opacity 0.3s, transform 0.3s, -webkit-transform 0.3s;
+  -webkit-transform: translateY(-450px);
+          transform: translateY(-450px);
+  opacity: 0;
+}
+
+.switch.is-active {
+  -webkit-transform: translateY(0);
+          transform: translateY(0);
+  opacity: 1;
+}
+
+.complited-msg {
+  position: absolute;
+  top: 0px;
+  padding: 30px;
+  width: 100%;
+  text-align: center;
+  margin: 0 -16px;
 }
 
 /*--- BUTTON ---*/

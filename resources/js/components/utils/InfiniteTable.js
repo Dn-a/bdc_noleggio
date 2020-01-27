@@ -112,6 +112,12 @@ export default class InfiniteTable extends Component {
 
         if(this.props.multiSelect===undefined || !this.props.multiSelect) return;
 
+        if(
+            this.props.multiSelectSetting!=undefined &&
+            this.props.multiSelectSetting.disableSelect!=undefined &&
+            this.props.multiSelectSetting.disableSelect(row)
+        ) return;
+
         let index = selectedList.indexOf(id);
         if(index>=0)
             selectedList.splice(index,1);
@@ -200,16 +206,23 @@ export default class InfiniteTable extends Component {
                                 onClick={() =>
                                     {
                                         let rows = this.props.externalRows!=null &&  this.props.externalRows instanceof Array ? this.props.externalRows : this.state.data.rows;
+                                        let selectedRow = [];
                                         let selectedList = [];
 
                                         rows.map((row,key) => {
+                                            if(this.props.multiSelectSetting!=undefined &&
+                                                this.props.multiSelectSetting.disableSelect!=undefined &&
+                                                this.props.multiSelectSetting.disableSelect(row)
+                                            ) return false;
+
+                                            selectedRow.push(row);
                                             selectedList.push(row.id);
                                         });
 
                                         this.setState({selectedList});
 
                                         if(this.props.multiSelectCallback !==undefined)
-                                            this.props.multiSelectCallback(selectedList,rows);
+                                            this.props.multiSelectCallback(selectedList,selectedRow);
                                     }
                                 }>
                                     Seleziona tutto
@@ -317,6 +330,8 @@ export default class InfiniteTable extends Component {
 
         let data = this.state.data;
         let columns = data.columns!= null ?  data.columns : [];
+        // externalRows quando non ha dati da visualizzare,
+        // deve assumere un valore stringa vuoto e non un array vuoto
         let rows = this.props.externalRows!=null &&  this.props.externalRows instanceof Array ? this.props.externalRows : data.rows;
         let idTable = this.props.id !== undefined? this.props.id:'';
 
@@ -348,7 +363,21 @@ export default class InfiniteTable extends Component {
                                 let idField = row.id;
                                 let sl = this.state.selectedList;
                                 return(
-                                    <tr className={sl.indexOf(idField)>-1 ? 'active':''} key={id} onClick={() => this._handleMultiSelection(idField,row)}>
+                                    <tr className={
+                                            (
+                                                this.props.multiSelectSetting!=undefined &&
+                                                this.props.multiSelectSetting.disableSelect!=undefined &&
+                                                this.props.multiSelectSetting.disableSelect(row)
+                                            )
+                                            ?
+                                            '':
+                                            (
+                                                sl.indexOf(idField)>-1?'active':''
+                                            )
+                                        }
+                                        key={id}
+                                        onClick={() => this._handleMultiSelection(idField,row)}
+                                    >
                                         {
                                             columns.map((column,id) => {
                                                 //console.log(row['img']);

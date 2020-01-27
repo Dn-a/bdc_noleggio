@@ -23,7 +23,7 @@ const COLUMNS = [
         if(cell==null ) return;
 
         let linkSource = 'data:application/pdf;base64,'+cell;
-        let downloadLink = document.createElement("a");
+        //let downloadLink = document.createElement("a");
         let fileName = 'privacy_'+row.nome+'_'+row.cognome+'.pdf';
 
         return(
@@ -31,8 +31,8 @@ const COLUMNS = [
                 <i className="fa fa-file-pdf-o" aria-hidden="true"></i>
             </a>
         );
-        downloadLink.href = linkSource;
-        downloadLink.download = fileName;
+        //downloadLink.href = linkSource;
+        //downloadLink.download = fileName;
         //downloadLink.click();
     } },
   ];

@@ -16,8 +16,12 @@ const COLUMNS = [
     { title: 'Giorni al Ritiro', field:'ritiro'},
     { title: 'Noleggiato', field:'noleggiato', render: cell => cell==0?'No':'SI'},
     { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':'SI'},
-  ];
-
+];
+const MULTISEL_SETTING = {
+    disableSelect: (row) => {
+        return row.noleggiato == 1;
+    }
+};
 
 export default class Magazzino extends Component {
 
@@ -193,6 +197,7 @@ export default class Magazzino extends Component {
                                             columns={COLUMNS}
                                             externalRows={this.state.rows}
                                             multiSelect={true}
+                                            multiSelectSetting={MULTISEL_SETTING}
                                             selectedList={this.state.selectedList}
                                             multiSelectCallback={ (list) =>{
                                                 this.setState({selectedList:list})

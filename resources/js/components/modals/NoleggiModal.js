@@ -1,4 +1,5 @@
 import React, { Component , Fragment } from 'react';
+import cx from "classnames";
 
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
@@ -39,8 +40,10 @@ export default class DipendentiModal extends Component {
             data: data,
             error: error,
             checked: false,
-            openModal:false,
-            loader:false
+            openModal: false,
+            loader: false,
+            complited: false,
+            pdf:''
         };
 
         this._handleChange = this._handleChange.bind(this);
@@ -60,6 +63,8 @@ export default class DipendentiModal extends Component {
         this.state.loader = false;
         this.state.checked = false;
         this.state.openModal = false;
+        this.state.complited = false;
+        this.state.pdf = '';
     }
 
     componentDidUpdate (){
@@ -122,11 +127,11 @@ export default class DipendentiModal extends Component {
 
         return axios.post(url,data,headers)
         .then(result => {
-            console.log(result);return;
-            if(this.props.callback !== undefined)
-                this.props.callback(data);
-            this.props.onHide();
-            this.state.loader = false;
+            //console.log(result.data.pdf);return;
+            this.setState({complited:true, pdf:result.data.pdf, loader:false},()=>{
+                if(this.props.callback !== undefined)
+                    this.props.callback(data);
+            });
             return result;
         }).catch((error) => {
           console.error(error.response.data);
@@ -166,7 +171,8 @@ export default class DipendentiModal extends Component {
                 else if(date <= today )
                     error[field][key] = INFO_ERROR['data'];
                 else {
-                    let giorni = Math.ceil((date-(new Date()).getTime())/(3600000*24));
+                    let day = (date-(new Date()).getTime())/(3600000*24);
+                    let giorni = day>1?Math.round(day):Math.ceil(day);
                     data.prezzo_tot[key] = giorni * row.prezzo;
                 }
                 break;
@@ -221,6 +227,14 @@ export default class DipendentiModal extends Component {
           );
     }
 
+    _complited(){
+        return(
+            <div>
+                suca
+            </div>
+        )
+    }
+
     render(){
 
         let divClassName = 'mb-3';
@@ -228,8 +242,14 @@ export default class DipendentiModal extends Component {
 
         let externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
 
+        // dopo aver completato il noleggio, il server trasmetterà
+        // un pdf in formato base64 come risposta
+        let linkSource = this.state.pdf!=''? 'data:application/pdf;base64,'+this.state.pdf:'';
+        let fileName = 'ricevuta_noleggio.pdf';
+
+        //calcolo prezzo totale
         let totPagare = 0;
-        this.state.data.prezzo_tot.map((val) => totPagare+=val)
+        this.state.data.prezzo_tot.map((val) => totPagare+=val);
 
         return(
             <AddEditModal size="lg"
@@ -238,96 +258,118 @@ export default class DipendentiModal extends Component {
                 loader={this.state.loader}
                 onConfirm={this._handleOnSave}
                 txtConfirmButton='Noleggia'
-                disabledConfirmButton={!this.state.checked}
+                disabledConfirmButton={!this.state.checked || this.state.complited}
                 title="Video" type="Noleggio"
             >
-
-                <div className="form-group w-50 mb-4">
-                    <SearchField
-                        label="Cliente"
-                        placeholder='Cerca un Cliente'
-                        searchClassName='w-100'
-                        showList={true}
-                        url={urlCliente}
-                        patternList={{id:'id', fields:{nome:[],cognome:[],cf:[]} } }//id di ritorno; i fields vengono usati come titolo
-                        reloadOnClick={false}
-                        onClick={(val) => {
-                                //console.log(val);
-                                let data = this.state.data;
-                                let error = this.state.error;
-                                data.id_cliente = val.id;
-                                error.id_cliente = '';
-                                this.setState({data,error},() => this.checked());
-                            }
-                        }
-                        callback={(val) => {
-                                //console.log(val);
-                                let data = this.state.data;
-                                let error = this.state.error;
-                                data.id_cliente = '';
-                                if(val.length==0){
-                                    error.id_cliente = INFO_ERROR['cliente'];
+                <div className=
+                    {cx("switch", {
+                        "is-active": !this.state.complited,
+                    })}
+                >
+                    <div className="form-group w-50 mb-4">
+                        <SearchField
+                            label="Cliente"
+                            placeholder='Cerca un Cliente'
+                            searchClassName='w-100'
+                            showList={true}
+                            url={urlCliente}
+                            patternList={{id:'id', fields:{nome:[],cognome:[],cf:[]} } }//id di ritorno; i fields vengono usati come titolo
+                            reloadOnClick={false}
+                            onClick={(val) => {
+                                    //console.log(val);
+                                    let data = this.state.data;
+                                    let error = this.state.error;
+                                    data.id_cliente = val.id;
+                                    error.id_cliente = '';
+                                    this.setState({data,error},() => this.checked());
                                 }
-                                this.setState({data,error},() => this.checked());
                             }
-                        }
-                    />
-                    {this.showError('id_cliente')}
-                </div>
-
-                <div className="form-group">
-                        <div className='table-responsive'>
-                            <label>Film selezionati</label>
-                            <table className="table">
-                                <thead>
-                                    <tr>
-                                        <th>N</th>
-                                        <th>Titolo</th>
-                                        <th>Prezzo</th>
-                                        <th>Data restituzione</th>
-                                        <th>Giorni</th>
-                                        <th>Prezzo complessivo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        externalRows.map((row,key) => {
-                                            let data = this.state.data;
-                                            let date = data.data_fine[key]==null || data.data_fine[key]==''?'000-00-00':data.data_fine[key];
-                                            let giorni = date=='000-00-00' || Date.parse(date)<=(new Date()).getTime() ? 0 : Math.ceil((Date.parse(date)-(new Date()).getTime())/(3600000*24));
-                                            //console.log((Date.parse(date)-(new Date()).getTime())/(3600000*24))
-                                            return(
-                                                <tr key={key}>
-                                                    <td>{(key+1)}</td>
-                                                    <td>{row.titolo}</td>
-                                                    <td>{parseFloat(row.prezzo).toFixed(2) +' €'}</td>
-                                                    <td>
-                                                        <DataField
-                                                            name ="data_fine" className="form-control"
-                                                            placeholder='data fine'
-                                                            helperText={this.showError('data_fine',key)}
-                                                            value={date}
-                                                            handleChange={(e) => this._handleChange(e,key,row)}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        {giorni}
-                                                    </td>
-                                                    <td>
-                                                        {parseFloat(data.prezzo_tot[key]).toFixed(2) +' €'}
-                                                    </td>
-                                                </tr>
-                                            )
-                                        })
+                            callback={(val) => {
+                                    //console.log(val);
+                                    let data = this.state.data;
+                                    let error = this.state.error;
+                                    data.id_cliente = '';
+                                    if(val.length==0){
+                                        error.id_cliente = INFO_ERROR['cliente'];
                                     }
-                                </tbody>
-                            </table>
+                                    this.setState({data,error},() => this.checked());
+                                }
+                            }
+                        />
+                        {this.showError('id_cliente')}
                     </div>
+
+                    <div className="form-group">
+                            <div className='table-responsive'>
+                                <label>Film selezionati</label>
+                                <table className="table">
+                                    <thead>
+                                        <tr>
+                                            <th>N</th>
+                                            <th>Titolo</th>
+                                            <th>Prezzo</th>
+                                            <th>Data restituzione</th>
+                                            <th>Giorni</th>
+                                            <th>Prezzo complessivo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            externalRows.map((row,key) => {
+                                                let data = this.state.data;
+                                                let date = data.data_fine[key]==null || data.data_fine[key]==''?'000-00-00':data.data_fine[key];
+                                                let day = (Date.parse(date)-(new Date()).getTime())/(3600000*24);
+                                                let giorni = date=='000-00-00' || Date.parse(date) <= (new Date()).getTime() ? 0 : (day>1?Math.round(day):Math.ceil(day));
+                                                //console.log(giorni);
+                                                return(
+                                                    <tr key={key}>
+                                                        <td>{(key+1)}</td>
+                                                        <td>{row.titolo}</td>
+                                                        <td>{parseFloat(row.prezzo).toFixed(2) +' €'}</td>
+                                                        <td>
+                                                            <DataField
+                                                                name ="data_fine" className="form-control"
+                                                                placeholder='data fine'
+                                                                helperText={this.showError('data_fine',key)}
+                                                                value={date}
+                                                                handleChange={(e) => this._handleChange(e,key,row)}
+                                                            />
+                                                        </td>
+                                                        <td>
+                                                            {giorni}
+                                                        </td>
+                                                        <td>
+                                                            {parseFloat(data.prezzo_tot[key]).toFixed(2) +' €'}
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+
+                    <div className="form-group">
+                        <div className="text-right p-2 px-4">
+                            <strong>Totale da pagare:</strong> {parseFloat(totPagare).toFixed(2) +' €'}
+                        </div>
+                    </div>
+
                 </div>
 
-                <div className="form-group">
-                    <div className="text-right p-2 px-4">
-                        <strong>Totale da pagare:</strong> {parseFloat(totPagare).toFixed(2) +' €'}
+                <div className=
+                    {cx("switch complited-msg", {
+                        "is-active": this.state.complited,
+                    })}
+                >
+                    <div className="form-group">
+                        <h2>Noleggio andato a buon Fine!</h2>
+                        <div className="mt-3">scarica la ricevuta</div>
+
+                        <a className="pdf" href={linkSource} download={fileName}>
+                            <i className="fa fa-file-pdf-o" aria-hidden="true"></i> Ricevuta Noleggio
+                        </a>
                     </div>
                 </div>
 

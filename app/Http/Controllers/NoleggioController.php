@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Cliente;
 use App\Http\Resources\NoleggioCollection;
 use App\Magazzino;
 use App\Noleggio;
-use PDF;
+use App\Ricevuta;
+use App\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 class NoleggioController extends Controller
 {
@@ -52,7 +55,7 @@ class NoleggioController extends Controller
                     ->orWhere('cf','like',$arr[0].'%');
             });
         })
-        ->limit(10)->get();
+        ->limit(15)->get();
 
 
         return  new NoleggioCollection($noleggio,false, $this->moreField($ruolo));
@@ -73,14 +76,7 @@ class NoleggioController extends Controller
 
     public function create()
     {
-        $array = [
-            'title'=>'aa',
-            'content' => 'suca'
-        ];
 
-        return view('pdf.ricevuta_noleggio', $array);
-        $pdf = PDF::loadView('pdf.ricevuta_noleggio', ['title'=>'aa','content' => 'suca']);
-        return $pdf->download('ricevuta.pdf');
     }
 
 
@@ -104,14 +100,17 @@ class NoleggioController extends Controller
 
             $input = $request->all();
 
-            //return response()->json($input['id_video'],201);exit;
-
-            $idDipendente = Auth::user()->id;
-            $idPtVendita = Auth::user()->id_pt_vendita;
-
+            $user = Auth::user();
+            $idDipendente = $user->id;
+            $idPtVendita = $user->id_pt_vendita;
             $array = [];
+
+            // Field Ricevuta
+            $totale = 0;
+            $noleggi = [];
+
             for( $i=0 ; $i < count($input['id_video']) ; $i++ ){
-                // prendo l'id magazzino per usarlo nella tabella noleggi
+                // prendo l'id magazzino
                 // seleziono il primo in ordine Ascendente
                 $magazzino = Magazzino::
                         where('id_video',$input['id_video'][$i])
@@ -134,21 +133,150 @@ class NoleggioController extends Controller
                     'prezzo_tot' => $input['prezzo_tot'][$i],
                     'data_fine' => $input['data_fine'][$i],
                 ];
+
+                date_default_timezone_set("Europe/Rome");
+                $gg = ceil( (strtotime($input['data_fine'][$i]) - time()) / 86400 );
+
+                $video = Video::where('id',$input['id_video'][$i])->first();
+                $importo = $video->prezzo*$gg;
+
+                $noleggi[$i] = [
+                    'descrizione' => $video->titolo,
+                    'data_riconsegna' => $input['data_fine'][$i],
+                    'n_giorni' => $gg,
+                    'prezzo' => $video->prezzo,
+                    'importo' =>  $importo
+                ];
+
+                $totale += $importo;
             }
 
-            $pdf = PDF::loadView('pdf.ricevuta_noleggio', ['title'=>'aa','content' => 'suca']);
-            return $pdf->download('invoice.pdf');
+            $cliente = Cliente::where('id',$input['id_cliente'])->first();
+
+            $datiRicevutaNoleggio = [
+                'ptVendita' => [
+                    'titolo' => $user->puntoVendita->titolo,
+                    'indirizzo' => $user->puntoVendita->indirizzo.' '.
+                                   $user->puntoVendita->comune->nome.' ('.
+                                   $user->puntoVendita->comune->prov.')'
+                ],
+                'cliente'=> [
+                    'nome' => ucfirst($cliente->nome).' '.ucfirst($cliente->cognome),
+                    'indirizzo' => ucfirst($cliente->indirizzo).' '.
+                                   $cliente->comune->nome.' ('.
+                                   $cliente->comune->prov.')',
+                    'telefono' => $cliente->telefono,
+                    'cellulare' => $cliente->cellulare,
+                    'email' => $cliente->email
+                ],
+                'tabella' => $noleggi,
+                'totale' => $totale
+            ];
+
+            $ricevuta = $this->pdfGenerate($datiRicevutaNoleggio);
+
+            Ricevuta::insert(
+                [
+                    'tipo' => 'noleggio',
+                    'id_pt_vendita' => $idPtVendita,
+                    'id_dipendente' => $idDipendente,
+                    'id_cliente' => $input['id_cliente'],
+                    'pdf' => $ricevuta
+                ]
+            );
+
+            //return response()->json($datiRicevutaNoleggio,201);exit;
 
             $noleggio = new Noleggio();
 
             $noleggio->insert($array);
 
-            return response()->json(['msg' =>'added','data' => $noleggio],201);
+            return response()->json(['pdf' => $ricevuta],201);
 
 
         }catch( \Illuminate\Database\QueryException $e){
             return response()->json(['msg' => $e->getMessage() ],500);
         }
+    }
+
+
+    // PDF GENERATOR
+    //
+    private function pdfGenerate($array)
+    {
+        /*$array = [
+            'ptVendita' => [
+                'titolo' => 'Roma01',
+                'indirizzo' => 'p.zza repubblica - Roma',
+                'telefono' => '0142564589',
+                'email' => 'info.roma@movierental.it'
+            ],
+            'cliente'=> [
+                'nome' => 'Mario Rossi',
+                'indirizzo' => 'via aa - Palermo',
+                'telefono' => '012456236',
+                'cellulare' => '33322544',
+                'email' => 'email@email.com'
+            ],
+            'tabella' => [
+                [
+                    'descrizione' => 'cod. 1 - Pulp Fiction',
+                    'n_giorni' => '2',
+                    'prezzo' => '5',
+                    'importo' => '10',
+                    'danneggiato' => 'danneggiato'
+                ],
+                [
+                    'descrizione' => 'cod. 1 - Pulp Fiction',
+                    'n_giorni' => '2',
+                    'prezzo' => '5',
+                    'importo' => '10',
+                    'danneggiato' => 'danneggiato'
+                ],
+                [
+                    'descrizione' => 'cod. 1 - Pulp Fiction',
+                    'n_giorni' => '2',
+                    'prezzo' => '5',
+                    'importo' => '10',
+                    'danneggiato' => 'danneggiato'
+                ],
+                [
+                    'descrizione' => 'cod. 1 - Pulp Fiction',
+                    'n_giorni' => '2',
+                    'prezzo' => '5',
+                    'importo' => '10',
+                    'danneggiato' => 'danneggiato'
+                ],
+                [
+                    'descrizione' => 'cod. 1 - Pulp Fiction',
+                    'n_giorni' => '2',
+                    'prezzo' => '5',
+                    'importo' => '10',
+                    'danneggiato' => 'danneggiato'
+                ],
+                [
+                    'descrizione' => 'cod. 1 - Pulp Fiction',
+                    'n_giorni' => '2',
+                    'prezzo' => '5',
+                    'importo' => '10',
+                    'danneggiato' => 'danneggiato'
+                ]
+            ],
+            'tipoSconto' => 'start',
+            'sconto' =>'0',
+            'totDanni' => '0',
+            'giorniExtra' => '0',
+            'totale' => '10'
+        ];*/
+
+        //return view('pdf.ricevuta_pagamento', $array);
+        //PDF::setOptions(['dpi' => 96, 'fontHeightRatio' => '0.5']);
+        //$pdf = PDF::loadView('pdf.ricevuta_pagamento', $array);
+        $pdf = PDF::loadView('pdf.ricevuta_noleggio', $array);
+        $file = $pdf->download('ricevuta.pdf');
+        $blob = base64_encode($file);
+
+        return $blob;
     }
 
 

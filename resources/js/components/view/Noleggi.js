@@ -36,7 +36,13 @@ const COLUMNS_VIDEO = [
             );
         }
     },
-  ];
+];
+
+const MS_VIDEO = {
+    disableSelect: (row) => {
+        return row.qta_disponibili==0;
+    }
+};
 
 const COLUMNS_NOLEGGI = [
     { title: 'id', field: 'id' , align:'right'},
@@ -98,6 +104,7 @@ export default class Noleggi extends Component {
         this.setState({rowsVideo});
 
         if(reset){
+            // al momento unica soluzione per notificare a InfinityTable che externalRow è vuoto
             rowsVideo = '';
             this.setState({rowsVideo});
         }
@@ -133,7 +140,13 @@ export default class Noleggi extends Component {
                         Noleggia un Video
                     </a>
                     <a className="nav-item nav-link" id="nav-caricati-tab" data-toggle="tab" href="#nav-caricati" role="tab" aria-controls="nav-caricati" aria-selected="false">
-                        Video Noleggiati
+                        Noleggi Attivi
+                    </a>
+                    <a className="nav-item nav-link" id="nav-storico-tab" data-toggle="tab" href="#nav-storico" role="tab" aria-controls="nav-storico" aria-selected="false">
+                        Storico Noleggi
+                    </a>
+                    <a className="nav-item nav-link" id="nav-ricevute-tab" data-toggle="tab" href="#nav-ricevute" role="tab" aria-controls="nav-ricevute" aria-selected="false">
+                        Ricevute
                     </a>
                 </div>
                 </nav>
@@ -178,6 +191,7 @@ export default class Noleggi extends Component {
                                             columns={COLUMNS_VIDEO}
                                             externalRows={this.state.rowsVideo}
                                             multiSelect={true}
+                                            multiSelectSetting={MS_VIDEO}
                                             selectedList={this.state.selectedListVideo}
                                             multiSelectCallback={ (list,row) =>{
                                                 this.setState({selectedListVideo:list, rowsSelectedListVideo:row})
@@ -225,6 +239,14 @@ export default class Noleggi extends Component {
                                     </div>
                                 </div>
                         </div>
+                    </div>
+
+                    <div className="tab-pane fade" id="nav-storico" role="tabpanel" aria-labelledby="nav-storico-tab">
+
+                    </div>
+
+                    <div className="tab-pane fade" id="nav-ricevute" role="tabpanel" aria-labelledby="nav-ricevute-tab">
+
                     </div>
 
                 </div>

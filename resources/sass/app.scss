@@ -16,7 +16,9 @@ ul{
     margin: 0;
     list-style: none;
 }
-
+.modal-body{
+    overflow: hidden;
+}
 .logo {
     width: 75px;
     margin: auto;
@@ -30,6 +32,23 @@ ul{
     align-items: stretch;
     overflow: hidden;
     height: 100vh;
+}
+.switch {
+    transition:opacity .3s,transform .3s;
+    transform:translateY(-450px);
+    opacity:0;
+}
+.switch.is-active {
+    transform:translateY(0);
+    opacity:1;
+}
+.complited-msg{
+    position: absolute;
+    top: 0px;
+    padding: 30px;
+    width: 100%;
+    text-align: center;
+    margin: 0 -16px;
 }
 /*--- BUTTON ---*/
     .btn-info,

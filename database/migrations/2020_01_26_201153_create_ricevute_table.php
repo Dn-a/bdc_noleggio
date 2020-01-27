@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateNoleggiTable extends Migration
+class CreateRicevuteTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,23 +13,20 @@ class CreateNoleggiTable extends Migration
      */
     public function up()
     {
-        Schema::create('noleggi', function (Blueprint $table) {
+        Schema::create('ricevute', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('tipo',50);
+            $table->unsignedInteger('id_pt_vendita');
             $table->unsignedInteger('id_dipendente');
             $table->unsignedInteger('id_cliente');
-            $table->unsignedInteger('id_magazzino');
-            $table->float('prezzo_tot');
-            $table->float('prezzo_extra');
-            $table->timestamp('data_inizio')->useCurrent();
-            $table->date('data_fine');
-            $table->date('data_restituzione');
+            $table->binary('pdf');
+            $table->timestamp('data_creazione')->useCurrent();
         });
 
-        Schema::table('noleggi', function($table) {
+        Schema::table('ricevute', function($table) {
         	$table->foreign('id_cliente')->references('id')->on('clienti')->onDelete('restrict');
         	$table->foreign('id_dipendente')->references('id')->on('dipendenti')->onDelete('restrict');
-            $table->foreign('id_magazzino')->references('id')->on('magazzino')->onDelete('restrict');
-        	//$table->foreign('id_tariffa')->references('id')->on('tariffe')->onDelete('restrict');
+        	$table->foreign('id_pt_vendita')->references('id')->on('pt_vendita')->onDelete('restrict');
         });
     }
 
@@ -40,6 +37,6 @@ class CreateNoleggiTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('noleggi');
+        Schema::dropIfExists('ricevute');
     }
 }

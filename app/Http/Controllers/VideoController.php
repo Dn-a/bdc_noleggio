@@ -25,8 +25,9 @@ class VideoController extends Controller
                 $query->where('id_pt_vendita',$idPtVendita);
         })->orderBy('id','DESC')->paginate($page);
 
-        return new VideoCollection($video, true
-            //,$this->moreField($ruolo)
+        return new VideoCollection($video, true,
+            null,//,$this->moreField($ruolo)
+            $idPtVendita
         );
     }
 

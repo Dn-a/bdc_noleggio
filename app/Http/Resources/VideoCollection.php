@@ -19,13 +19,16 @@ class VideoCollection extends ResourceCollection
         'img'
     ];
     protected $withPagination;
+    private $idPtVendita;
 
 
-    public function __construct($items, $withPagination=false, $fields=null)
+    public function __construct($items, $withPagination=false, $fields=null,$idPtVendita=null)
     {
         parent::__construct($items);
         if($fields!=null && is_array($fields))
             $this->withFields = array_merge($this->withFields,$fields);
+        if($idPtVendita!=null)
+            $this->idPtVendita = $idPtVendita;
         $this->withPagination = $withPagination;
     }
 
@@ -55,16 +58,23 @@ class VideoCollection extends ResourceCollection
     protected function filterFields($item)
     {
 
-        $ptVendita = $item->puntoVendita;
-        $qta_disponibili = count($item->magazzino->where('restituito_al_fornitore',0)->where('noleggiato',0));
-        $qta_magazzino = count($item->magazzino->where('restituito_al_fornitore',0));
+        $qta_disponibili = count(
+                    $item->magazzino
+                    ->where('id_pt_vendita',$this->idPtVendita)
+                    ->where('restituito_al_fornitore',0)
+                    ->where('noleggiato',0)
+                );
+        $qta_magazzino = count(
+                    $item->magazzino
+                    ->where('id_pt_vendita',$this->idPtVendita)
+                    ->where('restituito_al_fornitore',0)
+                );
         $categoria = (string) $item->categoria->titolo;
         $regista = (string) $item->regista->nome
         .' '. (string) $item->regista->cognome;
 
         $item['categoria'] = $categoria;
         $item['regista'] = $regista;
-        $item['pt_vendita'] = $ptVendita;
         $item['qta_disponibili'] = $qta_disponibili;
         $item['qta_magazzino'] = $qta_magazzino;
 
