@@ -163,16 +163,13 @@ export default class DipendentiModal extends Component {
         switch(field){
             case 'data_fine':
                 let today = new Date();
-                today = new Date(today.toDateString()).getTime();
                 let date = value==''?new Date():new Date(value);
-                date = new Date(date.toDateString()).getTime();
                 if(value=='')
                     error[field][key] = INFO_ERROR['vuoto'];
-                else if(date <= today )
+                else if(date.getTime() <= today.getTime() )
                     error[field][key] = INFO_ERROR['data'];
                 else {
-                    let day = (date-(new Date()).getTime())/(3600000*24);
-                    let giorni = day>1?Math.round(day):Math.ceil(day);
+                    let giorni = this._calcDay(date);
                     data.prezzo_tot[key] = giorni * row.prezzo;
                 }
                 break;
@@ -211,6 +208,15 @@ export default class DipendentiModal extends Component {
 
 
         this.setState({checked});
+    }
+
+    _calcDay(date){
+        let now = new Date();
+        now = new Date(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
+        let day = ( Date.parse(date) - now.getTime() ) / (3600000*24);
+        let giorni = date=='000-00-00' || Date.parse(date) <= now.getTime() ? 0 : Math.round(day);
+        //console.log(day); console.log(giorni);
+        return giorni;
     }
 
     showError(field,key){
@@ -318,9 +324,8 @@ export default class DipendentiModal extends Component {
                                             externalRows.map((row,key) => {
                                                 let data = this.state.data;
                                                 let date = data.data_fine[key]==null || data.data_fine[key]==''?'000-00-00':data.data_fine[key];
-                                                let day = (Date.parse(date)-(new Date()).getTime())/(3600000*24);
-                                                let giorni = date=='000-00-00' || Date.parse(date) <= (new Date()).getTime() ? 0 : (day>1?Math.round(day):Math.ceil(day));
-                                                //console.log(giorni);
+                                                let giorni = this._calcDay(date);
+
                                                 return(
                                                     <tr key={key}>
                                                         <td>{(key+1)}</td>

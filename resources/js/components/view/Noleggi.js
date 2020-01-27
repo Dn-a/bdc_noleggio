@@ -48,13 +48,16 @@ const COLUMNS_NOLEGGI = [
     { title: 'id', field: 'id' , align:'right'},
     { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },
     { title: 'Cliente', field: 'cliente', style: {textTransform:'capitalize'} },
-    { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} },
+    USER_CONFIG.ruolo!='Addetto'?
+        { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} }
+    :
+        null,
     //{ title: 'Prezzo Extra', field: 'prezzo_extra', render: cell => parseFloat(cell).toFixed(2) +' €'},
     { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Giorni', field: 'giorni'},
     { title: 'Costo Tot.', field: 'prezzo_tot', render: cell => parseFloat(cell).toFixed(2) +' €'},
-];
+].map((a) => { if(a!=null) return a; return false; } );
 
 
 export default class Noleggi extends Component {

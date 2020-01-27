@@ -77290,12 +77290,10 @@ function (_Component) {
       switch (field) {
         case 'data_fine':
           var today = new Date();
-          today = new Date(today.toDateString()).getTime();
           var date = value == '' ? new Date() : new Date(value);
-          date = new Date(date.toDateString()).getTime();
-          if (value == '') error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['vuoto'];else if (date <= today) error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['data'];else {
-            var day = (date - new Date().getTime()) / (3600000 * 24);
-            var giorni = day > 1 ? Math.round(day) : Math.ceil(day);
+          if (value == '') error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['vuoto'];else if (date.getTime() <= today.getTime()) error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['data'];else {
+            var giorni = this._calcDay(date);
+
             data.prezzo_tot[key] = giorni * row.prezzo;
           }
           break;
@@ -77332,6 +77330,16 @@ function (_Component) {
       this.setState({
         checked: checked
       });
+    }
+  }, {
+    key: "_calcDay",
+    value: function _calcDay(date) {
+      var now = new Date();
+      now = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+      var day = (Date.parse(date) - now.getTime()) / (3600000 * 24);
+      var giorni = date == '000-00-00' || Date.parse(date) <= now.getTime() ? 0 : Math.round(day); //console.log(day); console.log(giorni);
+
+      return giorni;
     }
   }, {
     key: "showError",
@@ -77440,8 +77448,8 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "N"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Data restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo complessivo"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
         var data = _this4.state.data;
         var date = data.data_fine[key] == null || data.data_fine[key] == '' ? '000-00-00' : data.data_fine[key];
-        var day = (Date.parse(date) - new Date().getTime()) / (3600000 * 24);
-        var giorni = date == '000-00-00' || Date.parse(date) <= new Date().getTime() ? 0 : day > 1 ? Math.round(day) : Math.ceil(day); //console.log(giorni);
+
+        var giorni = _this4._calcDay(date);
 
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: key
@@ -78870,7 +78878,7 @@ var InfoError = {
   'data': 'inserire una data superiore a quella corrente',
   'caratteri': 'Inserire caratteri validi',
   'password': 'Inserire almeno 8 caratteri',
-  'confirm_password': 'Le password non sono uguali',
+  'confirm_password': 'Le password non corrispondono',
   'comune': 'inserire un comune valido',
   'pt_vendita': 'inserire un punto vendita valido',
   'fornitore': 'inserire un fornitore valido',
@@ -79694,19 +79702,19 @@ var COLUMNS = [{
   style: {
     textTransform: 'capitalize'
   }
-}, {
+}, USER_CONFIG.ruolo == 'Admin' ? {
   title: 'P.to Vendita',
   field: 'pt_vendita',
   style: {
     textTransform: 'capitalize'
   }
-}, {
+} : null, USER_CONFIG.ruolo != 'Addetto' ? {
   title: 'Dipendente',
   field: 'dipendente',
   style: {
     textTransform: 'capitalize'
   }
-}, {
+} : null, {
   title: 'Fornitore',
   field: 'fornitore',
   style: {
@@ -79729,7 +79737,9 @@ var COLUMNS = [{
   title: 'Noleggiato',
   field: 'noleggiato',
   render: function render(cell) {
-    return cell == 0 ? 'No' : 'SI';
+    return cell == 0 ? 'No' : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: "highlight"
+    }, "Si");
   }
 }, {
   title: 'Danneggiato',
@@ -79737,7 +79747,10 @@ var COLUMNS = [{
   render: function render(cell) {
     return cell == 0 ? 'No' : 'SI';
   }
-}];
+}].map(function (a) {
+  if (a != null) return a;
+  return false;
+});
 var MULTISEL_SETTING = {
   disableSelect: function disableSelect(row) {
     return row.noleggiato == 1;
@@ -80144,13 +80157,13 @@ var COLUMNS_NOLEGGI = [{
   style: {
     textTransform: 'capitalize'
   }
-}, {
+}, USER_CONFIG.ruolo != 'Addetto' ? {
   title: 'Dipendente',
   field: 'dipendente',
   style: {
     textTransform: 'capitalize'
   }
-}, //{ title: 'Prezzo Extra', field: 'prezzo_extra', render: cell => parseFloat(cell).toFixed(2) +' €'},
+} : null, //{ title: 'Prezzo Extra', field: 'prezzo_extra', render: cell => parseFloat(cell).toFixed(2) +' €'},
 {
   title: 'Data Inizio',
   field: 'data_inizio',
@@ -80180,7 +80193,10 @@ var COLUMNS_NOLEGGI = [{
   render: function render(cell) {
     return parseFloat(cell).toFixed(2) + ' €';
   }
-}];
+}].map(function (a) {
+  if (a != null) return a;
+  return false;
+});
 
 var Noleggi =
 /*#__PURE__*/

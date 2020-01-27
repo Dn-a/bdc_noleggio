@@ -12,7 +12,6 @@ class MagazzinoCollection extends ResourceCollection
         'fornitore',
         'data_scarico',
         'ritiro',
-        'noleggiato',
         'danneggiato',
     ];
     protected $withPagination;
@@ -61,8 +60,11 @@ class MagazzinoCollection extends ResourceCollection
             .' - '. (string) $item->puntoVendita->comune->nome
             .' ('. (string) $item->puntoVendita->comune->prov.')';
 
+
         date_default_timezone_set("Europe/Rome");
-        $gg = round( (strtotime($item->data_ritiro) - time()) / 86400 );
+        $date = date("Y-m-d ");
+        $day = (strtotime($item->data_ritiro) - strtotime($date)) / 86400;
+        $gg = round($day);
         $ritiro = $gg>=0 ? $gg : 0;
 
         $item['video'] = $video;

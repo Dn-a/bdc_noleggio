@@ -3,7 +3,7 @@ const InfoError = {
     'data': 'inserire una data superiore a quella corrente',
     'caratteri': 'Inserire caratteri validi',
     'password': 'Inserire almeno 8 caratteri',
-    'confirm_password': 'Le password non sono uguali',
+    'confirm_password': 'Le password non corrispondono',
     'comune':'inserire un comune valido',
     'pt_vendita':'inserire un punto vendita valido',
     'fornitore':'inserire un fornitore valido',

@@ -11366,6 +11366,10 @@ ul {
   list-style: none;
 }
 
+.highlight {
+  color: #3490dc;
+}
+
 .modal-body {
   overflow: hidden;
 }

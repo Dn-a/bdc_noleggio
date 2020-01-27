@@ -70,8 +70,9 @@ class NoleggioCollection extends ResourceCollection
         $item['pt_vendita'] = $ptVendita;
 
         date_default_timezone_set("Europe/Rome");
-        $day = (strtotime($item->data_fine) - time()) / 86400;
-        $gg = $day>1 ? round($day) : ceil($day);
+        $date = date("Y-m-d ");
+        $day = (strtotime($item->data_fine) - strtotime($date)) / 86400;
+        $gg = round($day);
         $giorni = $gg>=0 ? $gg : 0;
 
         $item['giorni'] = $giorni;

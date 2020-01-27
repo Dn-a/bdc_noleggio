@@ -9,14 +9,20 @@ import ScaricoVideoModal from '../modals/ScaricoVideoModal';
 const COLUMNS = [
     { title: 'id', field: 'id' , align:'right'},
     { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },
-    { title: 'P.to Vendita', field: 'pt_vendita', style: {textTransform:'capitalize'} },
-    { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} },
+    USER_CONFIG.ruolo=='Admin'?
+        { title: 'P.to Vendita', field:'pt_vendita', style: {textTransform:'capitalize'} }
+    :
+        null,
+    USER_CONFIG.ruolo!='Addetto'?
+        { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} }
+    :
+        null,
     { title: 'Fornitore', field: 'fornitore',style: {textTransform:'capitalize'} },
     { title: 'Data Scarico', field: 'data_scarico',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Giorni al Ritiro', field:'ritiro'},
-    { title: 'Noleggiato', field:'noleggiato', render: cell => cell==0?'No':'SI'},
+    { title: 'Noleggiato', field:'noleggiato', render: cell => cell==0 ? 'No' : <span className="highlight">Si</span>},
     { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':'SI'},
-];
+].map((a) => { if(a!=null) return a; return false; } );
 const MULTISEL_SETTING = {
     disableSelect: (row) => {
         return row.noleggiato == 1;

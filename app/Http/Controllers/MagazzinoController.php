@@ -31,7 +31,7 @@ class MagazzinoController extends Controller
         ->orderBy('id','DESC')->paginate($page);
 
 
-        return new MagazzinoCollection($magazzino, true, $this->moreField($ruolo));
+        return new MagazzinoCollection($magazzino, true, $this->moreField($ruolo, $caricati));
     }
 
     public function search(Request $request, $val)
@@ -83,13 +83,18 @@ class MagazzinoController extends Controller
         return  new MagazzinoCollection($magazzino,false,$this->moreField($ruolo));
     }
 
-    private function moreField($ruolo)
+    private function moreField($ruolo, $caricati)
     {
         $moreFields = [
+            'noleggiato',
         ];
+        if($caricati) // video restituiti al fornitore
+            $moreFields = [];
 
         if($ruolo=='Admin')
             $moreFields =  array_merge($moreFields,['dipendente','pt_vendita']);
+        elseif($ruolo=='Responsabile')
+            $moreFields =  array_merge($moreFields,['dipendente']);
 
         return $moreFields;
     }
