@@ -150,16 +150,13 @@
                 <div class="row">
                     <div class="col-md-8 float-left">
                         <div class="text-left">
-                            <h4>Ricevuta Pagamento</h4>
+                            <h4>Ricevuta di Pagamento</h4>
                             <ul>
                                 <li>
                                     Movie Rental - {{$ptVendita['titolo']}}
                                 </li>
                                 <li>
                                     {{$ptVendita['indirizzo']}}
-                                </li>
-                                <li>
-                                    {{$ptVendita['email']}}
                                 </li>
                             </ul>
                         </div>
@@ -216,6 +213,7 @@
                                     <th>Prezzo uni.</th>
                                     <!--<th>Ritardo riconsegna (gg)</th>
                                     <th>Danneggiato</th>-->
+                                    <th>Sconto n. giorni</th>
                                     <th>Importo</th>
                                 </tr>
                             </thead>
@@ -230,6 +228,7 @@
                                         </td>
                                         <td>{{$item['n_giorni']}}</td>
                                         <td>{{number_format($item['prezzo'],2)}} €</td>
+                                        <td>{{number_format($item['scontoGiorni'],2)}} €</td>
                                         <td class="text-right">{{number_format($item['importo'],2)}} €</td>
                                     </tr>
                                 @endforeach
@@ -241,40 +240,45 @@
                 <div class="row mb-5">
                     <div class="col-md-6">
                         <p>
-                            Per ogni giorno di ritardo di ogni singolo film, viene applicata la tariffa pari a quella del noleggio giornaliero.
+                            Per ogni giorno di ritardo, viene applicato il prezzo unitario senza sconti.
                         </p>
                         <p>
                             Lo sconto viene applicato sulla base della propria Fidelizzazione.
                         </p>
                         <p>
-                            I film danneggiati dovranno essere rimborsati per un importo pari a 3 giorni di noleggio senza sconti.
+                            I film danneggiati dovranno essere rimborsati per un importo pari a 2 giorni di noleggio senza sconti.
                         </p>
                     </div>
                     <div class="col-md-6 ">
+                        @php
+                            $sconto = $totaleParziale*$sconto;
+                            $totConSconto = $totaleParziale - $sconto;
+                            $totale = $totConSconto + $costoGiorniExtra + $totDanni;
+                        @endphp
                         <div class=" ">
                             <strong class="text-left ">Totale Parziale:</strong>
-                            <span class="float-right">{{number_format($totale,2)}} €</span>
+                            <span class="float-right">{{number_format($totaleParziale,2)}} €</span>
                         </div>
                         <div class="clear"></div>
-                        <div class=" ">
-                            <strong class="text-left ">Costi giorni extra:</strong>
-                            <span class="float-right">+ {{number_format($giorniExtra,2)}} €</span>
-                        </div>
-                        <hr/>
-                        <div class=" mb-3">
-                            <strong class="text-left "></strong>
-                            <span class="float-right">{{number_format($sconto,2)}} €</span>
-                            <div class="clear"></div>
-                        </div>
-                        <div class="clear"></div>
-                        <div class=" ">
+                        <div class="mb-3 ">
                         <strong class="text-left ">Sconto Fidelizzazione ({{$tipoSconto}}):</strong>
                             <span class="float-right">- {{number_format($sconto,2)}} €</span>
                         </div>
                         <hr/>
                         <div class="mb-3 ">
                             <strong class="text-left "></strong>
-                            <span class="float-right">{{number_format($sconto,2)}} €</span><div class="clear"></div>
+                            <span class="float-right">{{number_format($totConSconto,2)}} €</span><div class="clear"></div>
+                        </div>
+                        <div class="clear"></div>
+                        <div class=" ">
+                            <strong class="text-left ">Costi giorni extra:</strong>
+                            <span class="float-right">+ {{number_format($costoGiorniExtra,2)}} €</span>
+                        </div>
+                        <hr/>
+                        <div class=" mb-3">
+                            <strong class="text-left "></strong>
+                            <span class="float-right">{{number_format(($totConSconto+$costoGiorniExtra),2)}} €</span>
+                            <div class="clear"></div>
                         </div>
                         <div class="clear"></div>
                         <div class=" ">

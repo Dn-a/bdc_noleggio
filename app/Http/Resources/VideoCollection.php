@@ -57,26 +57,35 @@ class VideoCollection extends ResourceCollection
 
     protected function filterFields($item)
     {
+        $fields = $this->withFields;
 
-        $qta_disponibili = count(
-                    $item->magazzino
-                    ->where('id_pt_vendita',$this->idPtVendita)
-                    ->where('restituito_al_fornitore',0)
-                    ->where('noleggiato',0)
-                );
-        $qta_magazzino = count(
-                    $item->magazzino
-                    ->where('id_pt_vendita',$this->idPtVendita)
-                    ->where('restituito_al_fornitore',0)
-                );
-        $categoria = (string) $item->categoria->titolo;
-        $regista = (string) $item->regista->nome
-        .' '. (string) $item->regista->cognome;
+        if(in_array('qta_disponibili',$fields)){
+            $qta_disponibili = count(
+                $item->magazzino
+                ->where('id_pt_vendita',$this->idPtVendita)
+                ->where('restituito_al_fornitore',0)
+                ->where('noleggiato',0)
+            );
+            $item['qta_disponibili'] = $qta_disponibili;
+        }
+        if(in_array('qta_magazzino',$fields)){
+            $qta_magazzino = count(
+                $item->magazzino
+                ->where('id_pt_vendita',$this->idPtVendita)
+                ->where('restituito_al_fornitore',0)
+            );
+            $item['qta_magazzino'] = $qta_magazzino;
+        }
+        if(in_array('categoria',$fields)){
+            $categoria = (string) $item->categoria->titolo;
+            $item['categoria'] = $categoria;
+        }
+        if(in_array('regista',$fields)){
+            $regista = (string) $item->regista->nome
+            .' '. (string) $item->regista->cognome;
+            $item['regista'] = $regista;
+        }
 
-        $item['categoria'] = $categoria;
-        $item['regista'] = $regista;
-        $item['qta_disponibili'] = $qta_disponibili;
-        $item['qta_magazzino'] = $qta_magazzino;
 
         $item['durata'] = (string) $item->durata .' minuti';
 

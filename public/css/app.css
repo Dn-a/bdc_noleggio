@@ -11741,7 +11741,7 @@ footer:hover {
 
 /*--- PRIVACY FILE ---*/
 
-.privacy-file {
+.privacy-file i {
   font-size: 1.3em;
   color: red;
 }

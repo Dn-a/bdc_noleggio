@@ -77088,16 +77088,16 @@ function (_Component) {
 
 /***/ }),
 
-/***/ "./resources/js/components/modals/NoleggiModal.js":
+/***/ "./resources/js/components/modals/NoleggoModal.js":
 /*!********************************************************!*\
-  !*** ./resources/js/components/modals/NoleggiModal.js ***!
+  !*** ./resources/js/components/modals/NoleggoModal.js ***!
   \********************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return DipendentiModal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return NoleggoModal; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
@@ -77130,21 +77130,20 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-var whitespace_reg_ex = /^[^\s].*/;
 var FIELDS = ['id_cliente', 'id_video', 'prezzo_tot', 'data_fine'];
 var HIDE_FIELD = [];
 
-var DipendentiModal =
+var NoleggoModal =
 /*#__PURE__*/
 function (_Component) {
-  _inherits(DipendentiModal, _Component);
+  _inherits(NoleggoModal, _Component);
 
-  function DipendentiModal(props) {
+  function NoleggoModal(props) {
     var _this;
 
-    _classCallCheck(this, DipendentiModal);
+    _classCallCheck(this, NoleggoModal);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(DipendentiModal).call(this, props));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(NoleggoModal).call(this, props));
     var data = {};
     var error = {};
     FIELDS.map(function (fd, id) {
@@ -77156,6 +77155,7 @@ function (_Component) {
     _this.state = {
       data: data,
       error: error,
+      sconto: [],
       checked: false,
       openModal: false,
       loader: false,
@@ -77167,7 +77167,7 @@ function (_Component) {
     return _this;
   }
 
-  _createClass(DipendentiModal, [{
+  _createClass(NoleggoModal, [{
     key: "_resetAfterClose",
     value: function _resetAfterClose() {
       var data = {};
@@ -77178,6 +77178,7 @@ function (_Component) {
       });
       this.state.data = data;
       this.state.error = error;
+      this.state.sconto = [];
       this.state.loader = false;
       this.state.checked = false;
       this.state.openModal = false;
@@ -77196,12 +77197,14 @@ function (_Component) {
       var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
       var data = this.state.data;
       var error = this.state.error;
+      var sconto = this.state.sconto;
       FIELDS.map(function (fd, id) {
         switch (fd) {
           case 'id_video':
             externalRows.map(function (row, key) {
               data[fd][key] = row.id;
               error[fd][key] = '';
+              sconto[key] = 0;
             });
             break;
 
@@ -77217,7 +77220,7 @@ function (_Component) {
             var tomorrow = new Date();
             tomorrow.setDate(new Date().getDate() + 1); //tomorrow = tomorrow.toJSON().slice(0, 10);
 
-            tomorrow = tomorrow.getFullYear() + '-' + ("0" + (tomorrow.getMonth() + 1)).slice(-2) + '-' + tomorrow.getDate();
+            tomorrow = tomorrow.getFullYear() + '-' + ("0" + (tomorrow.getMonth() + 1)).slice(-2) + '-' + ("0" + tomorrow.getDate()).slice(-2);
             externalRows.map(function (row, key) {
               error[fd][key] = '';
               data[fd][key] = tomorrow;
@@ -77285,7 +77288,9 @@ function (_Component) {
       var field = e.target.name;
       var error = this.state.error;
       var data = this.state.data;
+      var sconto = this.state.sconto;
       if (value == '') error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['vuoto'];else error[field][key] = '';
+      var sct = 0;
 
       switch (field) {
         case 'data_fine':
@@ -77294,15 +77299,22 @@ function (_Component) {
           if (value == '') error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['vuoto'];else if (date.getTime() <= today.getTime()) error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['data'];else {
             var giorni = this._calcDay(date);
 
-            data.prezzo_tot[key] = giorni * row.prezzo;
+            if (giorni > 1) {
+              sct = row.prezzo * (giorni / 40);
+              sct = sct > row.prezzo / 2 ? row.prezzo / 2 : sct;
+            }
+
+            data.prezzo_tot[key] = giorni * row.prezzo - sct;
           }
           break;
       }
 
       data[field][key] = value;
+      sconto[key] = sct;
       this.setState({
         data: data,
-        error: error
+        error: error,
+        sconto: sconto
       }, function () {
         return _this3.checked();
       });
@@ -77369,9 +77381,6 @@ function (_Component) {
       var fileName = 'ricevuta_noleggio.pdf'; //calcolo prezzo totale
 
       var totPagare = 0;
-      this.state.data.prezzo_tot.map(function (val) {
-        return totPagare += val;
-      });
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
         size: "lg",
         show: this.props.show,
@@ -77445,11 +77454,15 @@ function (_Component) {
         className: "table-responsive"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Film selezionati"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         className: "table"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "N"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Data restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo complessivo"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "N"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Data restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Sconto giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo complessivo"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
         var data = _this4.state.data;
         var date = data.data_fine[key] == null || data.data_fine[key] == '' ? '000-00-00' : data.data_fine[key];
 
         var giorni = _this4._calcDay(date);
+
+        var prezzoTot = data.prezzo_tot[key];
+        var sconto = _this4.state.sconto[key];
+        totPagare += prezzoTot; //console.log(date)
 
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: key
@@ -77462,7 +77475,7 @@ function (_Component) {
           handleChange: function handleChange(e) {
             return _this4._handleChange(e, key, row);
           }
-        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, giorni), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(data.prezzo_tot[key]).toFixed(2) + ' €'));
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, giorni), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(sconto).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(prezzoTot).toFixed(2) + ' €'));
       }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -77473,7 +77486,7 @@ function (_Component) {
         })
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Noleggio andato a buon Fine!"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Noleggio concluso!"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "mt-3"
       }, "scarica la ricevuta"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         className: "pdf",
@@ -77486,7 +77499,293 @@ function (_Component) {
     }
   }]);
 
-  return DipendentiModal;
+  return NoleggoModal;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/modals/RestNoleggioModal.js":
+/*!*************************************************************!*\
+  !*** ./resources/js/components/modals/RestNoleggioModal.js ***!
+  \*************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return RestNoleggioModal; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/AddEditModal */ "./resources/js/components/utils/AddEditModal.js");
+/* harmony import */ var _utils_form_CheckField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/form/CheckField */ "./resources/js/components/utils/form/CheckField.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+var FIELDS = ['id_cliente', 'id_noleggio', 'danneggiato', 'prezzo_extra'];
+var HIDE_FIELD = [];
+
+var RestNoleggioModal =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(RestNoleggioModal, _Component);
+
+  function RestNoleggioModal(props) {
+    var _this;
+
+    _classCallCheck(this, RestNoleggioModal);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(RestNoleggioModal).call(this, props));
+    var data = {};
+    FIELDS.map(function (fd, id) {
+      if (fd == 'id_cliente') data[fd] = '';else {
+        data[fd] = [];
+      }
+    });
+    _this.state = {
+      data: data,
+      checked: true,
+      openModal: false,
+      loader: false,
+      complited: false,
+      totPagare: 0,
+      pdf: ''
+    };
+    _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
+    _this._handleOnSave = _this._handleOnSave.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(RestNoleggioModal, [{
+    key: "_resetAfterClose",
+    value: function _resetAfterClose() {
+      var data = {};
+      FIELDS.map(function (fd, id) {
+        data[fd] = [];
+      });
+      this.state.data = data;
+      this.state.loader = false;
+      this.state.openModal = false;
+      this.state.complited = false;
+      this.state.pdf = '';
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      if (this.props.show) this._onOpenModal();
+    }
+  }, {
+    key: "_onOpenModal",
+    value: function _onOpenModal() {
+      if (this.state.openModal) return;
+      var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
+      var data = this.state.data; //console.log(externalRows[0])
+
+      data['id_cliente'] = externalRows[0].id_cliente;
+      FIELDS.map(function (fd, id) {
+        switch (fd) {
+          case 'id_noleggio':
+            externalRows.map(function (row, key) {
+              data[fd][key] = row.id;
+              data['danneggiato'][key] = 0;
+            });
+            break;
+
+          case 'prezzo_extra':
+            externalRows.map(function (row, key) {
+              data[fd][key] = row.prezzo * row.giorni_ritardo;
+            });
+            break;
+        }
+      });
+      this.setState({
+        data: data,
+        openModal: true
+      });
+    }
+  }, {
+    key: "setRemoteStore",
+    value: function setRemoteStore() {
+      var _this2 = this;
+
+      var data = this.state.data;
+      var url = this.props.url + '/noleggi/' + data.id_cliente;
+      var headers = {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      };
+      data['_token'] = CSRF_TOKEN;
+      data['_method'] = 'put'; //console.log(data);return;
+
+      this.setState({
+        loader: true
+      });
+      return axios.post(url, data, headers).then(function (result) {
+        //console.log(result.data);return;
+        _this2.setState({
+          complited: true,
+          pdf: result.data.pdf,
+          loader: false
+        }, function () {
+          if (_this2.props.callback !== undefined) _this2.props.callback(data);
+        });
+
+        return result;
+      })["catch"](function (error) {
+        console.error(error.response.data);
+
+        _this2.setState({
+          errorRemoteStore: error.response.status
+        });
+
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
+        throw error;
+      });
+    }
+  }, {
+    key: "_handleOnSave",
+    value: function _handleOnSave() {
+      console.log("save");
+      this.setRemoteStore();
+    }
+  }, {
+    key: "_handleChange",
+    value: function _handleChange(e, key, row) {
+      var value = e.target.value;
+      var field = e.target.name;
+      field = field.split('_')[0].toString();
+      var data = this.state.data;
+      var extra = 0;
+
+      switch (field) {
+        case 'danneggiato':
+          value = Math.abs(value - 1);
+          extra = row.prezzo * 2;
+
+          if (value == 1) {
+            data['prezzo_extra'][key] += extra;
+          } else data['prezzo_extra'][key] -= extra;
+
+          break;
+      } //console.log(fld)
+
+
+      data[field][key] = value;
+      this.setState({
+        data: data
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this3 = this;
+
+      var divClassName = 'mb-3';
+      var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : []; //console.log(externalRows)
+      // dopo aver completato la fase di restituzione, il server trasmetterà
+      // un pdf in formato base64 come risposta
+
+      var linkSource = this.state.pdf != '' ? 'data:application/pdf;base64,' + this.state.pdf : '';
+      var fileName = 'ricevuta_pagamento.pdf'; //calcolo prezzo totale
+
+      var totPagare = 0;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        size: "lg",
+        show: this.props.show,
+        onHide: function onHide(a) {
+          _this3.props.onHide(a);
+
+          _this3._resetAfterClose();
+        },
+        loader: this.state.loader,
+        onConfirm: this._handleOnSave,
+        txtConfirmButton: "Conferma",
+        disabledConfirmButton: !this.state.checked || this.state.complited,
+        title: "Video",
+        type: "Restituzione"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()("switch", {
+          "is-active": !this.state.complited
+        })
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group w-50 mb-4"
+      }, externalRows.length > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Cliente:"), " ", externalRows[0].cliente)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "table-responsive"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Noleggi selezionati"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+        className: "table"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "ID"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Importo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Danneggiato"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Giorni Ritardo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Importo complessivo", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        style: {
+          fontSize: '0.8em',
+          color: '#aaa'
+        }
+      }, "compresi (ritardi + danni)")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
+        var prezzoTot = row.prezzo_tot;
+        var prezzoExta = _this3.state.data.prezzo_extra[key];
+        var complessivo = prezzoTot + prezzoExta;
+        var danneggiato = _this3.state.data.danneggiato[key];
+        totPagare += complessivo; //console.log(danneggiato)
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+          key: key
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.id), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.video), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(prezzoTot).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_CheckField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+          label: "Danneggiato",
+          value: danneggiato,
+          checked: danneggiato == 1,
+          name: 'danneggiato_' + key,
+          handleChange: function handleChange(e) {
+            return _this3._handleChange(e, key, row);
+          }
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.giorni_ritardo), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(complessivo).toFixed(2) + ' €'));
+      }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "text-right p-2 px-4"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Totale da pagare:"), " ", parseFloat(totPagare).toFixed(2) + ' €'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()("switch complited-msg", {
+          "is-active": this.state.complited
+        })
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Restituzione conclusa!"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "mt-3"
+      }, "Scarica la ricevuta"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        className: "pdf",
+        href: linkSource,
+        download: fileName
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-file-pdf-o",
+        "aria-hidden": "true"
+      }), " Ricevuta di Pagamento"))));
+    }
+  }]);
+
+  return RestNoleggioModal;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 
@@ -78144,9 +78443,7 @@ function (_Component) {
   }, {
     key: "_handleMultiSelection",
     value: function _handleMultiSelection(id, row) {
-      var _this5 = this;
-
-      var selectedList = this.state.selectedList;
+      var selectedList = this.props.selectedList !== undefined ? this.props.selectedList : this.state.selectedList;
       if (this.props.multiSelect === undefined || !this.props.multiSelect) return;
       if (this.props.multiSelectSetting != undefined && this.props.multiSelectSetting.disableSelect != undefined && this.props.multiSelectSetting.disableSelect(row)) return;
       var index = selectedList.indexOf(id);
@@ -78156,11 +78453,10 @@ function (_Component) {
       rows.map(function (row, k) {
         if (selectedList.indexOf(row.id) > -1) selectedListRows.push(row);
       });
-      this.setState({
-        selectedList: selectedList
-      }, function () {
-        if (_this5.props.multiSelectCallback !== undefined) _this5.props.multiSelectCallback(selectedList, selectedListRows);
-      }); //console.log(id)
+      if (this.props.multiSelectCallback !== undefined) this.props.multiSelectCallback(selectedList, selectedListRows);
+      /*this.setState({selectedList},() => {
+      });*/
+      //console.log(id)
     } // quando la barra di scorrimento verticale supera una certa percentuale,
     // vengono recuperati i dati dal server remoto, incrementando la pagina di uno step.
 
@@ -78207,7 +78503,7 @@ function (_Component) {
   }, {
     key: "_moreData",
     value: function _moreData() {
-      var _this6 = this;
+      var _this5 = this;
 
       var content = document.getElementById('content');
 
@@ -78216,48 +78512,49 @@ function (_Component) {
         this.state.moreData = false;
         console.log("More data loading");
         this.getRemoteData(++page).then(function (a) {
-          return _this6._moreData();
+          return _this5._moreData();
         });
       }
     }
   }, {
     key: "_moreInfoTable",
     value: function _moreInfoTable() {
-      var _this7 = this;
+      var _this6 = this;
 
-      var multiSelect = this.props.multiSelect !== undefined ? this.props.multiSelect : false;
-      var elSize = this.state.selectedList.length;
+      var multiSelect = this.props.multiSelect !== undefined ? this.props.multiSelect : false; //let elSize = this.state.selectedList.length;
+
+      var elSize = this.props.selectedList !== undefined ? this.props.selectedList.length : this.state.selectedList.length;
       if (multiSelect) return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "more-info-table text-left py-2"
       }, elSize > -1 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         title: "seleziona tutto",
         className: "d-inline-block mr-3",
         onClick: function onClick() {
-          var rows = _this7.props.externalRows != null && _this7.props.externalRows instanceof Array ? _this7.props.externalRows : _this7.state.data.rows;
+          var rows = _this6.props.externalRows != null && _this6.props.externalRows instanceof Array ? _this6.props.externalRows : _this6.state.data.rows;
           var selectedRow = [];
           var selectedList = [];
           rows.map(function (row, key) {
-            if (_this7.props.multiSelectSetting != undefined && _this7.props.multiSelectSetting.disableSelect != undefined && _this7.props.multiSelectSetting.disableSelect(row)) return false;
+            if (_this6.props.multiSelectSetting != undefined && _this6.props.multiSelectSetting.disableSelect != undefined && _this6.props.multiSelectSetting.disableSelect(row)) return false;
             selectedRow.push(row);
             selectedList.push(row.id);
           });
 
-          _this7.setState({
+          _this6.setState({
             selectedList: selectedList
           });
 
-          if (_this7.props.multiSelectCallback !== undefined) _this7.props.multiSelectCallback(selectedList, selectedRow);
+          if (_this6.props.multiSelectCallback !== undefined) _this6.props.multiSelectCallback(selectedList, selectedRow);
         }
       }, "Seleziona tutto"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         title: "deseleziona tutto",
         className: "d-inline-block mr-3 " + (elSize > 0 ? '' : 'disable'),
         onClick: function onClick() {
           if (elSize > 0) {
-            _this7.setState({
+            _this6.setState({
               selectedList: []
             });
 
-            if (_this7.props.multiSelectCallback !== undefined) _this7.props.multiSelectCallback([], []);
+            if (_this6.props.multiSelectCallback !== undefined) _this6.props.multiSelectCallback([], []);
           }
         }
       }, "Deseleziona tutto"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, elSize, " elementi selezionati")));
@@ -78267,7 +78564,7 @@ function (_Component) {
   }, {
     key: "_handleChangeSearch",
     value: function _handleChangeSearch(e) {
-      var _this8 = this;
+      var _this7 = this;
 
       //console.log(e.target.value);
       var value = e.target.value;
@@ -78279,7 +78576,7 @@ function (_Component) {
         //console.log(data==null)
         var size = data != null && data.data !== undefined ? data.data : data;
 
-        _this8.setState({
+        _this7.setState({
           data: size == null ? [] : data,
           infoSearch: size == 0 ? 'nessun risultato' : '',
           loader: false
@@ -78290,7 +78587,7 @@ function (_Component) {
   }, {
     key: "_onClickItemSearch",
     value: function _onClickItemSearch(val) {
-      var _this9 = this;
+      var _this8 = this;
 
       var patternList = this.props.patternList !== undefined ? this.props.patternList : {
         id: '',
@@ -78323,7 +78620,7 @@ function (_Component) {
         data: [],
         infoSearch: ''
       });else this._timeOut(txt, 0).then(function (data) {
-        if (data != null) _this9.setState({
+        if (data != null) _this8.setState({
           data: [],
           loader: false
         });
@@ -78334,27 +78631,27 @@ function (_Component) {
   }, {
     key: "_timeOutSearch",
     value: function _timeOutSearch(value, time) {
-      var _this10 = this;
+      var _this9 = this;
 
       var setTime = time !== undefined ? time : this.timeOut;
       clearTimeout(this.timer);
       return new Promise(function (resolve, reject) {
         if (value == '') {
-          if (_this10.props.callback !== undefined) _this10.props.callback([], true); // comunica al componente padre che non ci sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
+          if (_this9.props.callback !== undefined) _this9.props.callback([], true); // comunica al componente padre che non ci sono dati da visulalizzare, il secondo argomento indica che il campo ricerca è vuoto
 
           return resolve(null);
         }
 
-        _this10.timer = setTimeout(function () {
+        _this9.timer = setTimeout(function () {
           //console.log("tt");
-          resolve(_this10.getRemoteData(value));
+          resolve(_this9.getRemoteData(value));
         }, setTime);
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this11 = this;
+      var _this10 = this;
 
       var data = this.state.data;
       var columns = data.columns != null ? data.columns : []; // externalRows quando non ha dati da visualizzare,
@@ -78372,12 +78669,12 @@ function (_Component) {
         }, column.title);
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, rows.map(function (row, id) {
         var idField = row.id;
-        var sl = _this11.state.selectedList;
+        var sl = _this10.props.selectedList !== undefined ? _this10.props.selectedList : _this10.state.selectedList;
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-          className: _this11.props.multiSelectSetting != undefined && _this11.props.multiSelectSetting.disableSelect != undefined && _this11.props.multiSelectSetting.disableSelect(row) ? '' : sl.indexOf(idField) > -1 ? 'active' : '',
+          className: _this10.props.multiSelectSetting != undefined && _this10.props.multiSelectSetting.disableSelect != undefined && _this10.props.multiSelectSetting.disableSelect(row) ? '' : sl.indexOf(idField) > -1 ? 'active' : '',
           key: id,
           onClick: function onClick() {
-            return _this11._handleMultiSelection(idField, row);
+            return _this10._handleMultiSelection(idField, row);
           }
         }, columns.map(function (column, id) {
           //console.log(row['img']);
@@ -78703,6 +79000,53 @@ function (_Component) {
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 
+
+/***/ }),
+
+/***/ "./resources/js/components/utils/form/CheckField.js":
+/*!**********************************************************!*\
+  !*** ./resources/js/components/utils/form/CheckField.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var CheckField = function CheckField(_ref) {
+  var name = _ref.name,
+      placeholder = _ref.placeholder,
+      _ref$className = _ref.className,
+      className = _ref$className === void 0 ? null : _ref$className,
+      label = _ref.label,
+      required = _ref.required,
+      checked = _ref.checked,
+      defaultChecked = _ref.defaultChecked,
+      value = _ref.value,
+      handleChange = _ref.handleChange;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: className
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+    htmlFor: name + value
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "checkbox",
+    id: name + value,
+    name: name //className={'with-gap'}
+    ,
+    className: 'darken-3',
+    required: required,
+    placeholder: placeholder,
+    onChange: handleChange,
+    checked: checked,
+    defaultChecked: defaultChecked,
+    value: value
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, " ", label)));
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (CheckField);
 
 /***/ }),
 
@@ -80067,7 +80411,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
 /* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
 /* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
-/* harmony import */ var _modals_NoleggiModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modals/NoleggiModal */ "./resources/js/components/modals/NoleggiModal.js");
+/* harmony import */ var _modals_NoleggoModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modals/NoleggoModal */ "./resources/js/components/modals/NoleggoModal.js");
+/* harmony import */ var _modals_RestNoleggioModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/RestNoleggioModal */ "./resources/js/components/modals/RestNoleggioModal.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -80085,6 +80430,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -80163,8 +80509,7 @@ var COLUMNS_NOLEGGI = [{
   style: {
     textTransform: 'capitalize'
   }
-} : null, //{ title: 'Prezzo Extra', field: 'prezzo_extra', render: cell => parseFloat(cell).toFixed(2) +' €'},
-{
+} : null, {
   title: 'Data Inizio',
   field: 'data_inizio',
   render: function render(cell) {
@@ -80185,13 +80530,136 @@ var COLUMNS_NOLEGGI = [{
     });
   }
 }, {
-  title: 'Giorni',
-  field: 'giorni'
-}, {
-  title: 'Costo Tot.',
-  field: 'prezzo_tot',
+  title: 'Giorni Ritardo',
+  field: 'giorni_ritardo',
   render: function render(cell) {
-    return parseFloat(cell).toFixed(2) + ' €';
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      style: {
+        color: cell == 0 ? '' : 'red'
+      }
+    }, cell);
+  }
+} //{ title: 'Costo Tot.', field: 'prezzo_tot', render: cell => parseFloat(cell).toFixed(2) +' €'},
+].map(function (a) {
+  if (a != null) return a;
+  return false;
+});
+var COLUMNS_STORICO = [{
+  title: 'id',
+  field: 'id',
+  align: 'right'
+}, {
+  title: 'Video',
+  field: 'video',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, {
+  title: 'Cliente',
+  field: 'cliente',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, USER_CONFIG.ruolo != 'Addetto' ? {
+  title: 'Dipendente',
+  field: 'dipendente',
+  style: {
+    textTransform: 'capitalize'
+  }
+} : null, {
+  title: 'Data Inizio',
+  field: 'data_inizio',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Data Fine',
+  field: 'data_fine',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Data Restituzione',
+  field: 'data_restituzione',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Giorni ritardo',
+  field: 'giorni_ritardo'
+}, {
+  title: 'Costo Complessivo (compresi Extra)',
+  field: 'prezzo_tot',
+  render: function render(cell, row) {
+    return parseFloat(cell + row.prezzo_extra).toFixed(2) + ' €';
+  }
+}].map(function (a) {
+  if (a != null) return a;
+  return false;
+});
+var COLUMNS_RICEVUTE = [{
+  title: 'id',
+  field: 'id',
+  align: 'right'
+}, {
+  title: 'Tipo',
+  field: 'tipo',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, {
+  title: 'Cliente',
+  field: 'cliente',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, USER_CONFIG.ruolo != 'Addetto' ? {
+  title: 'Dipendente',
+  field: 'dipendente',
+  style: {
+    textTransform: 'capitalize'
+  }
+} : null, //{ title: 'Prezzo Extra', field: 'prezzo_extra', render: cell => parseFloat(cell).toFixed(2) +' €'},
+{
+  title: 'Documento',
+  field: 'pdf',
+  render: function render(cell, row) {
+    if (cell == null) return;
+    var linkSource = 'data:application/pdf;base64,' + cell; //let downloadLink = document.createElement("a");
+
+    var fileName = 'ricevuta_' + row.tipo + '.pdf';
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      className: "privacy-file",
+      href: linkSource,
+      download: fileName
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      className: "fa fa-file-pdf-o",
+      "aria-hidden": "true"
+    }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "ricevuta ", row.tipo)); //downloadLink.href = linkSource;
+    //downloadLink.download = fileName;
+    //downloadLink.click();
+  }
+}, {
+  title: 'Data Creazione',
+  field: 'data_creazione',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
   }
 }].map(function (a) {
   if (a != null) return a;
@@ -80212,33 +80680,58 @@ function (_Component) {
     _this.state = {
       rowsVideo: '',
       rowsNoleggi: '',
-      show: false,
+      rowsStorico: '',
+      rowsRicevute: '',
+      showNoleggio: false,
+      showRestituzione: false,
       selectedListVideo: [],
+      // id dei video selezionati
       rowsSelectedListVideo: [],
+      // row contenenti tutti i campi dei video selezionati - usato nel NOleggioMOdal
       selectedListNoleggi: [],
+      rowsSelectedListNoleggi: [],
+      // RestituzioneNoleggioModal
       reloadInfiniteTable: 0
     };
     _this.url = _this.props.url + '/noleggi';
-    _this._handleCloseModal = _this._handleCloseModal.bind(_assertThisInitialized(_this));
-    _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
+    _this._handleCloseNoleggioModal = _this._handleCloseNoleggioModal.bind(_assertThisInitialized(_this));
+    _this._handleShowNoleggioModal = _this._handleShowNoleggioModal.bind(_assertThisInitialized(_this));
+    _this._handleCloseRestituzioneModal = _this._handleCloseRestituzioneModal.bind(_assertThisInitialized(_this));
+    _this._handleShowRestituzioneModal = _this._handleShowRestituzioneModal.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldNoleggiCallback = _this._handleSearchFieldNoleggiCallback.bind(_assertThisInitialized(_this));
+    _this._handleSearchFieldStoricoCallback = _this._handleSearchFieldStoricoCallback.bind(_assertThisInitialized(_this));
+    _this._handleSearchFieldRicevuteCallback = _this._handleSearchFieldRicevuteCallback.bind(_assertThisInitialized(_this));
     _this._handleCaricoVideo = _this._handleCaricoVideo.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(Noleggi, [{
-    key: "_handleCloseModal",
-    value: function _handleCloseModal() {
+    key: "_handleCloseNoleggioModal",
+    value: function _handleCloseNoleggioModal() {
       this.setState({
-        show: false
+        showNoleggio: false
       });
     }
   }, {
-    key: "_handleShowModal",
-    value: function _handleShowModal() {
+    key: "_handleShowNoleggioModal",
+    value: function _handleShowNoleggioModal() {
       this.setState({
-        show: true
+        showNoleggio: true
+      });
+    }
+  }, {
+    key: "_handleCloseRestituzioneModal",
+    value: function _handleCloseRestituzioneModal() {
+      this.setState({
+        showRestituzione: false
+      });
+    }
+  }, {
+    key: "_handleShowRestituzioneModal",
+    value: function _handleShowRestituzioneModal() {
+      this.setState({
+        showRestituzione: true
       });
     }
   }, {
@@ -80251,14 +80744,15 @@ function (_Component) {
     value: function _handleSearchFieldCallback(data, reset) {
       //console.log(data);
       var rowsVideo = this.state.rowsVideo;
-      rowsVideo = data.data;
-      this.setState({
-        rowsVideo: rowsVideo
-      });
 
       if (reset) {
         // al momento unica soluzione per notificare a InfinityTable che externalRow è vuoto
         rowsVideo = '';
+        this.setState({
+          rowsVideo: rowsVideo
+        });
+      } else {
+        rowsVideo = data.data;
         this.setState({
           rowsVideo: rowsVideo
         });
@@ -80269,15 +80763,52 @@ function (_Component) {
     value: function _handleSearchFieldNoleggiCallback(data, reset) {
       //console.log(rows);
       var rowsNoleggi = this.state.rowsNoleggi;
-      rowsNoleggi = data.data;
-      this.setState({
-        rowsNoleggi: rowsNoleggi
-      });
 
       if (reset) {
         rowsNoleggi = '';
         this.setState({
           rowsNoleggi: rowsNoleggi
+        });
+      } else {
+        rowsNoleggi = data.data;
+        this.setState({
+          rowsNoleggi: rowsNoleggi
+        });
+      }
+    }
+  }, {
+    key: "_handleSearchFieldStoricoCallback",
+    value: function _handleSearchFieldStoricoCallback(data, reset) {
+      //console.log(rows);
+      var rowsStorico = this.state.rowsStorico;
+
+      if (reset) {
+        rowsStorico = '';
+        this.setState({
+          rowsStorico: rowsStorico
+        });
+      } else {
+        rowsStorico = data.data;
+        this.setState({
+          rowsStorico: rowsStorico
+        });
+      }
+    }
+  }, {
+    key: "_handleSearchFieldRicevuteCallback",
+    value: function _handleSearchFieldRicevuteCallback(data, reset) {
+      //console.log(data);
+      var rowsRicevute = this.state.rowsRicevute;
+
+      if (reset) {
+        rowsRicevute = '';
+        this.setState({
+          rowsRicevute: rowsRicevute
+        });
+      } else {
+        rowsRicevute = data.data;
+        this.setState({
+          rowsRicevute: rowsRicevute
         });
       }
     }
@@ -80287,6 +80818,7 @@ function (_Component) {
       var _this2 = this;
 
       var urlVideo = this.props.url + '/video';
+      var urlRicevute = this.props.url + '/ricevute';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "nav nav-tabs",
         id: "nav-tab",
@@ -80340,10 +80872,6 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
         key: "s-video",
         showList: false,
-        patternList: {
-          id: 'id',
-          fields: ['nome', 'cognome']
-        },
         url: urlVideo + '/search-noleggi',
         callback: this._handleSearchFieldCallback
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -80351,15 +80879,15 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
         className: "btn-success mr-3",
         disabled: this.state.selectedListVideo.length > 0 ? false : true,
-        onClick: this._handleShowModal
+        onClick: this._handleShowNoleggioModal
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-upload",
         "aria-hidden": "true"
-      }), "\xA0Noleggia"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_NoleggiModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }), "\xA0Noleggia"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_NoleggoModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
         url: this.props.url,
         externalRows: this.state.rowsSelectedListVideo,
-        show: this.state.show,
-        onHide: this._handleCloseModal,
+        show: this.state.showNoleggio,
+        onHide: this._handleCloseNoleggioModal,
         callback: function callback(row) {
           _this2.setState({
             reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
@@ -80400,10 +80928,6 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
         key: "s-noleggi",
         showList: false,
-        patternList: {
-          id: 'id',
-          fields: ['nome', 'cognome']
-        },
         url: this.url + '/search',
         callback: this._handleSearchFieldNoleggiCallback
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -80411,11 +80935,21 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
         className: "btn-warning mr-3",
         disabled: this.state.selectedListNoleggi.length > 0 ? false : true,
-        onClick: this._handleCaricoVideo
+        onClick: this._handleShowRestituzioneModal
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-download",
         "aria-hidden": "true"
-      }), "\xA0Restituzione"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), "\xA0Restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_RestNoleggioModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        url: this.props.url,
+        externalRows: this.state.rowsSelectedListNoleggi,
+        show: this.state.showRestituzione,
+        onHide: this._handleCloseRestituzioneModal,
+        callback: function callback(row) {
+          _this2.setState({
+            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+          });
+        }
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
@@ -80428,9 +80962,19 @@ function (_Component) {
         externalRows: this.state.rowsNoleggi,
         multiSelect: true,
         selectedList: this.state.selectedListNoleggi,
-        multiSelectCallback: function multiSelectCallback(list) {
+        multiSelectCallback: function multiSelectCallback(list, rows) {
+          var idCliente = rows[0] !== undefined ? rows[0].id_cliente : null;
+          var lst = [];
+          var rw = [];
+          rows.map(function (row, k) {
+            if (row.id_cliente != idCliente) return false;
+            lst[k] = row.id;
+            rw[k] = row;
+          }); //console.log(lst);
+
           _this2.setState({
-            selectedListNoleggi: list
+            selectedListNoleggi: lst,
+            rowsSelectedListNoleggi: rw
           }); //console.log(list)
 
         }
@@ -80439,12 +80983,60 @@ function (_Component) {
         id: "nav-storico",
         role: "tabpanel",
         "aria-labelledby": "nav-storico-tab"
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container-fluid pl-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-3 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        key: "s-storico",
+        showList: false,
+        query: "only=storico",
+        url: this.url + '/search',
+        callback: this._handleSearchFieldStoricoCallback
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        key: "storico",
+        id: "storico",
+        reload: this.state.reloadInfiniteTable,
+        query: "only=storico",
+        url: this.url,
+        columns: COLUMNS_STORICO,
+        externalRows: this.state.rowsStorico,
+        multiSelect: false
+      }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-pane fade",
         id: "nav-ricevute",
         role: "tabpanel",
         "aria-labelledby": "nav-ricevute-tab"
-      })));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container-fluid pl-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-3 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        key: "s-ricevute",
+        showList: false,
+        url: urlRicevute + '/search',
+        callback: this._handleSearchFieldRicevuteCallback
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        key: "ricevute",
+        id: "ricevute",
+        reload: this.state.reloadInfiniteTable,
+        url: urlRicevute,
+        columns: COLUMNS_RICEVUTE,
+        externalRows: this.state.rowsRicevute,
+        multiSelect: false
+      })))))));
     }
   }]);
 

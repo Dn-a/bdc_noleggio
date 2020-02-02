@@ -3,7 +3,8 @@ import React, { Component , Fragment } from 'react';
 import SearchField from '../utils/SearchField';
 import { Button } from '../utils/Button';
 import InfiniteTable from '../utils/InfiniteTable';
-import NoleggiModal from '../modals/NoleggiModal';
+import NoleggoModal from '../modals/NoleggoModal';
+import RestNoleggioModal from '../modals/RestNoleggioModal';
 
 
 const COLUMNS_VIDEO = [
@@ -40,7 +41,7 @@ const COLUMNS_VIDEO = [
 
 const MS_VIDEO = {
     disableSelect: (row) => {
-        return row.qta_disponibili==0;
+        return row.qta_disponibili == 0;
     }
 };
 
@@ -52,11 +53,57 @@ const COLUMNS_NOLEGGI = [
         { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} }
     :
         null,
-    //{ title: 'Prezzo Extra', field: 'prezzo_extra', render: cell => parseFloat(cell).toFixed(2) +' €'},
     { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
-    { title: 'Giorni', field: 'giorni'},
-    { title: 'Costo Tot.', field: 'prezzo_tot', render: cell => parseFloat(cell).toFixed(2) +' €'},
+    { title: 'Giorni Ritardo', field: 'giorni_ritardo', render: (cell) => <span style={{color:cell==0?'':'red'}}>{cell}</span>},
+    //{ title: 'Costo Tot.', field: 'prezzo_tot', render: cell => parseFloat(cell).toFixed(2) +' €'},
+].map((a) => { if(a!=null) return a; return false; } );
+
+const COLUMNS_STORICO = [
+    { title: 'id', field: 'id' , align:'right'},
+    { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },
+    { title: 'Cliente', field: 'cliente', style: {textTransform:'capitalize'} },
+    USER_CONFIG.ruolo!='Addetto'?
+        { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} }
+    :
+        null,
+    { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Data Restituzione', field: 'data_restituzione',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Giorni ritardo', field: 'giorni_ritardo'},
+    { title: 'Costo Complessivo (compresi Extra)', field: 'prezzo_tot', render:
+    (cell,row) => parseFloat(cell+row.prezzo_extra).toFixed(2) +' €'},
+].map((a) => { if(a!=null) return a; return false; } );
+
+const COLUMNS_RICEVUTE = [
+    { title: 'id', field: 'id' , align:'right'},
+    { title: 'Tipo', field: 'tipo', style: {textTransform:'capitalize'}  },
+    { title: 'Cliente', field: 'cliente', style: {textTransform:'capitalize'}  },
+    USER_CONFIG.ruolo!='Addetto'?
+        { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} }
+    :
+        null,
+    //{ title: 'Prezzo Extra', field: 'prezzo_extra', render: cell => parseFloat(cell).toFixed(2) +' €'},
+    { title: 'Documento', field: 'pdf', render:(cell,row) =>
+        {
+            if(cell==null ) return;
+
+            let linkSource = 'data:application/pdf;base64,'+cell;
+            //let downloadLink = document.createElement("a");
+            let fileName = 'ricevuta_'+row.tipo+'.pdf';
+
+            return(
+                <a className="privacy-file" href={linkSource} download={fileName}>
+                    <i className="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;
+                    <span>ricevuta {row.tipo}</span>
+                </a>
+            );
+            //downloadLink.href = linkSource;
+            //downloadLink.download = fileName;
+            //downloadLink.click();
+        }
+    },
+    { title: 'Data Creazione', field: 'data_creazione', render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) }
 ].map((a) => { if(a!=null) return a; return false; } );
 
 
@@ -68,27 +115,42 @@ export default class Noleggi extends Component {
         this.state = {
             rowsVideo: '',
             rowsNoleggi: '',
-            show:false,
-            selectedListVideo: [],
-            rowsSelectedListVideo: [],
+            rowsStorico: '',
+            rowsRicevute: '',
+            showNoleggio:false,
+            showRestituzione:false,
+            selectedListVideo: [],// id dei video selezionati
+            rowsSelectedListVideo: [],// row contenenti tutti i campi dei video selezionati - usato nel NOleggioMOdal
             selectedListNoleggi: [],
+            rowsSelectedListNoleggi: [],// RestituzioneNoleggioModal
             reloadInfiniteTable:0
         };
 
         this.url = this.props.url+'/noleggi';
-        this._handleCloseModal = this._handleCloseModal.bind(this);
-        this._handleShowModal = this._handleShowModal.bind(this);
+        this._handleCloseNoleggioModal = this._handleCloseNoleggioModal.bind(this);
+        this._handleShowNoleggioModal = this._handleShowNoleggioModal.bind(this);
+        this._handleCloseRestituzioneModal = this._handleCloseRestituzioneModal.bind(this);
+        this._handleShowRestituzioneModal = this._handleShowRestituzioneModal.bind(this);
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
         this._handleSearchFieldNoleggiCallback = this._handleSearchFieldNoleggiCallback.bind(this);
+        this._handleSearchFieldStoricoCallback = this._handleSearchFieldStoricoCallback.bind(this);
+        this._handleSearchFieldRicevuteCallback = this._handleSearchFieldRicevuteCallback.bind(this);
         this._handleCaricoVideo = this._handleCaricoVideo.bind(this);
     }
 
 
-    _handleCloseModal () {
-        this.setState({show : false});
+    _handleCloseNoleggioModal () {
+        this.setState({showNoleggio : false});
     }
-    _handleShowModal (){
-        this.setState({show : true});
+    _handleShowNoleggioModal (){
+        this.setState({showNoleggio : true});
+    }
+
+    _handleCloseRestituzioneModal () {
+        this.setState({showRestituzione : false});
+    }
+    _handleShowRestituzioneModal (){
+        this.setState({showRestituzione : true});
     }
 
     _handleCaricoVideo(e){
@@ -103,12 +165,12 @@ export default class Noleggi extends Component {
 
         let rowsVideo = this.state.rowsVideo;
 
-        rowsVideo = data.data;
-        this.setState({rowsVideo});
-
         if(reset){
             // al momento unica soluzione per notificare a InfinityTable che externalRow è vuoto
             rowsVideo = '';
+            this.setState({rowsVideo});
+        }else{
+            rowsVideo = data.data;
             this.setState({rowsVideo});
         }
 
@@ -120,12 +182,44 @@ export default class Noleggi extends Component {
 
         let rowsNoleggi = this.state.rowsNoleggi;
 
-        rowsNoleggi = data.data;
-        this.setState({rowsNoleggi});
-
         if(reset){
             rowsNoleggi = '';
             this.setState({rowsNoleggi});
+        }else{
+            rowsNoleggi = data.data;
+            this.setState({rowsNoleggi});
+        }
+
+    }
+
+    _handleSearchFieldStoricoCallback(data,reset){
+
+        //console.log(rows);
+
+        let rowsStorico = this.state.rowsStorico;
+
+        if(reset){
+            rowsStorico = '';
+            this.setState({rowsStorico});
+        }else{
+            rowsStorico = data.data;
+            this.setState({rowsStorico});
+        }
+
+    }
+
+    _handleSearchFieldRicevuteCallback(data,reset){
+
+        //console.log(data);
+
+        let rowsRicevute = this.state.rowsRicevute;
+
+        if(reset){
+            rowsRicevute = '';
+            this.setState({rowsRicevute});
+        }else{
+            rowsRicevute = data.data;
+            this.setState({rowsRicevute});
         }
 
     }
@@ -134,6 +228,7 @@ export default class Noleggi extends Component {
     render() {
 
         let urlVideo = this.props.url+'/video';
+        let urlRicevute = this.props.url+'/ricevute';
 
         return (
             <Fragment>
@@ -162,20 +257,22 @@ export default class Noleggi extends Component {
                             <div className="row mb-3 px-2">
 
                                     <div className="col-md-6">
-                                        <SearchField key="s-video" showList={false} patternList={{id:'id',fields:['nome','cognome']}}
+                                        <SearchField key="s-video" showList={false}
                                         url={urlVideo+'/search-noleggi'} callback={this._handleSearchFieldCallback}
                                         />
                                     </div>
 
                                     <div className="col-md-6 text-right">
-                                        <Button className="btn-success mr-3" disabled={this.state.selectedListVideo.length>0?false:true} onClick={this._handleShowModal}>
+                                        <Button className="btn-success mr-3"
+                                        disabled={this.state.selectedListVideo.length>0?false:true}
+                                        onClick={this._handleShowNoleggioModal}>
                                         <i className="fa fa-upload" aria-hidden="true"></i>
                                         &nbsp;Noleggia</Button>
 
 
-                                        <NoleggiModal url={this.props.url}
+                                        <NoleggoModal url={this.props.url}
                                             externalRows={this.state.rowsSelectedListVideo}
-                                            show={this.state.show} onHide={this._handleCloseModal}
+                                            show={this.state.showNoleggio} onHide={this._handleCloseNoleggioModal}
                                             callback={
                                                 (row) => {
                                                     this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
@@ -211,15 +308,30 @@ export default class Noleggi extends Component {
                             <div className="row mb-3 px-2">
 
                                     <div className="col-md-6">
-                                        <SearchField key="s-noleggi" showList={false} patternList={{id:'id',fields:['nome','cognome']}}
+                                        <SearchField key="s-noleggi" showList={false}
                                         url={this.url+'/search'} callback={this._handleSearchFieldNoleggiCallback}
                                         />
                                     </div>
 
                                     <div className="col-md-6 text-right">
-                                        <Button className="btn-warning mr-3" disabled={this.state.selectedListNoleggi.length>0?false:true} onClick={this._handleCaricoVideo}>
+
+                                        <Button className="btn-warning mr-3"
+                                        disabled={this.state.selectedListNoleggi.length>0?false:true}
+                                        onClick={this._handleShowRestituzioneModal}
+                                        >
                                         <i className="fa fa-download" aria-hidden="true"></i>
                                         &nbsp;Restituzione</Button>
+
+                                        <RestNoleggioModal
+                                            url={this.props.url}
+                                            externalRows={this.state.rowsSelectedListNoleggi}
+                                            show={this.state.showRestituzione} onHide={this._handleCloseRestituzioneModal}
+                                            callback={
+                                                (row) => {
+                                                    this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                                                }
+                                            }
+                                        />
 
                                     </div>
 
@@ -234,8 +346,18 @@ export default class Noleggi extends Component {
                                             externalRows={this.state.rowsNoleggi}
                                             multiSelect={true}
                                             selectedList={this.state.selectedListNoleggi}
-                                            multiSelectCallback={ (list) =>{
-                                                this.setState({selectedListNoleggi:list})
+                                            multiSelectCallback={ (list,rows) =>{
+                                                let idCliente = rows[0]!==undefined ? rows[0].id_cliente:null;
+                                                let lst = [];
+                                                let rw = [];
+                                                rows.map((row,k) =>{
+                                                    if(row.id_cliente!=idCliente)
+                                                        return false;
+                                                    lst[k] = row.id;
+                                                    rw[k] = row;
+                                                })
+                                                //console.log(lst);
+                                                this.setState({selectedListNoleggi:lst, rowsSelectedListNoleggi:rw})
                                                 //console.log(list)
                                             }}
                                         />
@@ -245,11 +367,63 @@ export default class Noleggi extends Component {
                     </div>
 
                     <div className="tab-pane fade" id="nav-storico" role="tabpanel" aria-labelledby="nav-storico-tab">
+                        <div className="container-fluid pl-3">
+                            <div className="row mb-3 px-2">
 
+                                    <div className="col-md-6">
+                                        <SearchField key="s-storico" showList={false}
+                                        query='only=storico'
+                                        url={this.url+'/search'}
+                                        callback={this._handleSearchFieldStoricoCallback}
+                                        />
+                                    </div>
+
+
+
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <InfiniteTable key="storico"
+                                            id="storico"
+                                            reload={this.state.reloadInfiniteTable}
+                                            query='only=storico'
+                                            url={this.url}
+                                            columns={COLUMNS_STORICO}
+                                            externalRows={this.state.rowsStorico}
+                                            multiSelect={false}
+                                        />
+                                    </div>
+                                </div>
+                        </div>
                     </div>
 
                     <div className="tab-pane fade" id="nav-ricevute" role="tabpanel" aria-labelledby="nav-ricevute-tab">
+                        <div className="container-fluid pl-3">
+                            <div className="row mb-3 px-2">
 
+                                    <div className="col-md-6">
+                                        <SearchField key="s-ricevute" showList={false}
+                                        url={urlRicevute+'/search'}
+                                        callback={this._handleSearchFieldRicevuteCallback}
+                                        />
+                                    </div>
+
+
+
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <InfiniteTable key="ricevute"
+                                            id="ricevute"
+                                            reload={this.state.reloadInfiniteTable}
+                                            url={urlRicevute}
+                                            columns={COLUMNS_RICEVUTE}
+                                            externalRows={this.state.rowsRicevute}
+                                            multiSelect={false}
+                                        />
+                                    </div>
+                                </div>
+                        </div>
                     </div>
 
                 </div>

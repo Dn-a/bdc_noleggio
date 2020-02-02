@@ -17,18 +17,23 @@ class NoleggioController extends Controller
 
     public function index(Request $request)
     {
-        $page = $request->input('per-page') ?: 15;
+        $page = $request->input('per-page') ?: 10;
+
+        // view che mostra lo storico noleggi
+        $only = $request->input('only') ?: '';
+        $storico = in_array('storico', explode('-',$only));
 
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $user->id_pt_vendita;
 
-        $noleggio = Noleggio::whereHas('magazzino',function($query) use($idPtVendita) {
+        $noleggio = Noleggio::where('data_restituzione',$storico?'!=':'=', null )
+            ->whereHas('magazzino',function($query) use($idPtVendita) {
                 $query->where('id_pt_vendita',$idPtVendita);
             })
             ->orderBy('id','DESC')->paginate($page);
 
-        return new NoleggioCollection($noleggio, true, $this->moreField($ruolo) );
+        return new NoleggioCollection($noleggio, true, $this->moreField($ruolo,$storico) );
     }
 
 
@@ -36,10 +41,19 @@ class NoleggioController extends Controller
     {
         $arr = explode(' ',$val);
 
+        // view che mostra lo storico noleggi
+        $only = $request->input('only') ?: '';
+        $storico = in_array('storico', explode('-',$only));
+
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
+        $idPtVendita = $user->id_pt_vendita;
 
-        $noleggio = Noleggio::where(function($query) use($arr) {
+        $noleggio = Noleggio::where('data_restituzione',$storico?'!=':'=', null )
+        ->whereHas('magazzino',function($query) use($idPtVendita) {
+            $query->where('id_pt_vendita',$idPtVendita);
+        })
+        ->where(function($query) use($arr) {
             $query->whereHas('magazzino',function($query) use($arr) {
                 $query->whereHas('video',function($query) use($arr) {
                     $query->where('titolo','like',$arr[0].'%');
@@ -58,14 +72,20 @@ class NoleggioController extends Controller
         ->limit(15)->get();
 
 
-        return  new NoleggioCollection($noleggio,false, $this->moreField($ruolo));
+        return  new NoleggioCollection($noleggio,false, $this->moreField($ruolo,$storico));
     }
 
 
-    private function moreField($ruolo)
+    private function moreField($ruolo,$storico)
     {
         $moreFields = [
+            'giorni_ritardo'
         ];
+
+        if($storico)
+            $moreFields =  array_merge($moreFields,['data_restituzione']);
+        else
+            $moreFields =  array_merge($moreFields,['prezzo']);
 
         if($ruolo!='Addetto')
             $moreFields =  array_merge($moreFields,['dipendente']);
@@ -76,7 +96,7 @@ class NoleggioController extends Controller
 
     public function create()
     {
-
+        return $this->pdfGenerate([],'a');
     }
 
 
@@ -173,7 +193,7 @@ class NoleggioController extends Controller
                 'totale' => $totale
             ];
 
-            $ricevuta = $this->pdfGenerate($datiRicevutaNoleggio);
+            $ricevuta = $this->pdfGenerate($datiRicevutaNoleggio,'noleggio');
 
             Ricevuta::insert(
                 [
@@ -202,9 +222,11 @@ class NoleggioController extends Controller
 
     // PDF GENERATOR
     //
-    private function pdfGenerate($array)
+    private function pdfGenerate($array,$tipo)
     {
-        /*$array = [
+        /*$cliente = Cliente::where('id',3)->first();
+        //var_dump($cliente->fidelizzazione->precentuale);exit;
+        $array = [
             'ptVendita' => [
                 'titolo' => 'Roma01',
                 'indirizzo' => 'p.zza repubblica - Roma',
@@ -224,55 +246,22 @@ class NoleggioController extends Controller
                     'n_giorni' => '2',
                     'prezzo' => '5',
                     'importo' => '10',
+                    'scontoGiorni' => '1',
                     'danneggiato' => 'danneggiato'
                 ],
-                [
-                    'descrizione' => 'cod. 1 - Pulp Fiction',
-                    'n_giorni' => '2',
-                    'prezzo' => '5',
-                    'importo' => '10',
-                    'danneggiato' => 'danneggiato'
-                ],
-                [
-                    'descrizione' => 'cod. 1 - Pulp Fiction',
-                    'n_giorni' => '2',
-                    'prezzo' => '5',
-                    'importo' => '10',
-                    'danneggiato' => 'danneggiato'
-                ],
-                [
-                    'descrizione' => 'cod. 1 - Pulp Fiction',
-                    'n_giorni' => '2',
-                    'prezzo' => '5',
-                    'importo' => '10',
-                    'danneggiato' => 'danneggiato'
-                ],
-                [
-                    'descrizione' => 'cod. 1 - Pulp Fiction',
-                    'n_giorni' => '2',
-                    'prezzo' => '5',
-                    'importo' => '10',
-                    'danneggiato' => 'danneggiato'
-                ],
-                [
-                    'descrizione' => 'cod. 1 - Pulp Fiction',
-                    'n_giorni' => '2',
-                    'prezzo' => '5',
-                    'importo' => '10',
-                    'danneggiato' => 'danneggiato'
-                ]
             ],
-            'tipoSconto' => 'start',
-            'sconto' =>'0',
+            'tipoSconto' => $cliente->fidelizzazione->titolo,
+            'sconto' => $cliente->fidelizzazione->percentuale,
             'totDanni' => '0',
-            'giorniExtra' => '0',
-            'totale' => '10'
+            'costoGiorniExtra' => '0',
+            'totaleParziale' => '10',
+            'totale' => 10
         ];*/
 
         //return view('pdf.ricevuta_pagamento', $array);
         //PDF::setOptions(['dpi' => 96, 'fontHeightRatio' => '0.5']);
         //$pdf = PDF::loadView('pdf.ricevuta_pagamento', $array);
-        $pdf = PDF::loadView('pdf.ricevuta_noleggio', $array);
+        $pdf = PDF::loadView('pdf.ricevuta_'.$tipo, $array);
         $file = $pdf->download('ricevuta.pdf');
         $blob = base64_encode($file);
 
@@ -294,7 +283,127 @@ class NoleggioController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        try{
+            //return response()->json($id,201);exit;
+            //Validate
+            $request->validate([
+                'id_cliente' => 'required|integer',
+                'id_noleggio' => 'required|array',
+                'id_noleggio.*' => 'required|integer',
+                'danneggiato' => 'required|array',
+                'danneggiato.*' => 'required|integer',
+                'prezzo_extra' => 'required|array',
+                'prezzo_extra.*' => 'required|regex:/^\d+(\.\d{1,2})?$/'
+            ]);
+
+            $input = $request->all();
+
+            //return response()->json($request->all(),201);exit;
+
+            $user = Auth::user();
+            $idDipendente = $user->id;
+            $idPtVendita = $user->id_pt_vendita;
+
+            date_default_timezone_set("Europe/Rome");
+
+            $totaleParziale = 0;
+            $totaleCostoDanni = 0;
+            $totaleGiorniExtra = 0;
+            $noleggi = [];
+
+            for( $i=0 ; $i < count($input['id_noleggio']) ; $i++ ){
+
+                $idNoleggio = $input['id_noleggio'][$i];
+                $danneggiato = $input['danneggiato'][$i];
+                $extra = $input['prezzo_extra'][$i];
+
+                $magazzino = Magazzino::whereHas('noleggio',function($query) use($idNoleggio) {
+                    $query->where('id',$idNoleggio);
+                })->first();
+
+                $magazzino->update(['noleggiato' => 0,'danneggiato' => $danneggiato]);
+
+                $noleggio = Noleggio::where('id',$idNoleggio);
+                $date = date('Y-m-d');
+                $noleggio->update(['prezzo_extra' => $extra,'data_restituzione' => $date]);
+                $noleggio = $noleggio->first();
+                $gg = ceil( (strtotime($noleggio->data_fine) - strtotime($noleggio->data_inizio)) / 86400 );
+                $ggExtra = ceil( (strtotime(date("Y-m-d ")) - strtotime($noleggio->data_fine)) / 86400 );
+
+                $video = Video::where('id',$magazzino->id_video)->first();
+                //$importo = $video->prezzo*$gg;
+                $importo = $noleggio->prezzo_tot;
+
+                $scontoGG = 0;
+                if($gg>1){
+                    $scontoGG = $video->prezzo*($gg/40);
+                    $scontoGG = $scontoGG > ($video->prezzo/2)? ($video->prezzo/2) : $scontoGG;
+                }
+
+                $noleggi[$i] = [
+                    'descrizione' => $video->titolo,
+                    'danneggiato' => $danneggiato==1? 'danneggiato':'',
+                    'n_giorni' => $gg,
+                    'n_giorni_extra' => $ggExtra,
+                    'prezzo' => $video->prezzo,
+                    'scontoGiorni' => $scontoGG,
+                    'importo' =>  $importo
+                ];
+
+                if($danneggiato==1)
+                    $totaleCostoDanni += $video->prezzo*2;
+
+                $totaleGiorniExtra += $video->prezzo*$ggExtra;
+
+                $totaleParziale += $importo;
+            }
+
+            $cliente = Cliente::where('id',$input['id_cliente'])->first();
+
+            $datiRicevutaPagamento = [
+                'ptVendita' => [
+                    'titolo' => $user->puntoVendita->titolo,
+                    'indirizzo' => $user->puntoVendita->indirizzo.' '.
+                                   $user->puntoVendita->comune->nome.' ('.
+                                   $user->puntoVendita->comune->prov.')'
+                ],
+                'cliente'=> [
+                    'nome' => ucfirst($cliente->nome).' '.ucfirst($cliente->cognome),
+                    'indirizzo' => ucfirst($cliente->indirizzo).' '.
+                                   $cliente->comune->nome.' ('.
+                                   $cliente->comune->prov.')',
+                    'telefono' => $cliente->telefono,
+                    'cellulare' => $cliente->cellulare,
+                    'email' => $cliente->email
+                ],
+                'tabella' => $noleggi,
+                'totale' => $totaleParziale,
+                'tipoSconto' => $cliente->fidelizzazione->titolo,
+                'sconto' => $cliente->fidelizzazione->percentuale,
+                'totDanni' => $totaleCostoDanni,
+                'costoGiorniExtra' => $totaleGiorniExtra,
+                'totaleParziale' => $totaleParziale
+            ];
+
+            $ricevuta = $this->pdfGenerate($datiRicevutaPagamento,'pagamento');
+
+            //return response()->json(['pdf' => $ricevuta],201);exit;
+
+            Ricevuta::insert(
+                [
+                    'tipo' => 'pagamento',
+                    'id_pt_vendita' => $idPtVendita,
+                    'id_dipendente' => $idDipendente,
+                    'id_cliente' => $input['id_cliente'],
+                    'pdf' => $ricevuta
+                ]
+            );
+
+            return response()->json(['pdf' => $ricevuta],201);
+
+        }catch( \Illuminate\Database\QueryException $e){
+            return response()->json(['msg' => $e->getMessage() ],500);
+        }
     }
 
 

@@ -4,15 +4,14 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class MagazzinoCollection extends ResourceCollection
+class RicevutaCollection extends ResourceCollection
 {
     protected $withFields = [
         'id',
-        'video',
-        'fornitore',
-        'data_scarico',
-        'ritiro',
-        'danneggiato',
+        'tipo',
+        'cliente',
+        'pdf',
+        'data_creazione'
     ];
     protected $withPagination;
 
@@ -29,8 +28,8 @@ class MagazzinoCollection extends ResourceCollection
     // return array
     public function toArray($request)
     {
-        $collection = $this->collection->transform(function($copia){
-                return $this->filterFields($copia);
+        $collection = $this->collection->transform(function($ricevuta){
+                return $this->filterFields($ricevuta);
             });
 
         if($this->withPagination )
@@ -50,37 +49,14 @@ class MagazzinoCollection extends ResourceCollection
 
     protected function filterFields($item)
     {
-        $fields = $this->withFields;
 
-        if(in_array('video',$fields)){
-            $video = (string) $item->video->titolo;
-            $item['video'] = $video;
-        }
-        if(in_array('fornitore',$fields)){
-            $fornitore = (string) $item->fornitore->titolo;
-            $item['fornitore'] = $fornitore;
-        }
-        if(in_array('dipendente',$fields)){
-            $dipendente = (string) $item->dipendente->nome.' '.
-            (string) $item->dipendente->cognome;
-            $item['dipendente'] = $dipendente;
-        }
-        if(in_array('pt_vendita',$fields)){
-            $ptVendita = ' '. (string) $item->puntoVendita->titolo
-            .' - '. (string) $item->puntoVendita->indirizzo
-            .' - '. (string) $item->puntoVendita->comune->nome
-            .' ('. (string) $item->puntoVendita->comune->prov.')';
-            $item['pt_vendita'] = $ptVendita;
-        }
-        if(in_array('ritiro',$fields)){
-            date_default_timezone_set("Europe/Rome");
-            $date = date("Y-m-d ");
-            $day = (strtotime($item->data_ritiro) - strtotime($date)) / 86400;
-            $gg = round($day);
-            $ritiro = $gg>=0 ? $gg : 0;
-            $item['ritiro'] = $ritiro;
-        }
+        $dipendente = ucfirst((string) $item->dipendente->nome).' '.
+            ucfirst((string) $item->dipendente->cognome);
+        $cliente = ucfirst((string) $item->cliente->nome).' '.
+            ucfirst((string) $item->cliente->cognome);
 
+        $item['cliente'] = $cliente;
+        $item['dipendente'] = $dipendente;
 
         if(empty($this->withFields)) return $item;
 

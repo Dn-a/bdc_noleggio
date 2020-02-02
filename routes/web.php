@@ -39,6 +39,10 @@ if(request()->header('accept')!='application/json')
     Route::get('noleggi/video', 'NoleggioController@video')->name('noleggi.video');
     Route::resource('noleggi', 'NoleggioController',['as' => 'noleggi']);
 
+    // Ricevute
+    Route::get('ricevute/search/{val}', 'RicevutaController@search')->name('ricevute.search');
+    Route::resource('ricevute', 'RicevutaController',['as' => 'ricevute']);
+
     // Fornitori
     Route::get('fornitori/search/{val}', 'FornitoreController@search')->name('fornitori.search');
 

@@ -155,7 +155,7 @@
                 <div class="row">
                     <div class="col-md-8 float-left">
                         <div class="text-left">
-                            <h4>Ricevuta Noleggio</h4>
+                            <h4>Ricevuta di Noleggio</h4>
                             <ul>
                                 <li>
                                     Movie Rental - {{$ptVendita['titolo']}}
@@ -251,7 +251,7 @@
 
         <div>
             <div class="container">
-                <div class="row hf mt-4"></div>
+                <div class="row hf mt-5"></div>
             </div>
         </div>
     </body>

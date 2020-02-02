@@ -16,7 +16,6 @@ class MagazzinoController extends Controller
 
         // seconda view che mostra i video restituiti al fornitore
         $only = $request->input('only') ?: '';
-
         $caricati = in_array('caricati', explode('-',$only));
 
         $user = Auth::user();
@@ -60,7 +59,8 @@ class MagazzinoController extends Controller
             ->orWhereHas('dipendente',function($query) use($arr) {
                 if(count($arr)==2)
                     $query->where('nome','like',$arr[0].'%')
-                    ->where('cognome','like',$arr[1].'%');
+                    ->where('cognome','like',$arr[1].'%')
+                    ->orWhere('cognome','like',$arr[0].' '.$arr[1].'%');
                 else
                     $query->where('nome','like',$arr[0].'%')
                     ->orWhere('cognome','like',$arr[0].'%');
@@ -80,7 +80,7 @@ class MagazzinoController extends Controller
         ->limit(10)->get();
 
 
-        return  new MagazzinoCollection($magazzino,false,$this->moreField($ruolo));
+        return  new MagazzinoCollection($magazzino,false,$this->moreField($ruolo,$caricati));
     }
 
     private function moreField($ruolo, $caricati)

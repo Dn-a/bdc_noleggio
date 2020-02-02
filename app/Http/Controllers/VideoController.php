@@ -68,7 +68,7 @@ class VideoController extends Controller
         ->where('titolo','like',$val.'%')
         ->limit(10)->get();
 
-        return  new VideoCollection($video);
+        return  new VideoCollection($video,false, null, $idPtVendita );
     }
 
     private function moreField($ruolo)

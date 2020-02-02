@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 
 /*const Back = ({name , placeholder, className='', label, required, checked, value, _handleChange}) => (
-    <div className={"custom-control custom-checkbox "+ className}>        
+    <div className={"custom-control custom-checkbox "+ className}>
         <input
             type="radio"
             id = {name+value}
@@ -19,8 +19,8 @@ import React, { Fragment } from "react";
 );*/
 
 const RadioField = ({name , placeholder, className=null, label, required, checked, value, _handleChange}) => (
-    <div className={className}>   
-    <label htmlFor={name+value}>     
+    <div className={className}>
+    <label htmlFor={name+value}>
         <input
             type="radio"
             id = {name+value}
@@ -34,7 +34,7 @@ const RadioField = ({name , placeholder, className=null, label, required, checke
             checked = {checked}
             value = {value}
         />
-        <span>{label}</span>
+        <span> {label}</span>
     </label>
     </div>
 );

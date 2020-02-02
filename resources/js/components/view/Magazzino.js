@@ -220,8 +220,10 @@ export default class Magazzino extends Component {
                             <div className="row mb-3 px-2">
 
                                     <div className="col-md-6">
-                                        <SearchField key="s-caricati" id="s-caricati" showList={false} patternList={{id:'id',fields:['nome','cognome']}}
-                                        url={this.url+'/search'} query='only=caricati' callback={this._handleSearchFieldCaricatiCallback}
+                                        <SearchField key="s-caricati" id="s-caricati"
+                                        showList={false} patternList={{id:'id',fields:['nome','cognome']}}
+                                        url={this.url+'/search'}
+                                        query='only=caricati' callback={this._handleSearchFieldCaricatiCallback}
                                         //onClick={this._handleSearchFieldClick}
                                         />
                                     </div>

@@ -53,7 +53,7 @@ class DipendenteController extends Controller
             ->orWhere('cognome','like',$arr[0].'%')
             ->orWhere(function($query) use($arr) {
                 if(count($arr)==2)
-                    $query->where('cognome','like',$arr[0].'%');
+                    $query->where('cognome','like',$arr[0].' '.$arr[1].'%');
             })
             ->orWhere(function($query) use($arr) {
                 if(isset($arr[1]))

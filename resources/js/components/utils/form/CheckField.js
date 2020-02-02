@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
 
-const CheckField = ({name , placeholder, className=null, label, required, checked, defaultChecked, value, _handleChange}) => (
-    <div className={className}>   
-    <label htmlFor={name+value}>     
+const CheckField = ({name , placeholder, className=null, label, required, checked, defaultChecked, value, handleChange}) => (
+    <div className={className}>
+    <label htmlFor={name+value}>
         <input
             type="checkbox"
             id = {name+value}
@@ -11,12 +11,12 @@ const CheckField = ({name , placeholder, className=null, label, required, checke
             className={'darken-3'}
             required = {required}
             placeholder = {placeholder}
-            onChange = {_handleChange}
+            onChange = {handleChange}
             checked = {checked}
             defaultChecked = {defaultChecked}
             value = {value}
         />
-        <span>{label}</span>
+        <span> {label}</span>
     </label>
     </div>
 );

@@ -34,4 +34,9 @@ class Magazzino extends Model
     {
         return $this->belongsTo('App\Dipendente','id_dipendente');
     }
+
+    public function noleggio()
+    {
+        return $this->hasMany('App\Noleggio','id_magazzino','id');
+    }
 }

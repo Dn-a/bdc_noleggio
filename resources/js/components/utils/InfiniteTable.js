@@ -108,7 +108,8 @@ export default class InfiniteTable extends Component {
 
     // Multiselezione righe
     _handleMultiSelection(id,row){
-        let selectedList = this.state.selectedList;
+        let selectedList = this.props.selectedList!==undefined?
+                            this.props.selectedList: this.state.selectedList;
 
         if(this.props.multiSelect===undefined || !this.props.multiSelect) return;
 
@@ -132,10 +133,12 @@ export default class InfiniteTable extends Component {
                 selectedListRows.push(row);
         });
 
-        this.setState({selectedList},() => {
-            if(this.props.multiSelectCallback !==undefined)
+        if(this.props.multiSelectCallback !==undefined)
                 this.props.multiSelectCallback(selectedList,selectedListRows);
-        });
+
+                /*this.setState({selectedList},() => {
+
+        });*/
 
         //console.log(id)
     }
@@ -195,7 +198,9 @@ export default class InfiniteTable extends Component {
 
     _moreInfoTable(){
         let multiSelect = this.props.multiSelect!==undefined ? this.props.multiSelect : false;
-        let elSize = this.state.selectedList.length;
+        //let elSize = this.state.selectedList.length;
+        let elSize = this.props.selectedList!==undefined?
+                    this.props.selectedList.length : this.state.selectedList.length;
 
         if(multiSelect)
             return(
@@ -361,7 +366,9 @@ export default class InfiniteTable extends Component {
                         {
                             rows.map((row,id) => {
                                 let idField = row.id;
-                                let sl = this.state.selectedList;
+                                let sl = this.props.selectedList!==undefined?
+                                        this.props.selectedList: this.state.selectedList;
+
                                 return(
                                     <tr className={
                                             (

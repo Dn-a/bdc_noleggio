@@ -8,13 +8,13 @@ class NoleggioCollection extends ResourceCollection
 {
     protected $withFields = [
         'id',
+        'id_cliente',
         'cliente',
         'video',
         'prezzo_tot',
         'prezzo_extra',
         'data_inizio',
-        'data_fine',
-        'giorni'
+        'data_fine'
     ];
     protected $withPagination;
 
@@ -52,30 +52,59 @@ class NoleggioCollection extends ResourceCollection
 
     protected function filterFields($item)
     {
+        $fields = $this->withFields;
 
-        $video = (string) $item->magazzino->video->titolo;
-        $dipendente = ucfirst((string) $item->dipendente->nome).' '.
+        if(in_array('video',$fields)){
+            $video = (string) $item->magazzino->video->titolo;
+            $item['video'] = $video;
+        }
+        if(in_array('dipendente',$fields)){
+            $dipendente = ucfirst((string) $item->dipendente->nome).' '.
             ucfirst((string) $item->dipendente->cognome);
-        $cliente = ucfirst((string) $item->cliente->nome).' '.
+            $item['dipendente'] = $dipendente;
+        }
+        if(in_array('cliente',$fields)){
+            $cliente = ucfirst((string) $item->cliente->nome).' '.
             ucfirst((string) $item->cliente->cognome);
-        $ptVendita = ' '. (string) $item->magazzino->puntoVendita->titolo
+            $item['cliente'] = $cliente;
+        }
+        if(in_array('pt_vendita',$fields)){
+            $ptVendita = ' '. (string) $item->magazzino->puntoVendita->titolo
             .' - '. (string) $item->magazzino->puntoVendita->indirizzo
             .' - '. (string) $item->magazzino->puntoVendita->comune->nome
             .' ('. (string) $item->magazzino->puntoVendita->comune->prov.')';
+            $item['pt_vendita'] = $ptVendita;
+        }
+        if(in_array('giorni',$fields)){
+            date_default_timezone_set("Europe/Rome");
+            $date = date("Y-m-d ");
+            $day = (strtotime($item->data_fine) - strtotime($date)) / 86400;
+            $gg = round($day);
+            $giorni = $gg>=0 ? $gg : 0;
 
+            $item['giorni'] = $giorni;
+        }
+        if(in_array('prezzo',$fields)){
+            $item['prezzo'] = $item->magazzino->video->prezzo;
+        }
+        /*if(in_array('prezzo_extra',$fields)){
+            date_default_timezone_set("Europe/Rome");
+            $date = date("Y-m-d ");
+            $day = (strtotime($date) - strtotime($item->data_fine)) / 86400;
+            $gg = round($day);
+            $giorniRitardo = $gg>=0 ? $gg : 0;
+            $prezzo = $item->magazzino->video->prezzo;
+            $item['prezzo_extra'] = $prezzo*$giorniRitardo;
+        }*/
+        if(in_array('giorni_ritardo',$fields)){
+            date_default_timezone_set("Europe/Rome");
+            $date = date("Y-m-d ");
+            $day = (strtotime($date) - strtotime($item->data_fine)) / 86400;
+            $gg = round($day);
+            $giorniRitardo = $gg>=0 ? $gg : 0;
 
-        $item['dipendente'] = $dipendente;
-        $item['cliente'] = $cliente;
-        $item['video'] = $video;
-        $item['pt_vendita'] = $ptVendita;
-
-        date_default_timezone_set("Europe/Rome");
-        $date = date("Y-m-d ");
-        $day = (strtotime($item->data_fine) - strtotime($date)) / 86400;
-        $gg = round($day);
-        $giorni = $gg>=0 ? $gg : 0;
-
-        $item['giorni'] = $giorni;
+            $item['giorni_ritardo'] = $giorniRitardo;
+        }
 
         if(empty($this->withFields)) return $item;
 

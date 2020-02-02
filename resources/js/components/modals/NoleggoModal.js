@@ -6,8 +6,6 @@ import SearchField from '../utils/SearchField';
 import INFO_ERROR from '../utils/form/InfoError';
 import DataField from '../utils/form/DataField';
 
-const whitespace_reg_ex = /^[^\s].*/;
-
 const FIELDS = [
     'id_cliente',
     'id_video',
@@ -19,7 +17,7 @@ const HIDE_FIELD = [
 
 ]
 
-export default class DipendentiModal extends Component {
+export default class NoleggoModal extends Component {
 
     constructor(props){
         super(props);
@@ -39,6 +37,7 @@ export default class DipendentiModal extends Component {
         this.state = {
             data: data,
             error: error,
+            sconto:[],
             checked: false,
             openModal: false,
             loader: false,
@@ -60,6 +59,7 @@ export default class DipendentiModal extends Component {
         });
         this.state.data=data;
         this.state.error =error;
+        this.state.sconto = [];
         this.state.loader = false;
         this.state.checked = false;
         this.state.openModal = false;
@@ -77,6 +77,7 @@ export default class DipendentiModal extends Component {
         let externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
         let data = this.state.data;
         let error = this.state.error;
+        let sconto = this.state.sconto;
 
         FIELDS.map((fd,id) => {
             switch(fd){
@@ -84,6 +85,7 @@ export default class DipendentiModal extends Component {
                     externalRows.map((row,key) => {
                         data[fd][key] = row.id;
                         error[fd][key] = '';
+                        sconto[key] = 0;
                     })
                     break;
                 case 'prezzo_tot':
@@ -97,7 +99,7 @@ export default class DipendentiModal extends Component {
                     let tomorrow = new Date();
                     tomorrow.setDate((new Date()).getDate() + 1);
                     //tomorrow = tomorrow.toJSON().slice(0, 10);
-                    tomorrow = tomorrow.getFullYear()+'-'+("0" + (tomorrow.getMonth() + 1)).slice(-2)+'-'+tomorrow.getDate();
+                    tomorrow = tomorrow.getFullYear()+'-'+("0" + (tomorrow.getMonth() + 1)).slice(-2)+'-'+("0" + tomorrow.getDate()).slice(-2);
                     externalRows.map((row,key) => {
                         error[fd][key] = '';
                         data[fd][key] = tomorrow;
@@ -154,12 +156,13 @@ export default class DipendentiModal extends Component {
 
         let error = this.state.error;
         let data = this.state.data;
+        let sconto = this.state.sconto;
 
         if(value=='')
             error[field][key] = INFO_ERROR['vuoto'];
         else
             error[field][key] = '';
-
+        let sct = 0;
         switch(field){
             case 'data_fine':
                 let today = new Date();
@@ -170,14 +173,20 @@ export default class DipendentiModal extends Component {
                     error[field][key] = INFO_ERROR['data'];
                 else {
                     let giorni = this._calcDay(date);
-                    data.prezzo_tot[key] = giorni * row.prezzo;
+                    if(giorni>1){
+                        sct = row.prezzo * ( giorni/40);
+                        sct =  sct > (row.prezzo/2) ? row.prezzo/2 : sct;
+                    }
+                    data.prezzo_tot[key] = (giorni * row.prezzo) - sct;
                 }
                 break;
         }
 
         data[field][key] = value;
 
-        this.setState({data,error},()  => this.checked());
+        sconto[key] = sct;
+
+        this.setState({data,error,sconto},()  => this.checked());
     }
 
     checked(){
@@ -254,8 +263,7 @@ export default class DipendentiModal extends Component {
         let fileName = 'ricevuta_noleggio.pdf';
 
         //calcolo prezzo totale
-        let totPagare = 0;
-        this.state.data.prezzo_tot.map((val) => totPagare+=val);
+        var totPagare = 0;
 
         return(
             <AddEditModal size="lg"
@@ -316,6 +324,7 @@ export default class DipendentiModal extends Component {
                                             <th>Prezzo</th>
                                             <th>Data restituzione</th>
                                             <th>Giorni</th>
+                                            <th>Sconto giorni</th>
                                             <th>Prezzo complessivo</th>
                                         </tr>
                                     </thead>
@@ -325,7 +334,10 @@ export default class DipendentiModal extends Component {
                                                 let data = this.state.data;
                                                 let date = data.data_fine[key]==null || data.data_fine[key]==''?'000-00-00':data.data_fine[key];
                                                 let giorni = this._calcDay(date);
-
+                                                let prezzoTot = data.prezzo_tot[key];
+                                                let sconto = this.state.sconto[key];
+                                                totPagare += prezzoTot;
+                                                //console.log(date)
                                                 return(
                                                     <tr key={key}>
                                                         <td>{(key+1)}</td>
@@ -343,8 +355,9 @@ export default class DipendentiModal extends Component {
                                                         <td>
                                                             {giorni}
                                                         </td>
+                                                        <td>{parseFloat(sconto).toFixed(2) +' €'}</td>
                                                         <td>
-                                                            {parseFloat(data.prezzo_tot[key]).toFixed(2) +' €'}
+                                                            {parseFloat(prezzoTot).toFixed(2) +' €'}
                                                         </td>
                                                     </tr>
                                                 )
@@ -369,7 +382,7 @@ export default class DipendentiModal extends Component {
                     })}
                 >
                     <div className="form-group">
-                        <h2>Noleggio andato a buon Fine!</h2>
+                        <h2>Noleggio concluso!</h2>
                         <div className="mt-3">scarica la ricevuta</div>
 
                         <a className="pdf" href={linkSource} download={fileName}>
