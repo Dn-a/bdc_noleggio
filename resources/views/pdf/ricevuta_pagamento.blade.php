@@ -213,8 +213,9 @@
                                     <th>Prezzo uni.</th>
                                     <!--<th>Ritardo riconsegna (gg)</th>
                                     <th>Danneggiato</th>-->
-                                    <th>Sconto n. giorni</th>
-                                    <th>Importo</th>
+                                    <th>Sconto giorni</th>
+                                    <th>Sconto fidelizzazione</th>
+                                    <th>Importo complessivo</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -229,6 +230,7 @@
                                         <td>{{$item['n_giorni']}}</td>
                                         <td>{{number_format($item['prezzo'],2)}} €</td>
                                         <td>{{number_format($item['scontoGiorni'],2)}} €</td>
+                                        <td>{{$titleFidel}} {{$percFidel}} %</td>
                                         <td class="text-right">{{number_format($item['importo'],2)}} €</td>
                                     </tr>
                                 @endforeach
@@ -251,33 +253,21 @@
                     </div>
                     <div class="col-md-6 ">
                         @php
-                            $sconto = $totaleParziale*$sconto;
-                            $totConSconto = $totaleParziale - $sconto;
-                            $totale = $totConSconto + $costoGiorniExtra + $totDanni;
+                            $totale = $totaleParziale + $costoGiorniExtra + $totDanni;
                         @endphp
                         <div class=" ">
                             <strong class="text-left ">Totale Parziale:</strong>
                             <span class="float-right">{{number_format($totaleParziale,2)}} €</span>
                         </div>
                         <div class="clear"></div>
-                        <div class="mb-3 ">
-                        <strong class="text-left ">Sconto Fidelizzazione ({{$tipoSconto}}):</strong>
-                            <span class="float-right">- {{number_format($sconto,2)}} €</span>
-                        </div>
-                        <hr/>
-                        <div class="mb-3 ">
-                            <strong class="text-left "></strong>
-                            <span class="float-right">{{number_format($totConSconto,2)}} €</span><div class="clear"></div>
-                        </div>
-                        <div class="clear"></div>
                         <div class=" ">
-                            <strong class="text-left ">Costi giorni extra:</strong>
+                            <strong class="text-left ">Costo giorni extra:</strong>
                             <span class="float-right">+ {{number_format($costoGiorniExtra,2)}} €</span>
                         </div>
                         <hr/>
                         <div class=" mb-3">
                             <strong class="text-left "></strong>
-                            <span class="float-right">{{number_format(($totConSconto+$costoGiorniExtra),2)}} €</span>
+                            <span class="float-right">{{number_format(($totaleParziale+$costoGiorniExtra),2)}} €</span>
                             <div class="clear"></div>
                         </div>
                         <div class="clear"></div>

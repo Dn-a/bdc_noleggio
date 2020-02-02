@@ -47,6 +47,7 @@ export default class ClientiModal extends Component {
         this._handleOnSave = this._handleOnSave.bind(this);
     }
 
+
     _resetAfterClose () {
         let data = {};
         let error = {};
@@ -58,6 +59,23 @@ export default class ClientiModal extends Component {
         this.state.error =error;
         this.state.loader = false;
         this.state.checked = false;
+    }
+
+    componentDidUpdate (){
+        console.log(this.props.externalRow)
+        if(this.props.externalRow!==undefined)
+            this._onOpenModal();
+    }
+
+    _onOpenModal(){
+        let data = this.state.data;
+        let row = this.props.externalRow;
+
+        FIELDS.map((fd,k) => {
+            //console.log(data[fd])
+            data[fd] = row[fd];
+            //row[fd]
+        });
     }
 
     setRemoteStore() {

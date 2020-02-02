@@ -109,7 +109,7 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     @php
-        $array = array('home', 'noleggi', 'clienti', 'magazzino');
+        $array = array('home', 'prenotazioni', 'noleggi', 'clienti', 'magazzino');
         $ruolo = Auth::user()->ruolo->titolo;
         if($ruolo != 'Addetto')
             $array = array_merge($array,['dipendenti','incassi']);

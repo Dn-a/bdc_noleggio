@@ -216,9 +216,11 @@
                                     <th>Data Riconsegna</th>
                                     <th>N. giorni noleggio</th>
                                     <th>Prezzo uni.</th>
+                                    <th>Sconto giorni</th>
+                                    <th>Sconto Fidelizzazione</th>
                                     <!--<th>Ritardo riconsegna (gg)</th>
                                     <th>Danneggiato</th>-->
-                                    <th>Importo</th>
+                                    <th>Importo complessivo</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -228,6 +230,8 @@
                                         <td>{{date('d-m-Y', strtotime($item['data_riconsegna']))}}</td>
                                         <td>{{$item['n_giorni']}}</td>
                                         <td>{{number_format($item['prezzo'],2)}} €</td>
+                                        <td>{{number_format($item['scontoGiorni'],2)}} €</td>
+                                        <td>{{$titleField}} {{$percField}} %</td>
                                         <td class="text-right">{{number_format($item['importo'],2)}} €</td>
                                     </tr>
                                 @endforeach

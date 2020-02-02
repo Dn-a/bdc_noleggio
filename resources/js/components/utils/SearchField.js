@@ -16,6 +16,9 @@ export default class SearchField extends Component {
             infoSearch:''
         };
 
+        const host = window.location.hostname;
+        this.home = host=='www.dn-a.it'? '/noleggio':'';
+
         this.getRemoteData = this.getRemoteData.bind(this);
         this._handleChange = this._handleChange.bind(this);
         this._handleClick = this._handleClick.bind(this);
@@ -55,7 +58,7 @@ export default class SearchField extends Component {
 				console.log(error.response.data);
 				if(error.response.status==401)
 					if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-						window.location.href=this.props.url + '/login';
+						window.location.href=this.home + '/login';
             });
     }
 

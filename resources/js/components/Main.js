@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Switch, Route, Link, NavLink} from "react-router-dom";
 
 import Home from './view/Home';
+import Prenotazioni from './view/Prenotazioni';
 import Noleggi from './view/Noleggi';
 import Video from './view/Video';
 import Clienti from './view/Clienti';
@@ -12,6 +13,7 @@ import Incassi from './view/Incassi';
 
 const routes = [
     {path: "/", name:"Home",title:'Home', icon:'fa-home', Component:Home},
+    {path: "/prenotazioni", name:"Prenotazioni",title:'Gestione Prenotazioni', icon:'fa-calendar-check-o', Component: Prenotazioni},
     {path: "/noleggi", name:"Noleggi",title:'Gestione Noleggi', icon:'fa-film', Component: Noleggi},
     {path: "/clienti", name:"Clienti",title:'Gestione Clienti', icon:'fa-address-card-o', Component: Clienti},
     {path: "/dipendenti", name:"Dipendenti",title:'Gestione Dipendenti', icon:'fa-users', Component: Dipendenti},

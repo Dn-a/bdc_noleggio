@@ -85,7 +85,11 @@ class VideoCollection extends ResourceCollection
             .' '. (string) $item->regista->cognome;
             $item['regista'] = $regista;
         }
-
+        if(in_array('numero_prenotazioni',$fields)){
+            $item['numero_prenotazioni'] =
+            $item->prenotazione->where('id_pt_vendita',$this->idPtVendita)
+            ->count();
+        }
 
         $item['durata'] = (string) $item->durata .' minuti';
 

@@ -101,7 +101,7 @@ export default class Magazzino extends Component {
 
             //console.log(result.data);
 
-            this.setState({rows:'', selectedList:[],selectedListCaricati:[], reload: ++this.state.reloadInfiniteTable})
+            this.setState({rows:'', selectedList:[],selectedListCaricati:[], reloadInfiniteTable: ++this.state.reloadInfiniteTable})
             /*
             list.map((id,k) => {
                 list.splice( list.indexOf('foo'), 1 );

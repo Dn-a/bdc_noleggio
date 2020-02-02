@@ -1,6 +1,18 @@
 import React, { Component , Fragment } from 'react';
 import SearchField from './SearchField';
 
+// Proprietà
+//
+// - url: endpoint remoto
+// - columns: accetta una lista di oggetti {id:'',title:'',render:'',style:'',img:''}
+// - query: eventuali query string da accodare all'url
+// - reload: valore di tipo integer, se è diverso da quello precedente, viene eseguito un refresh della tabella
+// - externalRows: uso temporaneo; adotterò soluzioni migiori in futuro
+// - multiSelect: tipo boolean, attiva/disattiva la selezione multipla delle righe
+// - selectedList: riceve in ingresso una lista di ID dei dati visulalizzati in tabella
+// - multiSelectCallback: metodo richiamato ogni qualvolta si clicca su una nuova riga
+// - onActions: metodo invocato da eventuali azioni implementate nel render del campo columns - argomenti(object)
+
 export default class InfiniteTable extends Component {
 
     constructor(props){
@@ -24,6 +36,8 @@ export default class InfiniteTable extends Component {
             searchInfo:''
         };
 
+        const host = window.location.hostname;
+        this.home = host=='www.dn-a.it'? '/noleggio':'';
 
         this._handleScroll = this._handleScroll.bind(this);
         this._moreData = this._moreData.bind(this);
@@ -34,6 +48,8 @@ export default class InfiniteTable extends Component {
         this._handleChangeSearch = this._handleChangeSearch.bind(this);
         this._onClickItemSearch = this._onClickItemSearch.bind(this);
         this._timeOutSearch = this._timeOutSearch.bind(this);
+
+        this._handleActions = this._handleActions.bind(this);
     }
 
     componentDidMount () {
@@ -49,9 +65,11 @@ export default class InfiniteTable extends Component {
     }
 
     componentDidUpdate(){
+        /*
         if(this.props.selectedList !== undefined && this.props.selectedList instanceof Array){
             this.state.selectedList = this.props.selectedList;
-        }
+        }*/
+
         if(this.props.reload!==undefined && this.props.reload > this.state.reload){
             this.state.reload = this.props.reload;
             this.state.data.rows = [];
@@ -102,7 +120,7 @@ export default class InfiniteTable extends Component {
 				console.log(error.response.data);
 				if(error.response.status==401)
 					if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-						window.location.href=this.props.url + '/login';
+						window.location.href=this.home + '/login';
 			});
     }
 
@@ -252,6 +270,15 @@ export default class InfiniteTable extends Component {
             );
     }
 
+    // Metodo richiamabile dall'actions
+    _handleActions(obj){
+
+        if(this.props.onActions !== undefined)
+            this.props.onActions(obj);
+
+        //console.log(array)
+    }
+
     // SEARCH FIELD
     // dopo aver inserito un carattere nel campo
     _handleChangeSearch(e){
@@ -351,7 +378,11 @@ export default class InfiniteTable extends Component {
                             {
 
                             columns.map((column,id) => {
-                                if(rows[0]!== undefined && rows[0][column.field]=== undefined)
+                                if(column.field=='actions')
+                                    return(
+                                        <th key={id} className="text-center" >{column.title}</th>
+                                    );
+                                else if(rows[0]!== undefined && rows[0][column.field]=== undefined)
                                     return;
                                 else
                                 return(
@@ -388,20 +419,32 @@ export default class InfiniteTable extends Component {
                                         {
                                             columns.map((column,id) => {
                                                 //console.log(row['img']);
-                                                let cell = row[column.field];
-
-                                                let img = column.img !== undefined
-                                                &&  row['img']!== undefined ? row['img']:'';
-
                                                 let value = '';
-                                                if(rows[0][column.field]=== undefined)
+
+                                                if(column.render != undefined)
+                                                    value = column.render('',row,this._handleActions);
+
+                                                if(column.field=='actions')
+                                                    return(
+                                                        <td style={column.style!==undefined?column.style:{}} key={id}>
+                                                            {value}
+                                                        </td>
+                                                    );
+
+                                                // IMAGE
+                                                let img = '';
+                                                if(column.img !== undefined &&  row['img']!== undefined)
+                                                    img=  row['img'];
+                                                else if(column.img !== undefined && column.img !='')
+                                                    img= column.img;
+
+                                                // RENDER
+                                                if(rows[0][column.field] === undefined)
                                                     return;
                                                 else if(column.render != undefined)
-                                                    value = column.render(cell,row);
+                                                    value = column.render(row[column.field],row,this._handleActions);
                                                 else
-                                                    value = cell;
-
-
+                                                    value = row[column.field];//cell
 
                                                 return(
                                                     <td style={column.style!==undefined?column.style:{}} key={id}>

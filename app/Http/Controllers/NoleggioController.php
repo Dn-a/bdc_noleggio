@@ -14,6 +14,7 @@ use PDF;
 
 class NoleggioController extends Controller
 {
+    private $percSconto = 40;
 
     public function index(Request $request)
     {
@@ -117,6 +118,7 @@ class NoleggioController extends Controller
                 'data_fine.*' => 'required|date|date_format:Y-m-d',
             ]);
 
+            //return response()->json($request->all(),201);exit;
 
             $input = $request->all();
 
@@ -146,6 +148,7 @@ class NoleggioController extends Controller
                     ,500);
 
                 $magazzino->update(['noleggiato' => 1]);
+
                 $array[$i] = [
                     'id_dipendente' => $idDipendente,
                     'id_cliente' => $input['id_cliente'],
@@ -158,13 +161,21 @@ class NoleggioController extends Controller
                 $gg = ceil( (strtotime($input['data_fine'][$i]) - time()) / 86400 );
 
                 $video = Video::where('id',$input['id_video'][$i])->first();
-                $importo = $video->prezzo*$gg;
+
+                $importo = $input['prezzo_tot'][$i];
+
+                $scontoGG = 0;
+                if($gg>1){
+                    $scontoGG = $video->prezzo*($gg/$this->percSconto);
+                    $scontoGG = $scontoGG > ($video->prezzo/2)? ($video->prezzo/2) : $scontoGG;
+                }
 
                 $noleggi[$i] = [
                     'descrizione' => $video->titolo,
                     'data_riconsegna' => $input['data_fine'][$i],
                     'n_giorni' => $gg,
                     'prezzo' => $video->prezzo,
+                    'scontoGiorni' => $scontoGG,
                     'importo' =>  $importo
                 ];
 
@@ -190,7 +201,10 @@ class NoleggioController extends Controller
                     'email' => $cliente->email
                 ],
                 'tabella' => $noleggi,
-                'totale' => $totale
+                'totale' => $totale,
+                'titleField' => $cliente->fidelizzazione->titolo,
+                'percField' => $cliente->fidelizzazione->percentuale*100
+
             ];
 
             $ricevuta = $this->pdfGenerate($datiRicevutaNoleggio,'noleggio');
@@ -329,6 +343,7 @@ class NoleggioController extends Controller
                 $noleggio = $noleggio->first();
                 $gg = ceil( (strtotime($noleggio->data_fine) - strtotime($noleggio->data_inizio)) / 86400 );
                 $ggExtra = ceil( (strtotime(date("Y-m-d ")) - strtotime($noleggio->data_fine)) / 86400 );
+                $ggExtra = $ggExtra<0 ? 0 : $ggExtra;
 
                 $video = Video::where('id',$magazzino->id_video)->first();
                 //$importo = $video->prezzo*$gg;
@@ -378,8 +393,8 @@ class NoleggioController extends Controller
                 ],
                 'tabella' => $noleggi,
                 'totale' => $totaleParziale,
-                'tipoSconto' => $cliente->fidelizzazione->titolo,
-                'sconto' => $cliente->fidelizzazione->percentuale,
+                'titleFidel' => $cliente->fidelizzazione->titolo,
+                'percFidel' => $cliente->fidelizzazione->percentuale*100,
                 'totDanni' => $totaleCostoDanni,
                 'costoGiorniExtra' => $totaleGiorniExtra,
                 'totaleParziale' => $totaleParziale

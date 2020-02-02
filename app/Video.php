@@ -33,10 +33,17 @@ class Video extends Model
         return $this->belongsTo('App\Regista','id_regista');
     }
 
+    public function prenotazione()
+    {
+        return $this->hasMany('App\Prenotazione','id_video','id');
+    }
+
     public function magazzino()
     {
         return $this->hasMany('App\Magazzino','id_video','id');
     }
+
+
 
     /*
     public function puntoVendita()

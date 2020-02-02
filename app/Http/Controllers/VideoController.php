@@ -14,19 +14,27 @@ class VideoController extends Controller
     {
         $page = $request->input('per-page') ?: 10;
 
+        //
+        $only = $request->input('only') ?: '';
+        $inUscita = in_array('in_uscita', explode('-',$only));
+
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
+        $idPtVendita = $user->id_pt_vendita;//$ruolo=='Admin'? null:
         // Vengono visualizzati solo
         // i video disponibili al momento in magazzino  nello specifico p.to vendita
-        $idPtVendita =  $user->id_pt_vendita;//$ruolo=='Admin'? null:
 
-        $video = Video::whereHas('magazzino',function($query) use($idPtVendita) {
-            if($idPtVendita!=null)
-                $query->where('id_pt_vendita',$idPtVendita);
-        })->orderBy('id','DESC')->paginate($page);
+        $video = Video::where('in_uscita', $inUscita ? 1 : 0 )
+        ->where(function($query) use($idPtVendita,$inUscita) {
+            if(!$inUscita)
+                $query->whereHas('magazzino',function($query) use($idPtVendita) {
+                    $query->where('id_pt_vendita',$idPtVendita);
+                });
+        })
+        ->orderBy('id','DESC')->paginate($page);
 
         return new VideoCollection($video, true,
-            null,//,$this->moreField($ruolo)
+            $this->moreField($inUscita),//,$this->moreField($ruolo)
             $idPtVendita
         );
     }
@@ -35,19 +43,29 @@ class VideoController extends Controller
     {
         $arr = explode(' ',$val);
 
-        $video = Video::
-        //where('titolo',$arr[0])
-        where('titolo','like',$val.'%')
-        /*->orWhere(function($query) use($arr) {
-            if(isset($arr[1]))
-                $query->where('nome','like',$arr[0].'%')
-                ->where('prov','like',$arr[1].'%');
-            elseif(isset($arr[0]))
-                $query->where('nome','like',$arr[0].'%');
-        })*/
+        $only = $request->input('only') ?: '';
+        $noleggi = in_array('noleggi', explode('-',$only));
+        $inUscita = in_array('in_uscita', explode('-',$only));
+
+        $user = Auth::user();
+        $idPtVendita = $noleggi ? $user->id_pt_vendita : null;
+
+        $video = Video::where('in_uscita', $inUscita ? 1 : 0 )
+        ->where(function($query) use($idPtVendita) {
+            if($idPtVendita!=null)
+                $query->whereHas('magazzino',function($query) use($idPtVendita) {
+                    $query->where('id_pt_vendita',$idPtVendita);
+                });
+        })
+        ->where(function($query) use($arr,$inUscita) {
+            $query->where('titolo','like',$arr[0].'%')
+            ->orWhereHas('categoria',function($query) use($arr) {
+                $query->where('titolo','like',$arr[0].'%');
+            });
+        })
         ->limit(10)->get();
 
-        return  new VideoCollection($video);
+        return  new VideoCollection($video,false, $this->moreField($inUscita), $idPtVendita );
     }
 
 
@@ -64,21 +82,23 @@ class VideoController extends Controller
             if($idPtVendita!=null)
                 $query->where('id_pt_vendita',$idPtVendita);
         })
-        //->where('titolo',$arr[0])
         ->where('titolo','like',$val.'%')
+        ->orWhereHas('categoria',function($query) use($arr) {
+            $query->where('titolo','like',$arr[0].'%');
+        })
         ->limit(10)->get();
 
         return  new VideoCollection($video,false, null, $idPtVendita );
     }
 
-    private function moreField($ruolo)
+    private function moreField($inUscita)
     {
         $moreFields = [
 
         ];
 
-        if($ruolo=='Admin')
-            $moreFields =  array_merge($moreFields,['pt_vendita']);
+        if($inUscita)
+            $moreFields =  array_merge($moreFields,['numero_prenotazioni']);
 
         return $moreFields;
     }

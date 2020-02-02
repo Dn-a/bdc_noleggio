@@ -18,7 +18,7 @@ import React, { Fragment } from "react";
     </div>
 );*/
 
-const RadioField = ({name , placeholder, className=null, label, required, checked, value, _handleChange}) => (
+const RadioField = ({name , placeholder, className=null, label, required, checked, value, handleChange}) => (
     <div className={className}>
     <label htmlFor={name+value}>
         <input
@@ -30,7 +30,7 @@ const RadioField = ({name , placeholder, className=null, label, required, checke
             required = {required}
             autoComplete = {placeholder}
             placeholder = {placeholder}
-            onChange = {_handleChange}
+            onChange = {handleChange}
             checked = {checked}
             value = {value}
         />

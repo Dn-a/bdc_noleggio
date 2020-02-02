@@ -103,7 +103,7 @@ export default class DipendentiModal extends Component {
           this.setState({errorRemoteStore:error.response.status});
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-              window.location.href=this.home + '/login';
+              window.location.href=this.url + '/login';
           throw error;
         });
     }
@@ -193,7 +193,9 @@ export default class DipendentiModal extends Component {
 
     render(){
 
-        let objFid = {'3':'Addetto','2':'Responsabile',
+        let objFid = {
+            '3':'Addetto',
+            '2':'Responsabile',
             '1':'Admin'
         };
         let divClassName = 'mb-3';

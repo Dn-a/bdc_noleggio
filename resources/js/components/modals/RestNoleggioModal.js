@@ -177,7 +177,7 @@ export default class RestNoleggioModal extends Component {
                 onHide={(a) => {this.props.onHide(a);this._resetAfterClose();}}
                 loader={this.state.loader}
                 onConfirm={this._handleOnSave}
-                txtConfirmButton='Conferma'
+                txtConfirmButton={this.state.complited ? 'Confermato':'Conferma'}
                 disabledConfirmButton={!this.state.checked || this.state.complited}
                 title="Video" type="Restituzione"
             >

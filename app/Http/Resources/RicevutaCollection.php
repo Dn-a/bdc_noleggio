@@ -49,14 +49,19 @@ class RicevutaCollection extends ResourceCollection
 
     protected function filterFields($item)
     {
+        $fields = $this->withFields;
 
-        $dipendente = ucfirst((string) $item->dipendente->nome).' '.
+        if(in_array('dipendente',$fields)){
+            $dipendente = ucfirst((string) $item->dipendente->nome).' '.
             ucfirst((string) $item->dipendente->cognome);
-        $cliente = ucfirst((string) $item->cliente->nome).' '.
+            $item['dipendente'] = $dipendente;
+        }
+        if(in_array('cliente',$fields)){
+            $cliente = ucfirst((string) $item->cliente->nome).' '.
             ucfirst((string) $item->cliente->cognome);
+            $item['cliente'] = $cliente;
+        }
 
-        $item['cliente'] = $cliente;
-        $item['dipendente'] = $dipendente;
 
         if(empty($this->withFields)) return $item;
 

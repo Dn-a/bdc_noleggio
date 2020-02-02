@@ -76176,12 +76176,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 /* harmony import */ var _view_Home__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./view/Home */ "./resources/js/components/view/Home.js");
-/* harmony import */ var _view_Noleggi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./view/Noleggi */ "./resources/js/components/view/Noleggi.js");
-/* harmony import */ var _view_Video__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./view/Video */ "./resources/js/components/view/Video.js");
-/* harmony import */ var _view_Clienti__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./view/Clienti */ "./resources/js/components/view/Clienti.js");
-/* harmony import */ var _view_Dipendenti__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./view/Dipendenti */ "./resources/js/components/view/Dipendenti.js");
-/* harmony import */ var _view_Magazzino__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./view/Magazzino */ "./resources/js/components/view/Magazzino.js");
-/* harmony import */ var _view_Incassi__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./view/Incassi */ "./resources/js/components/view/Incassi.js");
+/* harmony import */ var _view_Prenotazioni__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./view/Prenotazioni */ "./resources/js/components/view/Prenotazioni.js");
+/* harmony import */ var _view_Noleggi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./view/Noleggi */ "./resources/js/components/view/Noleggi.js");
+/* harmony import */ var _view_Video__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./view/Video */ "./resources/js/components/view/Video.js");
+/* harmony import */ var _view_Clienti__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./view/Clienti */ "./resources/js/components/view/Clienti.js");
+/* harmony import */ var _view_Dipendenti__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./view/Dipendenti */ "./resources/js/components/view/Dipendenti.js");
+/* harmony import */ var _view_Magazzino__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./view/Magazzino */ "./resources/js/components/view/Magazzino.js");
+/* harmony import */ var _view_Incassi__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./view/Incassi */ "./resources/js/components/view/Incassi.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -76210,6 +76211,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var routes = [{
   path: "/",
   name: "Home",
@@ -76217,35 +76219,41 @@ var routes = [{
   icon: 'fa-home',
   Component: _view_Home__WEBPACK_IMPORTED_MODULE_3__["default"]
 }, {
+  path: "/prenotazioni",
+  name: "Prenotazioni",
+  title: 'Gestione Prenotazioni',
+  icon: 'fa-calendar-check-o',
+  Component: _view_Prenotazioni__WEBPACK_IMPORTED_MODULE_4__["default"]
+}, {
   path: "/noleggi",
   name: "Noleggi",
   title: 'Gestione Noleggi',
   icon: 'fa-film',
-  Component: _view_Noleggi__WEBPACK_IMPORTED_MODULE_4__["default"]
+  Component: _view_Noleggi__WEBPACK_IMPORTED_MODULE_5__["default"]
 }, {
   path: "/clienti",
   name: "Clienti",
   title: 'Gestione Clienti',
   icon: 'fa-address-card-o',
-  Component: _view_Clienti__WEBPACK_IMPORTED_MODULE_6__["default"]
+  Component: _view_Clienti__WEBPACK_IMPORTED_MODULE_7__["default"]
 }, {
   path: "/dipendenti",
   name: "Dipendenti",
   title: 'Gestione Dipendenti',
   icon: 'fa-users',
-  Component: _view_Dipendenti__WEBPACK_IMPORTED_MODULE_7__["default"]
+  Component: _view_Dipendenti__WEBPACK_IMPORTED_MODULE_8__["default"]
 }, {
   path: "/incassi",
   name: "Incassi",
   title: 'Report Incassi giornalieri',
   icon: 'fa-area-chart',
-  Component: _view_Incassi__WEBPACK_IMPORTED_MODULE_9__["default"]
+  Component: _view_Incassi__WEBPACK_IMPORTED_MODULE_10__["default"]
 }, {
   path: "/magazzino",
   name: "Magazzino",
   title: 'Gestione Magazzino',
   icon: 'fa-list-alt',
-  Component: _view_Magazzino__WEBPACK_IMPORTED_MODULE_8__["default"]
+  Component: _view_Magazzino__WEBPACK_IMPORTED_MODULE_9__["default"]
 }];
 
 var MainTitle = function MainTitle() {
@@ -76578,11 +76586,16 @@ function (_Component) {
     value: function render() {
       var _this4 = this;
 
+      //let objFid = {'1':'Start - 0%','2':'Plus - 10%','3':'Revolution - 20%'};
       var objFid = {
-        '1': 'Start - 0%',
-        '2': 'Plus - 10%',
-        '3': 'Revolution - 20%'
+        '1': 'Start - 0%'
       };
+
+      if (USER_CONFIG.ruolo != 'Addetto') {
+        objFid['2'] = 'Plus - 10%';
+        objFid['3'] = 'Revolution - 20%';
+      }
+
       var divClassName = 'mb-3';
       var urlComuni = this.props.url + '/comuni/search';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_1__["default"], {
@@ -76866,7 +76879,7 @@ function (_Component) {
           errorRemoteStore: error.response.status
         });
 
-        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.url + '/login';
         throw error;
       });
     }
@@ -77131,7 +77144,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 var FIELDS = ['id_cliente', 'id_video', 'prezzo_tot', 'data_fine'];
-var HIDE_FIELD = [];
+var TEMP_FIELDS = ['sconto', 'fidelizzazione'];
 
 var NoleggoModal =
 /*#__PURE__*/
@@ -77146,22 +77159,27 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(NoleggoModal).call(this, props));
     var data = {};
     var error = {};
+    var tempData = {};
     FIELDS.map(function (fd, id) {
       if (fd == 'id_cliente') data[fd] = error[fd] = '';else {
         data[fd] = [];
         error[fd] = [];
       }
     });
+    TEMP_FIELDS.map(function (fd, id) {
+      tempData[fd] = [];
+    });
     _this.state = {
       data: data,
       error: error,
-      sconto: [],
+      tempData: tempData,
       checked: false,
       openModal: false,
       loader: false,
       complited: false,
       pdf: ''
     };
+    _this.scontoGiorni = 40;
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
     _this._handleOnSave = _this._handleOnSave.bind(_assertThisInitialized(_this));
     return _this;
@@ -77172,13 +77190,19 @@ function (_Component) {
     value: function _resetAfterClose() {
       var data = {};
       var error = {};
+      var tempData = {};
       FIELDS.map(function (fd, id) {
-        data[fd] = [];
-        error[fd] = [];
+        if (fd == 'id_cliente') data[fd] = error[fd] = '';else {
+          data[fd] = [];
+          error[fd] = [];
+        }
+      });
+      TEMP_FIELDS.map(function (fd, id) {
+        tempData[fd] = [];
       });
       this.state.data = data;
       this.state.error = error;
-      this.state.sconto = [];
+      this.state.tempData = tempData;
       this.state.loader = false;
       this.state.checked = false;
       this.state.openModal = false;
@@ -77197,14 +77221,14 @@ function (_Component) {
       var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
       var data = this.state.data;
       var error = this.state.error;
-      var sconto = this.state.sconto;
+      var tempData = this.state.tempData;
       FIELDS.map(function (fd, id) {
         switch (fd) {
           case 'id_video':
             externalRows.map(function (row, key) {
               data[fd][key] = row.id;
               error[fd][key] = '';
-              sconto[key] = 0;
+              tempData.sconto[key] = 0;
             });
             break;
 
@@ -77230,6 +77254,7 @@ function (_Component) {
       this.setState({
         data: data,
         error: error,
+        tempData: tempData,
         openModal: true
       });
     }
@@ -77269,7 +77294,7 @@ function (_Component) {
           errorRemoteStore: error.response.status
         });
 
-        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.url + '/login';
         throw error;
       });
     }
@@ -77288,7 +77313,7 @@ function (_Component) {
       var field = e.target.name;
       var error = this.state.error;
       var data = this.state.data;
-      var sconto = this.state.sconto;
+      var tempData = this.state.tempData;
       if (value == '') error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['vuoto'];else error[field][key] = '';
       var sct = 0;
 
@@ -77299,22 +77324,16 @@ function (_Component) {
           if (value == '') error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['vuoto'];else if (date.getTime() <= today.getTime()) error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['data'];else {
             var giorni = this._calcDay(date);
 
-            if (giorni > 1) {
-              sct = row.prezzo * (giorni / 40);
-              sct = sct > row.prezzo / 2 ? row.prezzo / 2 : sct;
-            }
-
-            data.prezzo_tot[key] = giorni * row.prezzo - sct;
+            this._calcSconto(key, giorni);
           }
           break;
       }
 
       data[field][key] = value;
-      sconto[key] = sct;
       this.setState({
         data: data,
         error: error,
-        sconto: sconto
+        tempData: tempData
       }, function () {
         return _this3.checked();
       });
@@ -77323,10 +77342,11 @@ function (_Component) {
     key: "checked",
     value: function checked() {
       var data = this.state.data;
-      var error = this.state.error;
+      var error = this.state.error; //console.log(data);
+
       var checked = true;
       Object.keys(error).map(function (k, id) {
-        if (k == 'id_cliente' && (error[k] != '' || data[k] == '')) checked = false;else if (error[k] instanceof Array) // some ritorna true se all'interno del loop viene soddisfatta la condizione
+        if (k == 'id_cliente' && (error[k] != '' || data[k] == '' || data[k] == undefined)) checked = false;else if (error[k] instanceof Array) // some ritorna true se all'interno del loop viene soddisfatta la condizione
           if (!error[k].some(function (v) {
             if (v != '') {
               checked = false;
@@ -77354,6 +77374,42 @@ function (_Component) {
       return giorni;
     }
   }, {
+    key: "_calcSconto",
+    value: function _calcSconto(eKey, eGiorni, eFidelizzazione) {
+      var _this4 = this;
+
+      var data = this.state.data;
+      var tempData = this.state.tempData;
+      var fid = eFidelizzazione != null ? eFidelizzazione : tempData.fidelizzazione;
+      var percentuale = fid.percentuale !== undefined ? fid.percentuale : 0;
+      var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
+      var sconto = 0;
+      var prezzo = 0;
+
+      if (eKey != null && eGiorni != null) {
+        var row = externalRows[eKey];
+
+        if (eGiorni > 1) {
+          sconto = row.prezzo * (eGiorni / this.scontoGiorni);
+          sconto = sconto > row.prezzo / 2 ? row.prezzo / 2 : sconto;
+        }
+
+        prezzo = eGiorni * row.prezzo;
+        data.prezzo_tot[eKey] = prezzo - sconto - prezzo * percentuale;
+        tempData.sconto[eKey] = sconto;
+      } else externalRows.map(function (row, key) {
+        var giorni = _this4._calcDay(data.data_fine[key]);
+
+        if (giorni > 1) {
+          sconto = row.prezzo * (giorni / _this4.scontoGiorni);
+          sconto = sconto > row.prezzo / 2 ? row.prezzo / 2 : sconto;
+        }
+
+        prezzo = giorni * row.prezzo;
+        data.prezzo_tot[key] = prezzo - sconto - prezzo * percentuale;
+      });
+    }
+  }, {
     key: "showError",
     value: function showError(field, key) {
       var error = '';
@@ -77370,7 +77426,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var divClassName = 'mb-3';
       var urlCliente = this.props.url + '/clienti/search';
@@ -77381,6 +77437,376 @@ function (_Component) {
       var fileName = 'ricevuta_noleggio.pdf'; //calcolo prezzo totale
 
       var totPagare = 0;
+      var fidelizzazione = this.state.tempData.fidelizzazione;
+      var percentuale = fidelizzazione.percentuale !== undefined ? fidelizzazione.percentuale : 0;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        size: "lg",
+        show: this.props.show,
+        onHide: function onHide(a) {
+          _this5.props.onHide(a);
+
+          _this5._resetAfterClose();
+        },
+        loader: this.state.loader,
+        onConfirm: this._handleOnSave,
+        txtConfirmButton: this.state.complited ? 'Noleggiato' : 'Noleggia',
+        disabledConfirmButton: !this.state.checked || this.state.complited,
+        title: "Video",
+        type: "Noleggio"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()("switch", {
+          "is-active": !this.state.complited
+        })
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group w-50 mb-4"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        label: "Cliente",
+        placeholder: "Cerca un Cliente",
+        searchClassName: "w-100",
+        showList: true,
+        url: urlCliente,
+        patternList: {
+          id: 'id',
+          fields: {
+            nome: [],
+            cognome: [],
+            cf: []
+          }
+        } //id di ritorno; i fields vengono usati come titolo
+        ,
+        reloadOnClick: false,
+        onClick: function onClick(val) {
+          //console.log(val);
+          var data = _this5.state.data;
+          var error = _this5.state.error;
+          var tempData = _this5.state.tempData;
+          data.id_cliente = val.id;
+          error.id_cliente = '';
+          tempData.fidelizzazione = val.fidelizzazione;
+
+          _this5._calcSconto(null, null);
+
+          _this5.setState({
+            data: data,
+            error: error,
+            tempData: tempData
+          }, function () {
+            return _this5.checked();
+          });
+        },
+        callback: function callback(val) {
+          //console.log(val);
+          var data = _this5.state.data;
+          var error = _this5.state.error;
+          var tempData = _this5.state.tempData;
+          data.id_cliente = '';
+          tempData.fidelizzazione = {};
+
+          _this5._calcSconto(null, null);
+
+          if (val.length == 0) {
+            error.id_cliente = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['cliente'];
+          }
+
+          _this5.setState({
+            data: data,
+            error: error
+          }, function () {
+            return _this5.checked();
+          });
+        }
+      }), this.showError('id_cliente')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "table-responsive"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Film selezionati"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+        className: "table"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "N"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Data restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Sconto giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Sconto Fidelizzazione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Importo complessivo"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
+        var data = _this5.state.data;
+        var date = data.data_fine[key] == null || data.data_fine[key] == '' ? '000-00-00' : data.data_fine[key];
+
+        var giorni = _this5._calcDay(date);
+
+        var prezzoTot = data.prezzo_tot[key];
+        var sconto = _this5.state.tempData.sconto[key];
+        totPagare += prezzoTot; //console.log(date)
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+          key: key
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, key + 1), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.titolo), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(row.prezzo).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DataField__WEBPACK_IMPORTED_MODULE_5__["default"], {
+          name: "data_fine",
+          className: "form-control",
+          placeholder: "data fine",
+          helperText: _this5.showError('data_fine', key),
+          value: date,
+          handleChange: function handleChange(e) {
+            return _this5._handleChange(e, key, row);
+          }
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, giorni), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(sconto).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, fidelizzazione.titolo && fidelizzazione.titolo, "  ", percentuale * 100, " %"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(prezzoTot).toFixed(2) + ' €'));
+      }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "text-right p-2 px-4"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Totale da pagare:"), " ", parseFloat(totPagare).toFixed(2) + ' €'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()("switch complited-msg", {
+          "is-active": this.state.complited
+        })
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Noleggio concluso!"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "mt-3"
+      }, "scarica la ricevuta"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        className: "pdf",
+        href: linkSource,
+        download: fileName
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-file-pdf-o",
+        "aria-hidden": "true"
+      }), " Ricevuta Noleggio"))));
+    }
+  }]);
+
+  return NoleggoModal;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/modals/PrenotazioneModal.js":
+/*!*************************************************************!*\
+  !*** ./resources/js/components/modals/PrenotazioneModal.js ***!
+  \*************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return NoleggoModal; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/AddEditModal */ "./resources/js/components/utils/AddEditModal.js");
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
+/* harmony import */ var _utils_form_DataField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/form/DataField */ "./resources/js/components/utils/form/DataField.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+
+var FIELDS = ['id_cliente', 'id_video'];
+
+var NoleggoModal =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(NoleggoModal, _Component);
+
+  function NoleggoModal(props) {
+    var _this;
+
+    _classCallCheck(this, NoleggoModal);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(NoleggoModal).call(this, props));
+    var data = {};
+    var error = {};
+    FIELDS.map(function (fd, id) {
+      if (fd == 'id_cliente') data[fd] = error[fd] = '';else {
+        data[fd] = [];
+        error[fd] = [];
+      }
+    });
+    _this.state = {
+      data: data,
+      error: error,
+      checked: false,
+      openModal: false,
+      loader: false,
+      complited: false
+    };
+    _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
+    _this._handleOnSave = _this._handleOnSave.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(NoleggoModal, [{
+    key: "_resetAfterClose",
+    value: function _resetAfterClose() {
+      var data = {};
+      var error = {};
+      FIELDS.map(function (fd, id) {
+        if (fd == 'id_cliente') data[fd] = error[fd] = '';else {
+          data[fd] = [];
+          error[fd] = [];
+        }
+      });
+      this.state.data = data;
+      this.state.error = error;
+      this.state.loader = false;
+      this.state.checked = false;
+      this.state.openModal = false;
+      this.state.complited = false;
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      if (this.props.show) this._onOpenModal();
+    }
+  }, {
+    key: "_onOpenModal",
+    value: function _onOpenModal() {
+      if (this.state.openModal) return;
+      var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
+      var data = this.state.data;
+      var error = this.state.error;
+      FIELDS.map(function (fd, id) {
+        switch (fd) {
+          case 'id_video':
+            externalRows.map(function (row, key) {
+              data[fd][key] = row.id;
+              error[fd][key] = '';
+            });
+            break;
+        }
+      });
+      this.setState({
+        data: data,
+        error: error,
+        openModal: true
+      });
+    }
+  }, {
+    key: "setRemoteStore",
+    value: function setRemoteStore() {
+      var _this2 = this;
+
+      var url = this.props.url + '/prenotazioni';
+      var headers = {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      };
+      var data = this.state.data;
+      data['_token'] = CSRF_TOKEN; //console.log(data);return;
+
+      this.setState({
+        loader: true
+      });
+      return axios.post(url, data, headers).then(function (result) {
+        //console.log(result.data);return;
+
+        /*this.setState({complited:true, loader:false},()=>{
+            if(this.props.callback !== undefined)
+                this.props.callback(data);
+        });*/
+        if (_this2.props.callback !== undefined) _this2.props.callback(data);
+
+        _this2.props.onHide();
+
+        _this2.state.loader = false;
+        return result;
+      })["catch"](function (error) {
+        console.error(error.response.data);
+
+        _this2.setState({
+          errorRemoteStore: error.response.status
+        });
+
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.url + '/login';
+        throw error;
+      });
+    }
+  }, {
+    key: "_handleOnSave",
+    value: function _handleOnSave() {
+      console.log("save");
+      this.setRemoteStore();
+    }
+  }, {
+    key: "_handleChange",
+    value: function _handleChange(e, key, row) {
+      var _this3 = this;
+
+      var value = e.target.value.toLowerCase();
+      var field = e.target.name;
+      var error = this.state.error;
+      var data = this.state.data;
+      if (value == '') error[field][key] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['vuoto'];else error[field][key] = '';
+      var sct = 0;
+
+      switch (field) {}
+
+      data[field][key] = value;
+      this.setState({
+        data: data,
+        error: error
+      }, function () {
+        return _this3.checked();
+      });
+    }
+  }, {
+    key: "checked",
+    value: function checked() {
+      var data = this.state.data;
+      var error = this.state.error; //console.log(data);
+
+      var checked = true;
+      Object.keys(error).map(function (k, id) {
+        if (k == 'id_cliente' && (error[k] != '' || data[k] == '' || data[k] == undefined)) checked = false;else if (error[k] instanceof Array) // some ritorna true se all'interno del loop viene soddisfatta la condizione
+          if (!error[k].some(function (v) {
+            if (v != '') {
+              checked = false;
+              return true;
+            }
+          })) data[k].some(function (v) {
+            if (v == '') {
+              checked = false;
+              return true;
+            }
+          });
+      });
+      this.setState({
+        checked: checked
+      });
+    }
+  }, {
+    key: "showError",
+    value: function showError(field, key) {
+      var error = '';
+      if (this.state.error[field][key] !== undefined) error = this.state.error[field][key];else if (this.state.error[field] != undefined) error = this.state.error[field];
+      if (error != '') return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "error-div"
+      }, error);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this4 = this;
+
+      var divClassName = 'mb-3';
+      var urlCliente = this.props.url + '/clienti/search';
+      var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
         size: "lg",
         show: this.props.show,
@@ -77391,14 +77817,10 @@ function (_Component) {
         },
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
-        txtConfirmButton: "Noleggia",
+        txtConfirmButton: this.state.complited ? 'Prenotato' : 'Prenota',
         disabledConfirmButton: !this.state.checked || this.state.complited,
         title: "Video",
-        type: "Noleggio"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()("switch", {
-          "is-active": !this.state.complited
-        })
+        type: "Prenotazione"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group w-50 mb-4"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -77454,48 +77876,12 @@ function (_Component) {
         className: "table-responsive"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Film selezionati"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         className: "table"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "N"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Data restituzione"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Sconto giorni"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo complessivo"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "N"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Data Uscita"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
         var data = _this4.state.data;
-        var date = data.data_fine[key] == null || data.data_fine[key] == '' ? '000-00-00' : data.data_fine[key];
-
-        var giorni = _this4._calcDay(date);
-
-        var prezzoTot = data.prezzo_tot[key];
-        var sconto = _this4.state.sconto[key];
-        totPagare += prezzoTot; //console.log(date)
-
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: key
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, key + 1), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.titolo), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(row.prezzo).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DataField__WEBPACK_IMPORTED_MODULE_5__["default"], {
-          name: "data_fine",
-          className: "form-control",
-          placeholder: "data fine",
-          helperText: _this4.showError('data_fine', key),
-          value: date,
-          handleChange: function handleChange(e) {
-            return _this4._handleChange(e, key, row);
-          }
-        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, giorni), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(sconto).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(prezzoTot).toFixed(2) + ' €'));
-      }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "text-right p-2 px-4"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Totale da pagare:"), " ", parseFloat(totPagare).toFixed(2) + ' €'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()("switch complited-msg", {
-          "is-active": this.state.complited
-        })
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Noleggio concluso!"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "mt-3"
-      }, "scarica la ricevuta"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        className: "pdf",
-        href: linkSource,
-        download: fileName
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fa fa-file-pdf-o",
-        "aria-hidden": "true"
-      }), " Ricevuta Noleggio"))));
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, key + 1), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.titolo), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(row.prezzo).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.data_uscita));
+      }))))));
     }
   }]);
 
@@ -77723,7 +78109,7 @@ function (_Component) {
         },
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
-        txtConfirmButton: "Conferma",
+        txtConfirmButton: this.state.complited ? 'Confermato' : 'Conferma',
         disabledConfirmButton: !this.state.checked || this.state.complited,
         title: "Video",
         type: "Restituzione"
@@ -78184,12 +78570,15 @@ __webpack_require__.r(__webpack_exports__);
 
 var Button = function Button(_ref) {
   var _ref$className = _ref.className,
-      className = _ref$className === void 0 ? null : _ref$className,
+      className = _ref$className === void 0 ? '' : _ref$className,
+      _ref$title = _ref.title,
+      title = _ref$title === void 0 ? '' : _ref$title,
       _onClick = _ref.onClick,
       children = _ref.children,
       _ref$disabled = _ref.disabled,
       disabled = _ref$disabled === void 0 ? false : _ref$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    title: title,
     className: "btn waves-effect waves-light " + className + " grey lighten-5" + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick();
@@ -78316,7 +78705,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
-
+ // Proprietà
+//
+// - url: endpoint remoto
+// - columns: accetta una lista di oggetti {id:'',title:'',render:'',style:'',img:''}
+// - query: eventuali query string da accodare all'url
+// - reload: valore di tipo integer, se è diverso da quello precedente, viene eseguito un refresh della tabella
+// - externalRows: uso temporaneo; adotterò soluzioni migiori in futuro
+// - multiSelect: tipo boolean, attiva/disattiva la selezione multipla delle righe
+// - selectedList: riceve in ingresso una lista di ID dei dati visulalizzati in tabella
+// - multiSelectCallback: metodo richiamato ogni qualvolta si clicca su una nuova riga
+// - onActions: metodo invocato da eventuali azioni implementate nel render del campo columns - argomenti(object)
 
 var InfiniteTable =
 /*#__PURE__*/
@@ -78345,6 +78744,8 @@ function (_Component) {
       searchLoader: false,
       searchInfo: ''
     };
+    var host = window.location.hostname;
+    _this.home = host == 'www.dn-a.it' ? '/noleggio' : '';
     _this._handleScroll = _this._handleScroll.bind(_assertThisInitialized(_this));
     _this._moreData = _this._moreData.bind(_assertThisInitialized(_this));
     _this._handleMultiSelection = _this._handleMultiSelection.bind(_assertThisInitialized(_this)); // Search field
@@ -78354,6 +78755,7 @@ function (_Component) {
     _this._handleChangeSearch = _this._handleChangeSearch.bind(_assertThisInitialized(_this));
     _this._onClickItemSearch = _this._onClickItemSearch.bind(_assertThisInitialized(_this));
     _this._timeOutSearch = _this._timeOutSearch.bind(_assertThisInitialized(_this));
+    _this._handleActions = _this._handleActions.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -78380,10 +78782,10 @@ function (_Component) {
     value: function componentDidUpdate() {
       var _this3 = this;
 
-      if (this.props.selectedList !== undefined && this.props.selectedList instanceof Array) {
-        this.state.selectedList = this.props.selectedList;
-      }
-
+      /*
+      if(this.props.selectedList !== undefined && this.props.selectedList instanceof Array){
+          this.state.selectedList = this.props.selectedList;
+      }*/
       if (this.props.reload !== undefined && this.props.reload > this.state.reload) {
         this.state.reload = this.props.reload;
         this.state.data.rows = [];
@@ -78436,7 +78838,7 @@ function (_Component) {
         });
       })["catch"](function (error) {
         console.log(error.response.data);
-        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this4.props.url + '/login';
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this4.home + '/login';
       });
     } // Multiselezione righe
 
@@ -78558,6 +78960,12 @@ function (_Component) {
           }
         }
       }, "Deseleziona tutto"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, elSize, " elementi selezionati")));
+    } // Metodo richiamabile dall'actions
+
+  }, {
+    key: "_handleActions",
+    value: function _handleActions(obj) {
+      if (this.props.onActions !== undefined) this.props.onActions(obj); //console.log(array)
     } // SEARCH FIELD
     // dopo aver inserito un carattere nel campo
 
@@ -78663,7 +79071,10 @@ function (_Component) {
         className: "table",
         id: idTable
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, columns.map(function (column, id) {
-        if (rows[0] !== undefined && rows[0][column.field] === undefined) return;else return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        if (column.field == 'actions') return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+          key: id,
+          className: "text-center"
+        }, column.title);else if (rows[0] !== undefined && rows[0][column.field] === undefined) return;else return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
           key: id,
           className: "text-center"
         }, column.title);
@@ -78678,10 +79089,18 @@ function (_Component) {
           }
         }, columns.map(function (column, id) {
           //console.log(row['img']);
-          var cell = row[column.field];
-          var img = column.img !== undefined && row['img'] !== undefined ? row['img'] : '';
           var value = '';
-          if (rows[0][column.field] === undefined) return;else if (column.render != undefined) value = column.render(cell, row);else value = cell;
+          if (column.render != undefined) value = column.render('', row, _this10._handleActions);
+          if (column.field == 'actions') return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+            style: column.style !== undefined ? column.style : {},
+            key: id
+          }, value); // IMAGE
+
+          var img = '';
+          if (column.img !== undefined && row['img'] !== undefined) img = row['img'];else if (column.img !== undefined && column.img != '') img = column.img; // RENDER
+
+          if (rows[0][column.field] === undefined) return;else if (column.render != undefined) value = column.render(row[column.field], row, _this10._handleActions);else value = row[column.field]; //cell
+
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
             style: column.style !== undefined ? column.style : {},
             key: id
@@ -78802,6 +79221,8 @@ function (_Component) {
       loader: false,
       infoSearch: ''
     };
+    var host = window.location.hostname;
+    _this.home = host == 'www.dn-a.it' ? '/noleggio' : '';
     _this.getRemoteData = _this.getRemoteData.bind(_assertThisInitialized(_this));
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
     _this._handleClick = _this._handleClick.bind(_assertThisInitialized(_this));
@@ -78836,7 +79257,7 @@ function (_Component) {
         //this.setState({data});
       })["catch"](function (error) {
         console.log(error.response.data);
-        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.props.url + '/login';
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
       });
     } // dopo aver inserito un carattere nel campo
 
@@ -79306,6 +79727,69 @@ var InputField = function InputField(_ref) {
 
 /***/ }),
 
+/***/ "./resources/js/components/utils/form/RadioField.js":
+/*!**********************************************************!*\
+  !*** ./resources/js/components/utils/form/RadioField.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+/*const Back = ({name , placeholder, className='', label, required, checked, value, _handleChange}) => (
+    <div className={"custom-control custom-checkbox "+ className}>
+        <input
+            type="radio"
+            id = {name+value}
+            name={name}
+            className={'custom-control-input ' }
+            required = {required}
+            autoComplete = {placeholder}
+            placeholder = {placeholder}
+            onChange = {_handleChange}
+            checked = {checked}
+            value = {value}
+        />
+        { label != null ? <label className="custom-control-label" htmlFor={name+value}>{label}</label>:''}
+    </div>
+);*/
+
+var RadioField = function RadioField(_ref) {
+  var name = _ref.name,
+      placeholder = _ref.placeholder,
+      _ref$className = _ref.className,
+      className = _ref$className === void 0 ? null : _ref$className,
+      label = _ref.label,
+      required = _ref.required,
+      checked = _ref.checked,
+      value = _ref.value,
+      handleChange = _ref.handleChange;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: className
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+    htmlFor: name + value
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "radio",
+    id: name + value,
+    name: name //className={'with-gap'}
+    ,
+    className: 'darken-3',
+    required: required,
+    autoComplete: placeholder,
+    placeholder: placeholder,
+    onChange: handleChange,
+    checked: checked,
+    value: value
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, " ", label)));
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (RadioField);
+
+/***/ }),
+
 /***/ "./resources/js/components/utils/form/RangeField.js":
 /*!**********************************************************!*\
   !*** ./resources/js/components/utils/form/RangeField.js ***!
@@ -79370,6 +79854,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
 /* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
 /* harmony import */ var _modals_ClientiModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modals/ClientiModal */ "./resources/js/components/modals/ClientiModal.js");
+/* harmony import */ var _utils_form_RadioField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/form/RadioField */ "./resources/js/components/utils/form/RadioField.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -79393,10 +79878,21 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-var COLUMNS = [{
+
+var COLUMNS = [
+/*{ title: '', field: 'actions', render:(cell,row,handle) => {
+        return(
+            <Button className='btn-light' title="Modifica"
+                onClick={ () => handle({row:row})}
+            >
+                <i className="fa fa-pencil-square-o" aria-hidden="true"></i>
+            </Button>
+        )
+    }
+},*/
+{
   title: 'id',
-  field: 'id',
-  align: 'right'
+  field: 'id'
 }, {
   title: 'Nome',
   field: 'nome',
@@ -79434,8 +79930,42 @@ var COLUMNS = [{
 }, {
   title: 'Fidelizzazione',
   field: 'fidelizzazione',
-  render: function render(cell) {
-    return cell.titolo;
+  render: function render(cell, row, handle) {
+    if (USER_CONFIG.ruolo != 'Addetto') {
+      var idCliente = row.id; //console.log(row)
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RadioField__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        name: 'fidel_' + idCliente,
+        label: "Start 0%",
+        checked: row.fidelizzazione.titolo == 'Start',
+        handleChange: function handleChange(e) {
+          return handle({
+            idC: idCliente,
+            idF: 1
+          });
+        }
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RadioField__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        name: 'fidel_' + idCliente,
+        label: "Plus 10%",
+        checked: row.fidelizzazione.titolo == 'Plus',
+        handleChange: function handleChange(e) {
+          return handle({
+            idC: idCliente,
+            idF: 2
+          });
+        }
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RadioField__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        name: 'fidel_' + idCliente,
+        label: "Revolution 15%",
+        checked: row.fidelizzazione.titolo == 'Revolution',
+        handleChange: function handleChange(e) {
+          return handle({
+            idC: idCliente,
+            idF: 3
+          });
+        }
+      }));
+    } else return cell.titolo;
   }
 }, {
   title: 'Privacy',
@@ -79472,15 +80002,18 @@ function (_Component) {
     _this.state = {
       rows: '',
       show: false,
+      showEdit: false,
+      loader: false,
       reloadInfiniteTable: 0
     };
     _this._handleCloseModal = _this._handleCloseModal.bind(_assertThisInitialized(_this));
     _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
+    _this._handleCloseEditModal = _this._handleCloseEditModal.bind(_assertThisInitialized(_this));
+    _this._handleShowEditModal = _this._handleShowEditModal.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
-    _this._handleCheckDataModal = _this._handleCheckDataModal.bind(_assertThisInitialized(_this));
-    _this._handleSearchFieldClick = _this._handleSearchFieldClick.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // New Clienti Modal
+
 
   _createClass(Clienti, [{
     key: "_handleCloseModal",
@@ -79495,11 +80028,22 @@ function (_Component) {
       this.setState({
         show: true
       });
+    } // Edit CLienti Modal
+
+  }, {
+    key: "_handleCloseEditModal",
+    value: function _handleCloseEditModal() {
+      this.setState({
+        showEdit: false,
+        rowEdit: {}
+      });
     }
   }, {
-    key: "_handleCheckDataModal",
-    value: function _handleCheckDataModal(e) {
-      console.log(e.target.value);
+    key: "_handleShowEditModal",
+    value: function _handleShowEditModal() {
+      this.setState({
+        showEdit: true
+      });
     }
   }, {
     key: "_handleSearchFieldCallback",
@@ -79519,14 +80063,46 @@ function (_Component) {
       }
     }
   }, {
-    key: "_handleSearchFieldClick",
-    value: function _handleSearchFieldClick(data) {
-      console.log(data);
+    key: "updateRemoteData",
+    value: function updateRemoteData(idC, idF) {
+      var _this2 = this;
+
+      var url = this.props.url + '/clienti/' + idC;
+      var headers = {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      };
+      var data = {
+        id_cliente: idC,
+        id_fidelizzazione: idF,
+        _method: 'put',
+        _token: CSRF_TOKEN
+      }; //console.log(this.props.url); console.log(data);return;
+
+      return axios.post(url, data, headers).then(function (result) {
+        //console.log(result.data);
+        _this2.setState({
+          reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+        });
+
+        return result;
+      })["catch"](function (error) {
+        console.error(error.response.data);
+
+        _this2.setState({
+          errorRemoteStore: error.response.status
+        });
+
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
+        throw error;
+      });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       var urlClienti = this.props.url + '/clienti/search';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -79545,8 +80121,8 @@ function (_Component) {
           }
         },
         url: urlClienti,
-        callback: this._handleSearchFieldCallback,
-        onClick: this._handleSearchFieldClick
+        callback: this._handleSearchFieldCallback //onClick={this._handleSearchFieldClick}
+
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["AddButton"], {
@@ -79559,8 +80135,8 @@ function (_Component) {
         show: this.state.show,
         onHide: this._handleCloseModal,
         callback: function callback(row) {
-          _this2.setState({
-            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+          _this3.setState({
+            reloadInfiniteTable: ++_this3.state.reloadInfiniteTable
           });
         }
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -79571,8 +80147,13 @@ function (_Component) {
         reload: this.state.reloadInfiniteTable,
         url: this.props.url + '/clienti',
         columns: COLUMNS,
-        externalRows: this.state.rows //multiSelect={true}
-
+        externalRows: this.state.rows,
+        onActions: function onActions(obj) {
+          if (confirm("Sicuro di volerlo cambiare?")) {
+            //console.log(obj)
+            _this3.updateRemoteData(obj.idC, obj.idF);
+          }
+        }
       }))));
     }
   }]);
@@ -80185,7 +80766,7 @@ function (_Component) {
           rows: '',
           selectedList: [],
           selectedListCaricati: [],
-          reload: ++_this2.state.reloadInfiniteTable
+          reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
         });
         /*
         list.map((id,k) => {
@@ -80539,8 +81120,13 @@ var COLUMNS_NOLEGGI = [{
       }
     }, cell);
   }
-} //{ title: 'Costo Tot.', field: 'prezzo_tot', render: cell => parseFloat(cell).toFixed(2) +' €'},
-].map(function (a) {
+}, {
+  title: 'Importo Complessivo',
+  field: 'prezzo_tot',
+  render: function render(cell) {
+    return parseFloat(cell).toFixed(2) + ' €';
+  }
+}].map(function (a) {
   if (a != null) return a;
   return false;
 });
@@ -80872,7 +81458,9 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
         key: "s-video",
         showList: false,
-        url: urlVideo + '/search-noleggi',
+        query: "only=noleggi",
+        url: urlVideo + '/search' //url={urlVideo+'/search-noleggi'}
+        ,
         callback: this._handleSearchFieldCallback
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
@@ -81036,6 +81624,452 @@ function (_Component) {
         columns: COLUMNS_RICEVUTE,
         externalRows: this.state.rowsRicevute,
         multiSelect: false
+      })))))));
+    }
+  }]);
+
+  return Noleggi;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/view/Prenotazioni.js":
+/*!******************************************************!*\
+  !*** ./resources/js/components/view/Prenotazioni.js ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Noleggi; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
+/* harmony import */ var _modals_NoleggoModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modals/NoleggoModal */ "./resources/js/components/modals/NoleggoModal.js");
+/* harmony import */ var _modals_PrenotazioneModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/PrenotazioneModal */ "./resources/js/components/modals/PrenotazioneModal.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+
+var COLUMNS_VIDEO = [{
+  title: 'id',
+  field: 'id',
+  align: 'right'
+}, {
+  title: 'Titolo',
+  field: 'titolo',
+  img: '',
+  render: function render(cell, row) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      style: {
+        display: 'inline-block'
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      style: {
+        textTransform: 'capitalize',
+        fontWeight: '600'
+      }
+    }, row['titolo']), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['durata']), " -\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['categoria']), " -\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['regista'])));
+  }
+}, {
+  title: 'Prezzo',
+  field: 'prezzo',
+  render: function render(cell) {
+    return parseFloat(cell).toFixed(2) + ' €';
+  }
+}, {
+  title: 'Prenotazioni',
+  field: 'numero_prenotazioni'
+}, {
+  title: 'Data Uscita',
+  field: 'data_uscita',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}];
+var MS_VIDEO = {
+  disableSelect: function disableSelect(row) {
+    return row.qta_disponibili == 0;
+  }
+};
+var COLUMNS_PRENOTAZIONI = [{
+  title: 'id',
+  field: 'id',
+  align: 'right'
+}, {
+  title: 'Video',
+  field: 'video',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, {
+  title: 'Cliente',
+  field: 'cliente',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, USER_CONFIG.ruolo != 'Addetto' ? {
+  title: 'Dipendente',
+  field: 'dipendente',
+  style: {
+    textTransform: 'capitalize'
+  }
+} : null, {
+  title: 'Prezzo',
+  field: 'prezzo',
+  render: function render(cell) {
+    return parseFloat(cell).toFixed(2) + ' €';
+  }
+}, {
+  title: 'Data Uscita',
+  field: 'data_uscita',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Data Prenotazione',
+  field: 'data_prenotazione',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}].map(function (a) {
+  if (a != null) return a;
+  return false;
+});
+var COLUMNS_RITIRATI = [{
+  title: 'id',
+  field: 'id',
+  align: 'right'
+}, {
+  title: 'Video',
+  field: 'video',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, {
+  title: 'Cliente',
+  field: 'cliente',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, USER_CONFIG.ruolo != 'Addetto' ? {
+  title: 'Dipendente',
+  field: 'dipendente',
+  style: {
+    textTransform: 'capitalize'
+  }
+} : null, {
+  title: 'Data Inizio',
+  field: 'data_inizio',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Data Fine',
+  field: 'data_fine',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Data Restituzione',
+  field: 'data_restituzione',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Giorni ritardo',
+  field: 'giorni_ritardo'
+}, {
+  title: 'Costo Complessivo (compresi Extra)',
+  field: 'prezzo_tot',
+  render: function render(cell, row) {
+    return parseFloat(cell + row.prezzo_extra).toFixed(2) + ' €';
+  }
+}].map(function (a) {
+  if (a != null) return a;
+  return false;
+});
+
+var Noleggi =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Noleggi, _Component);
+
+  function Noleggi(props) {
+    var _this;
+
+    _classCallCheck(this, Noleggi);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Noleggi).call(this, props));
+    _this.state = {
+      rowsVideo: '',
+      rowsPrenotazioni: '',
+      rowsStorico: '',
+      rowsRicevute: '',
+      showPrenotazione: false,
+      selectedListVideo: [],
+      // id dei video selezionati
+      rowsSelectedListVideo: [],
+      // row contenenti tutti i campi dei video selezionati - usato nel NOleggioMOdal
+      selectedListPrenotazioni: [],
+      // id dei video selezionati
+      rowsSelectedListPrenotazioni: [],
+      reloadInfiniteTable: 0
+    };
+    _this.url = _this.props.url + '/prenotazioni';
+    _this._handleClosePrenotazioneModal = _this._handleClosePrenotazioneModal.bind(_assertThisInitialized(_this));
+    _this._handleShowPrenotazioneModal = _this._handleShowPrenotazioneModal.bind(_assertThisInitialized(_this));
+    _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
+    _this._handleSearchFieldPrenotazioneCallback = _this._handleSearchFieldPrenotazioneCallback.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(Noleggi, [{
+    key: "_handleClosePrenotazioneModal",
+    value: function _handleClosePrenotazioneModal() {
+      this.setState({
+        showPrenotazione: false
+      });
+    }
+  }, {
+    key: "_handleShowPrenotazioneModal",
+    value: function _handleShowPrenotazioneModal() {
+      this.setState({
+        showPrenotazione: true
+      });
+    }
+  }, {
+    key: "_handleCaricoVideo",
+    value: function _handleCaricoVideo(e) {
+      if (confirm("Confermi il carico dei video selezionati?")) return;
+    }
+  }, {
+    key: "_handleSearchFieldCallback",
+    value: function _handleSearchFieldCallback(data, reset) {
+      //console.log(data);
+      var rowsVideo = this.state.rowsVideo;
+
+      if (reset) {
+        // al momento unica soluzione per notificare a InfinityTable che externalRow è vuoto
+        rowsVideo = '';
+        this.setState({
+          rowsVideo: rowsVideo
+        });
+      } else {
+        rowsVideo = data.data;
+        this.setState({
+          rowsVideo: rowsVideo
+        });
+      }
+    }
+  }, {
+    key: "_handleSearchFieldPrenotazioneCallback",
+    value: function _handleSearchFieldPrenotazioneCallback(data, reset) {
+      //console.log(rows);
+      var rowsPrenotazioni = this.state.rowsPrenotazioni;
+
+      if (reset) {
+        rowsPrenotazioni = '';
+        this.setState({
+          rowsPrenotazioni: rowsPrenotazioni
+        });
+      } else {
+        rowsPrenotazioni = data.data;
+        this.setState({
+          rowsPrenotazioni: rowsPrenotazioni
+        });
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      var urlVideo = this.props.url + '/video';
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "nav nav-tabs",
+        id: "nav-tab",
+        role: "tablist"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        className: "nav-item nav-link active",
+        id: "nav-home-tab",
+        "data-toggle": "tab",
+        href: "#nav-home",
+        role: "tab",
+        "aria-controls": "nav-home",
+        "aria-selected": "true"
+      }, "Prenota un Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        className: "nav-item nav-link",
+        id: "nav-prenotati-tab",
+        "data-toggle": "tab",
+        href: "#nav-prenotati",
+        role: "tab",
+        "aria-controls": "nav-prenotati",
+        "aria-selected": "false"
+      }, "Prenotazioni Attive"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        className: "nav-item nav-link",
+        id: "nav-storico-tab",
+        "data-toggle": "tab",
+        href: "#nav-storico",
+        role: "tab",
+        "aria-controls": "nav-storico",
+        "aria-selected": "false"
+      }, "Ritirati"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "tab-content pt-4",
+        id: "nav-tabContent"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "tab-pane fade show active",
+        id: "nav-home",
+        role: "tabpanel",
+        "aria-labelledby": "nav-home-tab"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container-fluid pl-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-3 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        key: "s-video",
+        showList: false,
+        query: "only=in_uscita",
+        url: urlVideo + '/search',
+        callback: this._handleSearchFieldCallback
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6 text-right"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+        className: "btn-success mr-3",
+        disabled: this.state.selectedListVideo.length > 0 ? false : true,
+        onClick: this._handleShowPrenotazioneModal
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-upload",
+        "aria-hidden": "true"
+      }), "\xA0Prenota"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_PrenotazioneModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        url: this.props.url,
+        externalRows: this.state.rowsSelectedListVideo,
+        show: this.state.showPrenotazione,
+        onHide: this._handleClosePrenotazioneModal,
+        callback: function callback(row) {
+          _this2.setState({
+            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+          });
+        }
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        key: "video",
+        id: "video",
+        reload: this.state.reloadInfiniteTable,
+        url: urlVideo,
+        query: "only=in_uscita",
+        columns: COLUMNS_VIDEO,
+        externalRows: this.state.rowsVideo,
+        multiSelect: true //multiSelectSetting={MS_VIDEO}
+        ,
+        selectedList: this.state.selectedListVideo,
+        multiSelectCallback: function multiSelectCallback(list, row) {
+          //console.log(list)
+          _this2.setState({
+            selectedListVideo: list,
+            rowsSelectedListVideo: row
+          });
+        }
+      }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "tab-pane fade",
+        id: "nav-prenotati",
+        role: "tabpanel",
+        "aria-labelledby": "nav-prenotati-tab"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container-fluid pl-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-3 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        key: "s-prenotati",
+        showList: false,
+        url: this.url + '/search',
+        callback: this._handleSearchFieldPrenotazioneCallback
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6 text-right"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+        className: "btn-success mr-3",
+        disabled: this.state.selectedListVideo.length > 0 ? false : true,
+        onClick: this._handleShowPrenotazioneModal
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-upload",
+        "aria-hidden": "true"
+      }), "\xA0Prenota"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        key: "prenotati",
+        id: "prenotati",
+        reload: this.state.reloadInfiniteTable,
+        url: this.url,
+        columns: COLUMNS_PRENOTAZIONI,
+        externalRows: this.state.rowsPrenotazioni,
+        multiSelect: true //multiSelectSetting={MS_VIDEO}
+        ,
+        selectedList: this.state.selectedListPrenotazioni,
+        multiSelectCallback: function multiSelectCallback(list, row) {
+          //console.log(list)
+          _this2.setState({
+            selectedListPrenotazioni: list,
+            rowsSelectedListPrenotazioni: row
+          });
+        }
       })))))));
     }
   }]);

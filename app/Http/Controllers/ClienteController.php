@@ -147,7 +147,28 @@ class ClienteController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        try{
+            //return response()->json($request->all(),201);exit;
+            //Validate
+            $request->validate([
+                'id_cliente' => 'required|integer',
+                'id_fidelizzazione' => 'required|integer'
+            ]);
+
+            //return response()->json($request->all(),201);exit;
+
+            $input = $request->all();
+
+            $cliente = new Cliente();
+
+            $cliente->where('id',$input['id_cliente'])->update(['id_fidelizzazione' => $input['id_fidelizzazione']]);
+
+            return response()->json(['msg' =>'aggiornato'],201);
+
+
+        }catch( \Illuminate\Database\QueryException $e){
+            return response()->json(['msg' => $e->getMessage() ],200);
+        }
     }
 
 

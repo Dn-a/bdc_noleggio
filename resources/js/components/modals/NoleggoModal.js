@@ -13,9 +13,11 @@ const FIELDS = [
     'data_fine'
 ];
 
-const HIDE_FIELD = [
+const TEMP_FIELDS = [
+    'sconto',
+    'fidelizzazione'
+];
 
-]
 
 export default class NoleggoModal extends Component {
 
@@ -24,6 +26,7 @@ export default class NoleggoModal extends Component {
 
         let data = {};
         let error = {};
+        let tempData = {};
 
         FIELDS.map((fd,id) => {
             if(fd=='id_cliente')
@@ -34,16 +37,22 @@ export default class NoleggoModal extends Component {
             }
         });
 
+        TEMP_FIELDS.map((fd,id) => {
+            tempData[fd] = [];
+        });
+
         this.state = {
             data: data,
             error: error,
-            sconto:[],
+            tempData: tempData,
             checked: false,
             openModal: false,
             loader: false,
             complited: false,
             pdf:''
         };
+
+        this.scontoGiorni = 40;
 
         this._handleChange = this._handleChange.bind(this);
         this._handleOnSave = this._handleOnSave.bind(this);
@@ -52,14 +61,24 @@ export default class NoleggoModal extends Component {
     _resetAfterClose () {
         let data = {};
         let error = {};
+        let tempData = {};
 
         FIELDS.map((fd,id) => {
-            data[fd] = [];
-            error[fd]= [];
+            if(fd=='id_cliente')
+                data[fd] = error[fd]= '';
+            else{
+                data[fd] = [];
+                error[fd]= [];
+            }
         });
+
+        TEMP_FIELDS.map((fd,id) => {
+            tempData[fd] = [];
+        });
+
         this.state.data=data;
         this.state.error =error;
-        this.state.sconto = [];
+        this.state.tempData = tempData;
         this.state.loader = false;
         this.state.checked = false;
         this.state.openModal = false;
@@ -77,7 +96,7 @@ export default class NoleggoModal extends Component {
         let externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
         let data = this.state.data;
         let error = this.state.error;
-        let sconto = this.state.sconto;
+        let tempData = this.state.tempData;
 
         FIELDS.map((fd,id) => {
             switch(fd){
@@ -85,7 +104,7 @@ export default class NoleggoModal extends Component {
                     externalRows.map((row,key) => {
                         data[fd][key] = row.id;
                         error[fd][key] = '';
-                        sconto[key] = 0;
+                        tempData.sconto[key] = 0;
                     })
                     break;
                 case 'prezzo_tot':
@@ -107,7 +126,7 @@ export default class NoleggoModal extends Component {
             }
         });
 
-        this.setState({data,error,openModal:true});
+        this.setState({data,error,tempData,openModal:true});
     }
 
     setRemoteStore() {
@@ -140,7 +159,7 @@ export default class NoleggoModal extends Component {
           this.setState({errorRemoteStore:error.response.status});
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-              window.location.href=this.home + '/login';
+              window.location.href=this.url + '/login';
           throw error;
         });
     }
@@ -156,7 +175,7 @@ export default class NoleggoModal extends Component {
 
         let error = this.state.error;
         let data = this.state.data;
-        let sconto = this.state.sconto;
+        let tempData = this.state.tempData;
 
         if(value=='')
             error[field][key] = INFO_ERROR['vuoto'];
@@ -173,29 +192,23 @@ export default class NoleggoModal extends Component {
                     error[field][key] = INFO_ERROR['data'];
                 else {
                     let giorni = this._calcDay(date);
-                    if(giorni>1){
-                        sct = row.prezzo * ( giorni/40);
-                        sct =  sct > (row.prezzo/2) ? row.prezzo/2 : sct;
-                    }
-                    data.prezzo_tot[key] = (giorni * row.prezzo) - sct;
+                    this._calcSconto(key,giorni);
                 }
                 break;
         }
 
         data[field][key] = value;
 
-        sconto[key] = sct;
-
-        this.setState({data,error,sconto},()  => this.checked());
+        this.setState({data,error,tempData},()  => this.checked());
     }
 
     checked(){
         let data = this.state.data;
         let error = this.state.error;
-
+        //console.log(data);
         let checked = true;
         Object.keys(error).map((k,id) => {
-            if(k=='id_cliente' && (error[k]!='' || data[k]==''))
+            if(k=='id_cliente' && (error[k]!='' || data[k]=='' || data[k]==undefined))
                 checked = false;
             else if(error[k] instanceof Array)
                 // some ritorna true se all'interno del loop viene soddisfatta la condizione
@@ -226,6 +239,42 @@ export default class NoleggoModal extends Component {
         let giorni = date=='000-00-00' || Date.parse(date) <= now.getTime() ? 0 : Math.round(day);
         //console.log(day); console.log(giorni);
         return giorni;
+    }
+
+    _calcSconto(eKey,eGiorni,eFidelizzazione){
+        let data = this.state.data;
+        let tempData = this.state.tempData;
+        let fid = eFidelizzazione!=null? eFidelizzazione :tempData.fidelizzazione;
+        let percentuale = fid.percentuale!==undefined ? fid.percentuale:0;
+
+        let externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
+
+        let sconto = 0;
+        let prezzo = 0;
+
+        if(eKey!=null && eGiorni!=null){
+            let row = externalRows[eKey];
+            if(eGiorni>1){
+                sconto = row.prezzo * (eGiorni/this.scontoGiorni);
+                sconto =  sconto > (row.prezzo/2) ? row.prezzo/2 : sconto;
+            }
+            prezzo = (eGiorni * row.prezzo);
+
+            data.prezzo_tot[eKey] = prezzo - sconto - (prezzo*percentuale);
+            tempData.sconto[eKey] = sconto;
+        }
+        else
+            externalRows.map((row,key) => {
+                let giorni = this._calcDay(data.data_fine[key]);
+
+                if(giorni>1){
+                    sconto = row.prezzo * ( giorni/this.scontoGiorni);
+                    sconto =  sconto > (row.prezzo/2) ? row.prezzo/2 : sconto;
+                }
+                prezzo = (giorni * row.prezzo);
+
+                data.prezzo_tot[key] = prezzo - sconto - (prezzo * percentuale);
+            });
     }
 
     showError(field,key){
@@ -264,6 +313,8 @@ export default class NoleggoModal extends Component {
 
         //calcolo prezzo totale
         var totPagare = 0;
+        let fidelizzazione = this.state.tempData.fidelizzazione;
+        let percentuale = fidelizzazione.percentuale !== undefined ? fidelizzazione.percentuale : 0;
 
         return(
             <AddEditModal size="lg"
@@ -271,7 +322,7 @@ export default class NoleggoModal extends Component {
                 onHide={(a) => {this.props.onHide(a);this._resetAfterClose();}}
                 loader={this.state.loader}
                 onConfirm={this._handleOnSave}
-                txtConfirmButton='Noleggia'
+                txtConfirmButton={this.state.complited? 'Noleggiato': 'Noleggia'}
                 disabledConfirmButton={!this.state.checked || this.state.complited}
                 title="Video" type="Noleggio"
             >
@@ -293,16 +344,28 @@ export default class NoleggoModal extends Component {
                                     //console.log(val);
                                     let data = this.state.data;
                                     let error = this.state.error;
+                                    let tempData = this.state.tempData;
+
                                     data.id_cliente = val.id;
                                     error.id_cliente = '';
-                                    this.setState({data,error},() => this.checked());
+                                    tempData.fidelizzazione = val.fidelizzazione;
+
+                                    this._calcSconto(null,null);
+
+                                    this.setState({data,error,tempData},() => this.checked());
                                 }
                             }
                             callback={(val) => {
                                     //console.log(val);
                                     let data = this.state.data;
                                     let error = this.state.error;
+                                    let tempData = this.state.tempData;
+
                                     data.id_cliente = '';
+                                    tempData.fidelizzazione = {};
+
+                                    this._calcSconto(null,null);
+
                                     if(val.length==0){
                                         error.id_cliente = INFO_ERROR['cliente'];
                                     }
@@ -325,7 +388,8 @@ export default class NoleggoModal extends Component {
                                             <th>Data restituzione</th>
                                             <th>Giorni</th>
                                             <th>Sconto giorni</th>
-                                            <th>Prezzo complessivo</th>
+                                            <th>Sconto Fidelizzazione</th>
+                                            <th>Importo complessivo</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -335,7 +399,7 @@ export default class NoleggoModal extends Component {
                                                 let date = data.data_fine[key]==null || data.data_fine[key]==''?'000-00-00':data.data_fine[key];
                                                 let giorni = this._calcDay(date);
                                                 let prezzoTot = data.prezzo_tot[key];
-                                                let sconto = this.state.sconto[key];
+                                                let sconto = this.state.tempData.sconto[key];
                                                 totPagare += prezzoTot;
                                                 //console.log(date)
                                                 return(
@@ -356,6 +420,7 @@ export default class NoleggoModal extends Component {
                                                             {giorni}
                                                         </td>
                                                         <td>{parseFloat(sconto).toFixed(2) +' €'}</td>
+                                                        <td>{fidelizzazione.titolo && (fidelizzazione.titolo)}  {(percentuale *100)} %</td>
                                                         <td>
                                                             {parseFloat(prezzoTot).toFixed(2) +' €'}
                                                         </td>

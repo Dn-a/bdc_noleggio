@@ -56,7 +56,7 @@ const COLUMNS_NOLEGGI = [
     { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Giorni Ritardo', field: 'giorni_ritardo', render: (cell) => <span style={{color:cell==0?'':'red'}}>{cell}</span>},
-    //{ title: 'Costo Tot.', field: 'prezzo_tot', render: cell => parseFloat(cell).toFixed(2) +' €'},
+    { title: 'Importo Complessivo', field: 'prezzo_tot', render: cell => parseFloat(cell).toFixed(2) +' €'},
 ].map((a) => { if(a!=null) return a; return false; } );
 
 const COLUMNS_STORICO = [
@@ -258,7 +258,10 @@ export default class Noleggi extends Component {
 
                                     <div className="col-md-6">
                                         <SearchField key="s-video" showList={false}
-                                        url={urlVideo+'/search-noleggi'} callback={this._handleSearchFieldCallback}
+                                        query='only=noleggi'
+                                        url={urlVideo+'/search'}
+                                        //url={urlVideo+'/search-noleggi'}
+                                        callback={this._handleSearchFieldCallback}
                                         />
                                     </div>
 

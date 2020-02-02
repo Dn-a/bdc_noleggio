@@ -4,21 +4,20 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class DipendenteCollection extends ResourceCollection
+class PrenotazioneCollection extends ResourceCollection
 {
     protected $withFields = [
         'id',
-        'nome',
-        'cognome',
-        'email',
-        'matricola',
-        'ruolo',
-        'created_at'
+        'id_cliente',
+        'cliente',
+        'video',
+        'prezzo',
+        'data_uscita',
+        'data_prenotazione'
     ];
     protected $withPagination;
 
-
-    public function __construct($items, $withPagination=false,$fields=null)
+    public function __construct($items, $withPagination=false, $fields=null)
     {
         parent::__construct($items);
         if($fields!=null && is_array($fields))
@@ -30,8 +29,8 @@ class DipendenteCollection extends ResourceCollection
     // return array
     public function toArray($request)
     {
-        $collection = $this->collection->transform(function($dipendente){
-                return $this->filterFields($dipendente);
+        $collection = $this->collection->transform(function($copia){
+                return $this->filterFields($copia);
             });
 
         if($this->withPagination )
@@ -53,28 +52,28 @@ class DipendenteCollection extends ResourceCollection
     {
         $fields = $this->withFields;
 
-        if(in_array('ruolo',$fields)){
-            $ruolo = ' '.  (string) $item->ruolo->titolo.'';
-            $item['ruolo'] = $ruolo;
+        if(in_array('data_uscita',$fields)){
+            $dataUscita = (string) $item->video->data_uscita;
+            $item['data_uscita'] =$dataUscita;
         }
-        if(in_array('pt_vendita',$fields)){
-            $ptVendita = ' '. (string) $item->puntoVendita->titolo
-            .' - '. (string) $item->puntoVendita->indirizzo
-            .' - '. (string) $item->puntoVendita->comune->nome
-            .' ('. (string) $item->puntoVendita->comune->prov.')';
-            $item['pt_vendita'] = $ptVendita;
+        if(in_array('prezzo',$fields)){
+            $item['prezzo'] = $item->video->prezzo;
+        }
+        if(in_array('video',$fields)){
+            $video = (string) $item->video->titolo;
+            $item['video'] = $video;
+        }
+        if(in_array('dipendente',$fields)){
+            $dipendente = ucfirst((string) $item->dipendente->nome).' '.
+            ucfirst((string) $item->dipendente->cognome);
+            $item['dipendente'] = $dipendente;
+        }
+        if(in_array('cliente',$fields)){
+            $cliente = ucfirst((string) $item->cliente->nome).' '.
+            ucfirst((string) $item->cliente->cognome);
+            $item['cliente'] = $cliente;
         }
 
-        /*
-        unset(
-            $item['punto_vendita'],
-            $item['id_pt_vendita'],
-            $item['email_verified_at'],
-            //$item['created_at'],
-            $item['updated_at'],
-            $item['id_ruolo'],
-            $item['ruolo']
-        );*/
 
         if(empty($this->withFields)) return $item;
 

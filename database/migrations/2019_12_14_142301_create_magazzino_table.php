@@ -29,7 +29,7 @@ class CreateMagazzinoTable extends Migration
                     SET NEW.data_ritiro = ADDDATE(curdate(), INTERVAL 90 DAY)'
                 )*/
             );
-            $table->timestamp('data_prenotazione_noleggio')->nullable();
+            //$table->timestamp('data_prenotazione_noleggio')->nullable();
             $table->boolean('danneggiato')->default(0);
             $table->boolean('restituito_al_fornitore')->default(0);
             $table->boolean('noleggiato')->default(0);

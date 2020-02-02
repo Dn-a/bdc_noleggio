@@ -64,6 +64,9 @@ ul{
     .btn-info {
         background:#3490dc;
     }
+    .btn-light{
+        border-color:#a8abae;
+    }
 /*--- SIDEBAR ---*/
     #sidebar {
         padding-top:55px;
@@ -79,7 +82,7 @@ ul{
         margin-left: 0px;
         transition: all 0.3s;
         &.active{
-            width: 125px;
+            width: 135px;
         }
     }
     .menu {
@@ -114,16 +117,18 @@ ul{
     }
     @media (max-width: 768px) {
         #sidebar {
+            padding-top: 94px !important;
             width: 0px;
         }
         #content {
+            top: 85px !important;
             padding-left: 0 !important;
         }
         #sidebar.active {
-            width: 125px;
+            width: 135px;
         }
         #content.active {
-            padding-left: 125px !important;
+            padding-left: 135px !important;
         }
     }
     #sidebarCollapse {
@@ -152,7 +157,7 @@ ul{
         width: 100%;
         transition: all 0.3s;
         &.active{
-            padding-left: 125px;
+            padding-left: 135px;
         }
     }
 /*--- Breadcrumb ---*/

@@ -23,20 +23,24 @@ Auth::routes([
 // browser request
 if(request()->header('accept')!='application/json')
     Route::get('/{name}', 'HomeController@index')->name('home')
-    ->where('name','(|home|clienti|dipendenti|video|magazzino|noleggi|restituzioni|incassi|setting)');
+    ->where('name','(|home|clienti|dipendenti|video|magazzino|noleggi|prenotazioni|restituzioni|incassi|setting)');
 
 
-//Route::middleware(['auth'])->group( function () {
+Route::middleware(['auth'])->group( function () {
 //Route::group(['middleware' => ['guest','auth']], function () {
 
     // Video
     Route::get('video/search/{val}', 'VideoController@search')->name('video.search');
-    Route::get('video/search-noleggi/{val}', 'VideoController@searchVideoNoleggi')->name('video.searchNoleggi');//ricerca video disponibili per il noleggio
+    //Route::get('video/search-noleggi/{val}', 'VideoController@searchVideoNoleggi')->name('video.searchNoleggi');//ricerca video disponibili per il noleggio
     Route::resource('video', 'VideoController',['as' => 'video']);
+
+    // Prenotazione
+    Route::get('prenotazioni/search/{val}', 'PrenotazioneController@search')->name('prenotazioni.search');
+    Route::resource('prenotazioni', 'PrenotazioneController',['as' => 'prenotazioni']);
 
     // Noleggio
     Route::get('noleggi/search/{val}', 'NoleggioController@search')->name('noleggi.search');
-    Route::get('noleggi/video', 'NoleggioController@video')->name('noleggi.video');
+    //Route::get('noleggi/video', 'NoleggioController@video')->name('noleggi.video');
     Route::resource('noleggi', 'NoleggioController',['as' => 'noleggi']);
 
     // Ricevute
@@ -66,4 +70,4 @@ if(request()->header('accept')!='application/json')
     Route::resource('magazzino', 'MagazzinoController',['as' => 'magazzino']);
 
 
-//});
+});

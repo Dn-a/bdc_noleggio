@@ -7,6 +7,13 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class ClienteCollection extends ResourceCollection
 {
     protected $withFields = [
+        'id',
+        'nome',
+        'cognome',
+        'cf',
+        'recapiti',
+        'residenza',
+        'fidelizzazione',
 
     ];
     protected $withPagination;
@@ -45,24 +52,31 @@ class ClienteCollection extends ResourceCollection
 
     protected function filterFields($item)
     {
-        $recapiti = 'tel: '.(string) $item->telefono . ' - cell: '.(string) $item->cellulare;
-        $comune = (string) $item->indirizzo .' - '. (string) $item->comune->nome.' ('.(string) $item->comune->prov.')';
-        $fidelizzazione = $item->fidelizzazione;
+        $fields = $this->withFields;
 
+        if(in_array('recapiti',$fields)){
+            $recapiti = 'tel: '.(string) $item->telefono . ' - cell: '.(string) $item->cellulare;
+            $item['recapiti'] = $recapiti;
+        }
+        if(in_array('residenza',$fields)){
+            $comune = (string) $item->indirizzo .' - '. (string) $item->comune->nome.' ('.(string) $item->comune->prov.')';
+            $item['residenza'] = $comune;
+        }
+        if(in_array('fidelizzazione',$fields)){
+            $fidelizzazione = $item->fidelizzazione;
+            $item['fidelizzazione'] = $fidelizzazione;
+        }
 
         $item['nome'] = ucfirst((string) $item->nome);
         $item['cognome'] = ucfirst((string) $item->cognome);
 
-        $item['recapiti'] = $recapiti;
-        $item['residenza'] = $comune;
-        $item['fidelizzazione'] = $fidelizzazione;
 
-        unset(
+        /*unset(
             $item['telefono'], $item['cellulare'],
             $item['indirizzo'], $item['comune'],
             //$item['fidelizzazione'],
             $item['id_comune'], $item['id_fidelizzazione']
-        );
+        );*/
 
 
         if(empty($this->withFields)) return $item;
