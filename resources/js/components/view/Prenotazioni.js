@@ -79,6 +79,7 @@ export default class Noleggi extends Component {
             rowsSelectedListVideo: [],// row contenenti tutti i campi dei video selezionati - usato nel NOleggioMOdal
             selectedListPrenotazioni: [],// id dei video selezionati
             rowsSelectedListPrenotazioni: [],
+            recallSearch:false,
             reloadInfiniteTable:0
         };
 
@@ -98,7 +99,6 @@ export default class Noleggi extends Component {
     _handleShowPrenotazioneModal (){
         this.setState({showPrenotazione : true});
     }
-
 
     _handleCaricoVideo(e){
         if(confirm("Confermi il carico dei video selezionati?"))
@@ -138,7 +138,6 @@ export default class Noleggi extends Component {
 
     }
 
-
     render() {
 
         let urlVideo = this.props.url+'/video';
@@ -172,6 +171,11 @@ export default class Noleggi extends Component {
                                         query='only=in_uscita'
                                         url={urlVideo+'/search'}
                                         callback={this._handleSearchFieldCallback}
+                                        handles={(reset,recall) =>{
+                                            let check = this.state.recallSearch;
+                                            recall(check);
+                                            if(check) this.state.recallSearch=false;
+                                        }}
                                         />
                                     </div>
 
@@ -188,7 +192,7 @@ export default class Noleggi extends Component {
                                             show={this.state.showPrenotazione} onHide={this._handleClosePrenotazioneModal}
                                             callback={
                                                 (row) => {
-                                                    this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                                                    this.setState({recallSearch:true, reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
                                                 }
                                             }
                                         />

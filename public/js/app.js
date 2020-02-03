@@ -76160,6 +76160,21 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
+/***/ "./resources/js/components/Env.js":
+/*!****************************************!*\
+  !*** ./resources/js/components/Env.js ***!
+  \****************************************/
+/*! exports provided: URL_HOME */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "URL_HOME", function() { return URL_HOME; });
+var URL_HOME = window.location.hostname == 'www.dn-a.it' ? '/noleggio' : '';
+
+
+/***/ }),
+
 /***/ "./resources/js/components/Main.js":
 /*!*****************************************!*\
   !*** ./resources/js/components/Main.js ***!
@@ -78678,6 +78693,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _SearchField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _Env__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Env */ "./resources/js/components/Env.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -78703,6 +78719,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
  // Proprietà
@@ -78744,8 +78761,7 @@ function (_Component) {
       searchLoader: false,
       searchInfo: ''
     };
-    var host = window.location.hostname;
-    _this.home = host == 'www.dn-a.it' ? '/noleggio' : '';
+    _this.home = _Env__WEBPACK_IMPORTED_MODULE_2__["URL_HOME"];
     _this._handleScroll = _this._handleScroll.bind(_assertThisInitialized(_this));
     _this._moreData = _this._moreData.bind(_assertThisInitialized(_this));
     _this._handleMultiSelection = _this._handleMultiSelection.bind(_assertThisInitialized(_this)); // Search field
@@ -78789,7 +78805,7 @@ function (_Component) {
       if (this.props.reload !== undefined && this.props.reload > this.state.reload) {
         this.state.reload = this.props.reload;
         this.state.data.rows = [];
-        console.log("reload");
+        console.log("table reload");
         this.getRemoteData().then(function (a) {
           return _this3._moreData();
         });
@@ -79180,7 +79196,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return SearchField; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _form_InputField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./form/InputField */ "./resources/js/components/utils/form/InputField.js");
+/* harmony import */ var _Env__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Env */ "./resources/js/components/Env.js");
+/* harmony import */ var _form_InputField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./form/InputField */ "./resources/js/components/utils/form/InputField.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -79201,6 +79218,10 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+ // Proprietà
+//
+// - reloadOnClick: esegue una nuova ricerca
+// - handles: consente di richiamare alcune funzioni dall'esterno {reset,recall}
 
 var SearchField =
 /*#__PURE__*/
@@ -79221,18 +79242,19 @@ function (_Component) {
       loader: false,
       infoSearch: ''
     };
-    var host = window.location.hostname;
-    _this.home = host == 'www.dn-a.it' ? '/noleggio' : '';
-    _this.getRemoteData = _this.getRemoteData.bind(_assertThisInitialized(_this));
+    _this.home = _Env__WEBPACK_IMPORTED_MODULE_1__["URL_HOME"];
+    _this._getRemoteData = _this._getRemoteData.bind(_assertThisInitialized(_this));
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
     _this._handleClick = _this._handleClick.bind(_assertThisInitialized(_this));
     _this._timeOut = _this._timeOut.bind(_assertThisInitialized(_this));
+    _this._handleReset = _this._handleReset.bind(_assertThisInitialized(_this));
+    _this._handleRecall = _this._handleRecall.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(SearchField, [{
-    key: "getRemoteData",
-    value: function getRemoteData(val) {
+    key: "_getRemoteData",
+    value: function _getRemoteData(val) {
       var _this2 = this;
 
       var query = this.props.query !== undefined ? this.props.query : '';
@@ -79326,7 +79348,7 @@ function (_Component) {
         });
       });
       if (this.props.onClick !== undefined) this.props.onClick(val);
-    } // Richiama grtRemoteData dopo un certo tempo T
+    } // Richiama getRemoteData dopo un certo tempo T
 
   }, {
     key: "_timeOut",
@@ -79344,15 +79366,43 @@ function (_Component) {
 
         _this5.timer = setTimeout(function () {
           //console.log("tt");
-          resolve(_this5.getRemoteData(value));
+          resolve(_this5._getRemoteData(value));
         }, setTime);
+      });
+    }
+  }, {
+    key: "_handleReset",
+    value: function _handleReset(r) {
+      //console.log("reset");
+      this.setState({
+        value: '',
+        data: [],
+        infoSearch: ''
+      });
+      if (this.props.callback !== undefined) this.props.callback([], true);
+    }
+  }, {
+    key: "_handleRecall",
+    value: function _handleRecall(check) {
+      var _this6 = this;
+
+      var value = this.state.value;
+      if (!check || !value) return;
+      console.log("search recall");
+
+      this._timeOut(value, 0).then(function (data) {
+        if (data != null) _this6.setState({
+          data: [],
+          loader: false
+        });
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this6 = this;
+      var _this7 = this;
 
+      if (this.props.handles !== undefined) this.props.handles(this._handleReset, this._handleRecall);
       var data = this.state.data.data !== undefined ? this.state.data.data : this.state.data;
       var patternList = this.props.patternList !== undefined ? this.props.patternList : {
         id: '',
@@ -79362,7 +79412,7 @@ function (_Component) {
       var searchClassName = this.props.searchClassName !== undefined ? this.props.searchClassName : '';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "search-field " + searchClassName
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_form_InputField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_form_InputField__WEBPACK_IMPORTED_MODULE_2__["default"], {
         value: this.state.value,
         autocomplete: "on",
         divClassName: "d-inline",
@@ -79379,13 +79429,7 @@ function (_Component) {
         className: "info-search"
       }, this.state.infoSearch), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         onClick: function onClick() {
-          _this6.setState({
-            value: '',
-            data: [],
-            infoSearch: ''
-          });
-
-          _this6.props.callback([], true);
+          _this7._handleReset();
         },
         className: "btn-clear " + (this.state.value != '' ? "active" : '')
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -79400,7 +79444,7 @@ function (_Component) {
           key: id,
           id: val[patternList.id],
           onClick: function onClick() {
-            return _this6._handleClick(val);
+            return _this7._handleClick(val);
           },
           className: "list-group-item"
         }, Object.keys(patternList.fields).map(function (field, key) {
@@ -79850,11 +79894,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Clienti; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
-/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
-/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
-/* harmony import */ var _modals_ClientiModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modals/ClientiModal */ "./resources/js/components/modals/ClientiModal.js");
-/* harmony import */ var _utils_form_RadioField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/form/RadioField */ "./resources/js/components/utils/form/RadioField.js");
+/* harmony import */ var _Env__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Env */ "./resources/js/components/Env.js");
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
+/* harmony import */ var _modals_ClientiModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/ClientiModal */ "./resources/js/components/modals/ClientiModal.js");
+/* harmony import */ var _utils_form_RadioField__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/RadioField */ "./resources/js/components/utils/form/RadioField.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -79872,6 +79917,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -79934,7 +79980,7 @@ var COLUMNS = [
     if (USER_CONFIG.ruolo != 'Addetto') {
       var idCliente = row.id; //console.log(row)
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RadioField__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RadioField__WEBPACK_IMPORTED_MODULE_6__["default"], {
         name: 'fidel_' + idCliente,
         label: "Start 0%",
         checked: row.fidelizzazione.titolo == 'Start',
@@ -79944,7 +79990,7 @@ var COLUMNS = [
             idF: 1
           });
         }
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RadioField__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RadioField__WEBPACK_IMPORTED_MODULE_6__["default"], {
         name: 'fidel_' + idCliente,
         label: "Plus 10%",
         checked: row.fidelizzazione.titolo == 'Plus',
@@ -79954,7 +80000,7 @@ var COLUMNS = [
             idF: 2
           });
         }
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RadioField__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_RadioField__WEBPACK_IMPORTED_MODULE_6__["default"], {
         name: 'fidel_' + idCliente,
         label: "Revolution 15%",
         checked: row.fidelizzazione.titolo == 'Revolution',
@@ -80004,8 +80050,10 @@ function (_Component) {
       show: false,
       showEdit: false,
       loader: false,
+      recallSearch: false,
       reloadInfiniteTable: 0
     };
+    _this.home = _Env__WEBPACK_IMPORTED_MODULE_1__["URL_HOME"];
     _this._handleCloseModal = _this._handleCloseModal.bind(_assertThisInitialized(_this));
     _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
     _this._handleCloseEditModal = _this._handleCloseEditModal.bind(_assertThisInitialized(_this));
@@ -80084,6 +80132,7 @@ function (_Component) {
       return axios.post(url, data, headers).then(function (result) {
         //console.log(result.data);
         _this2.setState({
+          recallSearch: true,
           reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
         });
 
@@ -80111,7 +80160,7 @@ function (_Component) {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
         showList: false,
         patternList: {
           id: 'id',
@@ -80121,16 +80170,21 @@ function (_Component) {
           }
         },
         url: urlClienti,
-        callback: this._handleSearchFieldCallback //onClick={this._handleSearchFieldClick}
+        callback: this._handleSearchFieldCallback,
+        handles: function handles(reset, recall) {
+          var check = _this3.state.recallSearch;
+          recall(check);
+          if (check) _this3.state.recallSearch = false;
+        } //onClick={this._handleSearchFieldClick}
 
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["AddButton"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["AddButton"], {
         onClick: this._handleShowModal
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-plus-circle",
         "aria-hidden": "true"
-      }), "\xA0Nuovo Cliente"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_ClientiModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }), "\xA0Nuovo Cliente"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_ClientiModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
         url: this.props.url,
         show: this.state.show,
         onHide: this._handleCloseModal,
@@ -80143,7 +80197,7 @@ function (_Component) {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
         reload: this.state.reloadInfiniteTable,
         url: this.props.url + '/clienti',
         columns: COLUMNS,
@@ -80590,10 +80644,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Magazzino; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
-/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
-/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
-/* harmony import */ var _modals_ScaricoVideoModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modals/ScaricoVideoModal */ "./resources/js/components/modals/ScaricoVideoModal.js");
+/* harmony import */ var _Env__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Env */ "./resources/js/components/Env.js");
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
+/* harmony import */ var _modals_ScaricoVideoModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/ScaricoVideoModal */ "./resources/js/components/modals/ScaricoVideoModal.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -80611,6 +80666,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -80702,6 +80758,7 @@ function (_Component) {
       reloadInfiniteTable: 0
     };
     _this.url = _this.props.url + '/magazzino';
+    _this.home = _Env__WEBPACK_IMPORTED_MODULE_1__["URL_HOME"];
     _this._handleCloseModal = _this._handleCloseModal.bind(_assertThisInitialized(_this));
     _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
@@ -80728,7 +80785,7 @@ function (_Component) {
   }, {
     key: "_handleCaricoVideo",
     value: function _handleCaricoVideo(e) {
-      if (confirm("Confermi il carico dei video selezionati?")) this.setRemoteUpdate();
+      if (confirm("Confermi il carico dei video selezionati?")) this.setRemoteUpdate('carico');
     }
   }, {
     key: "_handleRipristinoCaricati",
@@ -80764,6 +80821,7 @@ function (_Component) {
         //console.log(result.data);
         _this2.setState({
           rows: '',
+          rowsCaricati: '',
           selectedList: [],
           selectedListCaricati: [],
           reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
@@ -80859,7 +80917,7 @@ function (_Component) {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
         key: "s-carico-scarico",
         id: "s-carico-scarico",
         showList: false,
@@ -80872,20 +80930,20 @@ function (_Component) {
 
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
         className: "btn-danger mr-3",
         disabled: this.state.selectedList.length > 0 ? false : true,
         onClick: this._handleCaricoVideo
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-upload",
         "aria-hidden": "true"
-      }), "\xA0Carico Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+      }), "\xA0Carico Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
         className: "btn-success",
         onClick: this._handleShowModal
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-download",
         "aria-hidden": "true"
-      }), "\xA0Scarico Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_ScaricoVideoModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }), "\xA0Scarico Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_ScaricoVideoModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
         url: this.props.url,
         show: this.state.show,
         onHide: this._handleCloseModal,
@@ -80898,7 +80956,7 @@ function (_Component) {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
         key: "carico-scarico",
         id: "carico-scarico",
         reload: this.state.reloadInfiniteTable,
@@ -80925,7 +80983,7 @@ function (_Component) {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
         key: "s-caricati",
         id: "s-caricati",
         showList: false,
@@ -80939,7 +80997,7 @@ function (_Component) {
 
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
         className: "btn-warning mr-3",
         disabled: this.state.selectedListCaricati.length > 0 ? false : true,
         onClick: this._handleRipristinoCaricati
@@ -80950,7 +81008,7 @@ function (_Component) {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
         key: "caricati",
         id: "caricati",
         reload: this.state.reloadInfiniteTable,
@@ -81277,6 +81335,8 @@ function (_Component) {
       selectedListNoleggi: [],
       rowsSelectedListNoleggi: [],
       // RestituzioneNoleggioModal
+      recallSearch: false,
+      recallSearchNoleggi: false,
       reloadInfiniteTable: 0
     };
     _this.url = _this.props.url + '/noleggi';
@@ -81461,7 +81521,12 @@ function (_Component) {
         query: "only=noleggi",
         url: urlVideo + '/search' //url={urlVideo+'/search-noleggi'}
         ,
-        callback: this._handleSearchFieldCallback
+        callback: this._handleSearchFieldCallback,
+        handles: function handles(reset, recall) {
+          var check = _this2.state.recallSearch;
+          recall(check);
+          if (check) _this2.state.recallSearch = false;
+        }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
@@ -81478,6 +81543,7 @@ function (_Component) {
         onHide: this._handleCloseNoleggioModal,
         callback: function callback(row) {
           _this2.setState({
+            recallSearch: true,
             reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
           });
         }
@@ -81517,7 +81583,12 @@ function (_Component) {
         key: "s-noleggi",
         showList: false,
         url: this.url + '/search',
-        callback: this._handleSearchFieldNoleggiCallback
+        callback: this._handleSearchFieldNoleggiCallback,
+        handles: function handles(reset, recall) {
+          var check = _this2.state.recallSearchNoleggi;
+          recall(check);
+          if (check) _this2.state.recallSearchNoleggi = false;
+        }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
@@ -81534,6 +81605,7 @@ function (_Component) {
         onHide: this._handleCloseRestituzioneModal,
         callback: function callback(row) {
           _this2.setState({
+            recallSearchNoleggi: true,
             reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
           });
         }
@@ -81863,6 +81935,7 @@ function (_Component) {
       selectedListPrenotazioni: [],
       // id dei video selezionati
       rowsSelectedListPrenotazioni: [],
+      recallSearch: false,
       reloadInfiniteTable: 0
     };
     _this.url = _this.props.url + '/prenotazioni';
@@ -81982,7 +82055,12 @@ function (_Component) {
         showList: false,
         query: "only=in_uscita",
         url: urlVideo + '/search',
-        callback: this._handleSearchFieldCallback
+        callback: this._handleSearchFieldCallback,
+        handles: function handles(reset, recall) {
+          var check = _this2.state.recallSearch;
+          recall(check);
+          if (check) _this2.state.recallSearch = false;
+        }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
@@ -81999,6 +82077,7 @@ function (_Component) {
         onHide: this._handleClosePrenotazioneModal,
         callback: function callback(row) {
           _this2.setState({
+            recallSearch: true,
             reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
           });
         }

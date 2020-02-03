@@ -48,11 +48,11 @@ class VideoController extends Controller
         $inUscita = in_array('in_uscita', explode('-',$only));
 
         $user = Auth::user();
-        $idPtVendita = $noleggi ? $user->id_pt_vendita : null;
+        $idPtVendita = $user->id_pt_vendita;
 
         $video = Video::where('in_uscita', $inUscita ? 1 : 0 )
-        ->where(function($query) use($idPtVendita) {
-            if($idPtVendita!=null)
+        ->where(function($query) use($idPtVendita,$inUscita,$noleggi) {
+            if($noleggi || !$inUscita)
                 $query->whereHas('magazzino',function($query) use($idPtVendita) {
                     $query->where('id_pt_vendita',$idPtVendita);
                 });

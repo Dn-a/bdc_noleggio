@@ -1,4 +1,5 @@
 import React, { Component , Fragment } from 'react';
+import {URL_HOME} from '../Env';
 
 import SearchField from '../utils/SearchField';
 import { Button } from '../utils/Button';
@@ -44,6 +45,8 @@ export default class Magazzino extends Component {
         };
 
         this.url = this.props.url+'/magazzino';
+        this.home = URL_HOME;
+
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
@@ -62,7 +65,7 @@ export default class Magazzino extends Component {
 
     _handleCaricoVideo(e){
         if(confirm("Confermi il carico dei video selezionati?"))
-            this.setRemoteUpdate();
+            this.setRemoteUpdate('carico');
     }
 
     _handleRipristinoCaricati(e){
@@ -101,7 +104,7 @@ export default class Magazzino extends Component {
 
             //console.log(result.data);
 
-            this.setState({rows:'', selectedList:[],selectedListCaricati:[], reloadInfiniteTable: ++this.state.reloadInfiniteTable})
+            this.setState({rows:'',rowsCaricati:'', selectedList:[],selectedListCaricati:[], reloadInfiniteTable: ++this.state.reloadInfiniteTable})
             /*
             list.map((id,k) => {
                 list.splice( list.indexOf('foo'), 1 );
@@ -171,6 +174,7 @@ export default class Magazzino extends Component {
                                     <div className="col-md-6">
                                         <SearchField key="s-carico-scarico" id="s-carico-scarico" showList={false} patternList={{id:'id',fields:['nome','cognome']}}
                                         url={this.url+'/search'} callback={this._handleSearchFieldCallback}
+
                                         //onClick={this._handleSearchFieldClick}
                                         />
                                     </div>

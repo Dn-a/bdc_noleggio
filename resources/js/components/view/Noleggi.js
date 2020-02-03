@@ -123,6 +123,8 @@ export default class Noleggi extends Component {
             rowsSelectedListVideo: [],// row contenenti tutti i campi dei video selezionati - usato nel NOleggioMOdal
             selectedListNoleggi: [],
             rowsSelectedListNoleggi: [],// RestituzioneNoleggioModal
+            recallSearch:false,
+            recallSearchNoleggi:false,
             reloadInfiniteTable:0
         };
 
@@ -157,7 +159,6 @@ export default class Noleggi extends Component {
         if(confirm("Confermi il carico dei video selezionati?"))
         return;
     }
-
 
     _handleSearchFieldCallback(data,reset){
 
@@ -262,6 +263,11 @@ export default class Noleggi extends Component {
                                         url={urlVideo+'/search'}
                                         //url={urlVideo+'/search-noleggi'}
                                         callback={this._handleSearchFieldCallback}
+                                        handles={(reset,recall) =>{
+                                            let check = this.state.recallSearch;
+                                            recall(check);
+                                            if(check) this.state.recallSearch=false;
+                                        }}
                                         />
                                     </div>
 
@@ -278,7 +284,7 @@ export default class Noleggi extends Component {
                                             show={this.state.showNoleggio} onHide={this._handleCloseNoleggioModal}
                                             callback={
                                                 (row) => {
-                                                    this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                                                    this.setState({recallSearch:true,reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
                                                 }
                                             }
                                         />
@@ -313,6 +319,11 @@ export default class Noleggi extends Component {
                                     <div className="col-md-6">
                                         <SearchField key="s-noleggi" showList={false}
                                         url={this.url+'/search'} callback={this._handleSearchFieldNoleggiCallback}
+                                        handles={(reset,recall) =>{
+                                            let check = this.state.recallSearchNoleggi;
+                                            recall(check);
+                                            if(check) this.state.recallSearchNoleggi=false;
+                                        }}
                                         />
                                     </div>
 
@@ -331,7 +342,7 @@ export default class Noleggi extends Component {
                                             show={this.state.showRestituzione} onHide={this._handleCloseRestituzioneModal}
                                             callback={
                                                 (row) => {
-                                                    this.setState({reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                                                    this.setState({recallSearchNoleggi:true, reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
                                                 }
                                             }
                                         />

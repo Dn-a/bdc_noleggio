@@ -1,6 +1,12 @@
 import React, { Component , Fragment } from 'react';
+import {URL_HOME} from '../Env';
 
 import InputField from './form/InputField';
+
+// Proprietà
+//
+// - reloadOnClick: esegue una nuova ricerca
+// - handles: consente di richiamare alcune funzioni dall'esterno {reset,recall}
 
 export default class SearchField extends Component {
 
@@ -16,16 +22,18 @@ export default class SearchField extends Component {
             infoSearch:''
         };
 
-        const host = window.location.hostname;
-        this.home = host=='www.dn-a.it'? '/noleggio':'';
+        this.home = URL_HOME;
 
-        this.getRemoteData = this.getRemoteData.bind(this);
+        this._getRemoteData = this._getRemoteData.bind(this);
         this._handleChange = this._handleChange.bind(this);
         this._handleClick = this._handleClick.bind(this);
         this._timeOut = this._timeOut.bind(this);
+
+        this._handleReset = this._handleReset.bind(this);
+        this._handleRecall = this._handleRecall.bind(this);
     }
 
-    getRemoteData(val){
+    _getRemoteData(val){
 
         let query = this.props.query !== undefined ? this.props.query :'';
         let qStrings = '';
@@ -118,7 +126,7 @@ export default class SearchField extends Component {
             this.props.onClick(val);
     }
 
-    // Richiama grtRemoteData dopo un certo tempo T
+    // Richiama getRemoteData dopo un certo tempo T
     _timeOut(value,time){
         let setTime = time!== undefined ? time : this.timeOut;
 
@@ -134,12 +142,40 @@ export default class SearchField extends Component {
 
             this.timer = setTimeout( () => {
                 //console.log("tt");
-                resolve(this.getRemoteData(value));
+                resolve(this._getRemoteData(value));
             },setTime);
         });
     }
 
+    _handleReset(r){
+        //console.log("reset");
+
+        this.setState({value:'',data:[],infoSearch:''});
+
+        if(this.props.callback!==undefined)
+            this.props.callback([], true);
+    }
+
+    _handleRecall(check){
+        let value =this.state.value;
+
+        if(!check || (!value)) return;
+
+        console.log("search recall");
+
+        this._timeOut(value,0).then(
+            (data) =>
+            {
+                if(data!=null) this.setState({ data:[], loader:false })
+            }
+        );
+    }
+
     render(){
+
+        if(this.props.handles!==undefined)
+            this.props.handles(this._handleReset,this._handleRecall);
+
         let data = this.state.data.data!==undefined ? this.state.data.data : this.state.data;
         let patternList = this.props.patternList!== undefined ? this.props.patternList : {id:'',fields:[]};
         let showList = this.props.showList!== undefined ? this.props.showList : false;
@@ -160,7 +196,7 @@ export default class SearchField extends Component {
                         {this.state.infoSearch}
                     </span>
                 }
-                <div onClick={() => {this.setState({value:'',data:[],infoSearch:''});this.props.callback([], true);} } className={"btn-clear " + (this.state.value !='' ? "active":'' )}>
+                <div onClick={() => {this._handleReset();} } className={"btn-clear " + (this.state.value !='' ? "active":'' )}>
                     <i className="fa fa-times" aria-hidden="true"></i>
                 </div>
                 {showList &&

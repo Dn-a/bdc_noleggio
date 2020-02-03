@@ -1,5 +1,6 @@
 import React, { Component , Fragment } from 'react';
 import SearchField from './SearchField';
+import {URL_HOME} from '../Env';
 
 // Proprietà
 //
@@ -36,8 +37,7 @@ export default class InfiniteTable extends Component {
             searchInfo:''
         };
 
-        const host = window.location.hostname;
-        this.home = host=='www.dn-a.it'? '/noleggio':'';
+        this.home = URL_HOME;
 
         this._handleScroll = this._handleScroll.bind(this);
         this._moreData = this._moreData.bind(this);
@@ -73,7 +73,7 @@ export default class InfiniteTable extends Component {
         if(this.props.reload!==undefined && this.props.reload > this.state.reload){
             this.state.reload = this.props.reload;
             this.state.data.rows = [];
-            console.log("reload");
+            console.log("table reload");
             this.getRemoteData().then((a) => this._moreData());
         }
     }

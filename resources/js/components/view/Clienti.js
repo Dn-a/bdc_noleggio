@@ -1,4 +1,5 @@
 import React, { Component , Fragment } from 'react';
+import {URL_HOME} from '../Env';
 
 import SearchField from '../utils/SearchField';
 import { AddButton, Button } from '../utils/Button';
@@ -84,8 +85,11 @@ export default class Clienti extends Component {
             show:false,
             showEdit:false,
             loader:false,
+            recallSearch:false,
             reloadInfiniteTable:0
         };
+
+        this.home = URL_HOME;
 
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
@@ -147,7 +151,7 @@ export default class Clienti extends Component {
         return axios.post(url,data,headers)
         .then(result => {
             //console.log(result.data);
-            this.setState({reloadInfiniteTable: ++this.state.reloadInfiniteTable})
+            this.setState({recallSearch:true, reloadInfiniteTable: ++this.state.reloadInfiniteTable})
             return result;
         }).catch((error) => {
           console.error(error.response.data);
@@ -169,6 +173,11 @@ export default class Clienti extends Component {
                     <div className="col-md-6">
                         <SearchField showList={false} patternList={{id:'id',fields:{nome:[],cognome:[]}} }
                         url={urlClienti} callback={this._handleSearchFieldCallback}
+                        handles={(reset,recall) =>{
+                            let check = this.state.recallSearch;
+                            recall(check);
+                            if(check) this.state.recallSearch=false;
+                        }}
                             //onClick={this._handleSearchFieldClick}
                         />
                     </div>
