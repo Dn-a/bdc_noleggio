@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\VideoCollection;
 use App\Video;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,10 +22,17 @@ class VideoController extends Controller
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $user->id_pt_vendita;//$ruolo=='Admin'? null:
+
+        $date = Carbon::now();
+        $date = $date->toDateString();
+
         // Vengono visualizzati solo
         // i video disponibili al momento in magazzino  nello specifico p.to vendita
 
-        $video = Video::where('in_uscita', $inUscita ? 1 : 0 )
+
+        $video = Video::
+        //where('in_uscita', $inUscita ? 1 : 0 )
+        where('data_uscita',$inUscita?'>=':'<',$date)
         ->where(function($query) use($idPtVendita,$inUscita) {
             if(!$inUscita)
                 $query->whereHas('magazzino',function($query) use($idPtVendita) {
@@ -50,9 +58,15 @@ class VideoController extends Controller
         $user = Auth::user();
         $idPtVendita = $user->id_pt_vendita;
 
-        $video = Video::where('in_uscita', $inUscita ? 1 : 0 )
-        ->where(function($query) use($idPtVendita,$inUscita,$noleggi) {
-            if($noleggi || !$inUscita)
+        $date = Carbon::now();
+        $date = $date->toDateString();
+
+        $video = Video::
+        //where('in_uscita', $inUscita ? 1 : 0 )
+        where('data_uscita',$inUscita?'>=':'<',$date)
+        ->where(function($query) use($idPtVendita,$noleggi) {
+            //if($noleggi || !$inUscita)
+            if($noleggi)
                 $query->whereHas('magazzino',function($query) use($idPtVendita) {
                     $query->where('id_pt_vendita',$idPtVendita);
                 });
@@ -68,28 +82,6 @@ class VideoController extends Controller
         return  new VideoCollection($video,false, $this->moreField($inUscita), $idPtVendita );
     }
 
-
-    // Campo ricerca della sezione noleggi
-    // visualizza solo i video disponibili in magazzino
-    public function searchVideoNoleggi(Request $request, $val)
-    {
-        $arr = explode(' ',$val);
-
-        $user = Auth::user();
-        $idPtVendita = $user->id_pt_vendita;
-
-        $video = Video::whereHas('magazzino',function($query) use($idPtVendita) {
-            if($idPtVendita!=null)
-                $query->where('id_pt_vendita',$idPtVendita);
-        })
-        ->where('titolo','like',$val.'%')
-        ->orWhereHas('categoria',function($query) use($arr) {
-            $query->where('titolo','like',$arr[0].'%');
-        })
-        ->limit(10)->get();
-
-        return  new VideoCollection($video,false, null, $idPtVendita );
-    }
 
     private function moreField($inUscita)
     {

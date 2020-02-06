@@ -54,12 +54,14 @@ export default class SearchField extends Component {
 			.then(res => {
                 let data = res.data;
 
+                //console.log(data);
+
                 if(this.props.callback !== undefined)
                     this.props.callback(data);
 
                 return data;
                 //this.setState({ data:data, loader:false });
-                //console.log(rows);
+
                 //this.setState({data});
 
 			}).catch((error) => {

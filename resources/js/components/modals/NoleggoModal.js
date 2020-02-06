@@ -52,7 +52,7 @@ export default class NoleggoModal extends Component {
             pdf:''
         };
 
-        this.scontoGiorni = 40;
+        this.scontoGiorni = 20;
 
         this._handleChange = this._handleChange.bind(this);
         this._handleOnSave = this._handleOnSave.bind(this);
@@ -234,9 +234,13 @@ export default class NoleggoModal extends Component {
 
     _calcDay(date){
         let now = new Date();
-        now = new Date(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
-        let day = ( Date.parse(date) - now.getTime() ) / (3600000*24);
-        let giorni = date=='000-00-00' || Date.parse(date) <= now.getTime() ? 0 : Math.round(day);
+        //console.log(date); console.log(now);
+        now= now.getFullYear() +'-'+ ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
+        //console.log(now);
+        now = Date.parse(now);
+        //now = new Date(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
+        let day = ( Date.parse(date) - now ) / (3600000*24);
+        let giorni = date=='000-00-00' || Date.parse(date) <= now ? 0 : Math.round(day);
         //console.log(day); console.log(giorni);
         return giorni;
     }

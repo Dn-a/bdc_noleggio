@@ -105,6 +105,10 @@ class NoleggioCollection extends ResourceCollection
 
             $item['giorni_ritardo'] = $giorniRitardo;
         }
+        if(in_array('danneggiato',$fields)){
+            $danneggiato = $item->magazzino->danneggiato;
+            $item['danneggiato'] = $danneggiato;
+        }
 
         if(empty($this->withFields)) return $item;
 

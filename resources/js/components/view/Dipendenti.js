@@ -103,6 +103,7 @@ export default class Dipendenti extends Component {
                 <div className="row">
                     <div className="col-md-12">
                         <InfiniteTable
+                            id='tb-dipendenti'
                             reload={this.state.reloadInfiniteTable}
                             url={this.url}
                             columns={COLUMNS}

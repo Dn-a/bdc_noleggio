@@ -28,4 +28,14 @@ class Prenotazione extends Model
     {
         return $this->belongsTo('App\Video','id_video');
     }
+
+    public function magazzino()
+    {
+        return $this->hasManyThrough('App\Magazzino', 'App\Video',
+            'id',
+            'id_video',
+            'id_video',
+            'id'
+        );
+    }
 }

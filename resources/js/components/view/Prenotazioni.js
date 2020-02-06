@@ -1,4 +1,5 @@
 import React, { Component , Fragment } from 'react';
+import {URL_HOME} from '../Env';
 
 import SearchField from '../utils/SearchField';
 import { Button } from '../utils/Button';
@@ -43,7 +44,26 @@ const COLUMNS_PRENOTAZIONI = [
     :
         null,
     { title: 'Prezzo', field: 'prezzo', render: cell => parseFloat(cell).toFixed(2) +' €'},
-    { title: 'Data Uscita', field: 'data_uscita',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Data Uscita', field: 'data_uscita',render: (cell,row) =>
+        {
+            let now = new Date();
+            now= now.getFullYear() +'-'+ ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
+            now = Date.parse(now);
+            let date = new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})
+            let check = Date.parse(date) <= now;
+            let disp = row.disp_magazzino == true;
+
+            return(
+                <Fragment>
+                    <div style={{fontWeight:check?'600':'200'}}>
+                        {check && 'uscito il '}
+                        {date}
+                    </div>
+                    {disp && <span style={{color:'green',fontSize:'0.9em'}}>copia disponibile in magazzino</span>}
+                </Fragment>
+            );
+        }
+    },
     { title: 'Data Prenotazione', field: 'data_prenotazione',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
 ].map((a) => { if(a!=null) return a; return false; } );
 
@@ -78,20 +98,58 @@ export default class Noleggi extends Component {
             selectedListVideo: [],// id dei video selezionati
             rowsSelectedListVideo: [],// row contenenti tutti i campi dei video selezionati - usato nel NOleggioMOdal
             selectedListPrenotazioni: [],// id dei video selezionati
-            rowsSelectedListPrenotazioni: [],
             recallSearch:false,
             reloadInfiniteTable:0
         };
 
         this.url = this.props.url+'/prenotazioni';
+        this.home = URL_HOME;
+
         this._handleClosePrenotazioneModal = this._handleClosePrenotazioneModal.bind(this);
         this._handleShowPrenotazioneModal = this._handleShowPrenotazioneModal.bind(this);
 
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
         this._handleSearchFieldPrenotazioneCallback = this._handleSearchFieldPrenotazioneCallback.bind(this);
 
+        this._handleVideoRitirati = this._handleVideoRitirati.bind(this);
+
     }
 
+    updateRemoteData() {
+
+        let url = this.props.url+'/prenotazioni/0';
+
+        let headers = {headers: {'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            }
+        };
+
+        let data = {
+            id_prenotazioni : this.state.selectedListPrenotazioni,
+            _method:'put',
+            _token : CSRF_TOKEN
+        };
+
+        //console.log(data);return;
+
+        return axios.post(url,data,headers)
+        .then(result => {
+
+            console.log(result.data);
+
+            this.setState({selectedListPrenotazioni:[], reloadInfiniteTable: ++this.state.reloadInfiniteTable})
+
+            return result;
+
+        }).catch((error) => {
+          console.error(error.response.data);
+          this.setState({errorRemoteStore:error.response.status});
+          if(error.response.status==401)
+            if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
+              window.location.href=this.home + '/login';
+          throw error;
+        });
+    }
 
     _handleClosePrenotazioneModal () {
         this.setState({showPrenotazione : false});
@@ -100,9 +158,9 @@ export default class Noleggi extends Component {
         this.setState({showPrenotazione : true});
     }
 
-    _handleCaricoVideo(e){
-        if(confirm("Confermi il carico dei video selezionati?"))
-        return;
+    _handleVideoRitirati(e){
+        if(confirm("Confermi il ritiro delle prenotazioni selezionate?"))
+            this.updateRemoteData();
     }
 
     _handleSearchFieldCallback(data,reset){
@@ -183,7 +241,7 @@ export default class Noleggi extends Component {
                                         <Button className="btn-success mr-3"
                                         disabled={this.state.selectedListVideo.length>0?false:true}
                                         onClick={this._handleShowPrenotazioneModal}>
-                                        <i className="fa fa-upload" aria-hidden="true"></i>
+                                       <i className="fa fa-calendar-plus-o" aria-hidden="true"></i>
                                         &nbsp;Prenota</Button>
 
 
@@ -202,7 +260,7 @@ export default class Noleggi extends Component {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <InfiniteTable key="video"
-                                            id="video"
+                                            id="tb-video"
                                             reload={this.state.reloadInfiniteTable}
                                             url={urlVideo}
                                             query='only=in_uscita'
@@ -232,31 +290,29 @@ export default class Noleggi extends Component {
                                         callback={this._handleSearchFieldPrenotazioneCallback}
                                         />
                                     </div>
-
+                                    {/*
                                     <div className="col-md-6 text-right">
-                                        <Button className="btn-success mr-3"
-                                        disabled={this.state.selectedListVideo.length>0?false:true}
-                                        onClick={this._handleShowPrenotazioneModal}>
-                                        <i className="fa fa-upload" aria-hidden="true"></i>
-                                        &nbsp;Prenota</Button>
-
+                                        <Button className="btn-warning mr-3" disabled={this.state.selectedListPrenotazioni.length>0?false:true}
+                                        onClick={this._handleVideoRitirati}>
+                                        <i className="fa fa-calendar-times-o" aria-hidden="true"></i>
+                                        &nbsp;Ritirato</Button>
                                     </div>
+                                    */}
 
                                 </div>
                                 <div className="row">
                                     <div className="col-md-12">
                                         <InfiniteTable key="prenotati"
-                                            id="prenotati"
+                                            id="tb-prenotati"
                                             reload={this.state.reloadInfiniteTable}
                                             url={this.url}
                                             columns={COLUMNS_PRENOTAZIONI}
                                             externalRows={this.state.rowsPrenotazioni}
-                                            multiSelect={true}
-                                            //multiSelectSetting={MS_VIDEO}
+                                            //multiSelect={true}
                                             selectedList={this.state.selectedListPrenotazioni}
                                             multiSelectCallback={ (list,row) =>{
                                                 //console.log(list)
-                                                this.setState({selectedListPrenotazioni:list, rowsSelectedListPrenotazioni:row})
+                                                this.setState({selectedListPrenotazioni:list})
                                             }}
                                         />
                                     </div>

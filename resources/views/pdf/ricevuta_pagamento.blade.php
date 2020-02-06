@@ -221,11 +221,8 @@
                             <tbody>
                                 @foreach ($tabella as $item)
                                     <tr>
-                                        <td>{{$item['descrizione']}}
-                                            @php
-                                                if(!empty($item['danneggiato']))
-                                                    echo "  <span style=\"color:red\">".$item['danneggiato']."</span>";
-                                            @endphp
+                                        <td >
+                                            {{$item['descrizione']}} <span style="color:red">{{$item['danneggiato']}}</span>
                                         </td>
                                         <td>{{$item['n_giorni']}}</td>
                                         <td>{{number_format($item['prezzo'],2)}} €</td>
@@ -242,10 +239,10 @@
                 <div class="row mb-5">
                     <div class="col-md-6">
                         <p>
-                            Per ogni giorno di ritardo, viene applicato il prezzo unitario senza sconti.
+                            Lo sconto giorni viene applicato solo sui video noleggiati per più di un giorno. A seconda del tipo di fidelizzazione, viene applicato un ulteriore sconto.
                         </p>
                         <p>
-                            Lo sconto viene applicato sulla base della propria Fidelizzazione.
+                            Per ogni giorno di ritardo, viene applicato il prezzo unitario giornaliero senza sconti.
                         </p>
                         <p>
                             I film danneggiati dovranno essere rimborsati per un importo pari a 2 giorni di noleggio senza sconti.

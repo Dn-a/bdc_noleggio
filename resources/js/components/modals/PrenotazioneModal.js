@@ -29,10 +29,10 @@ export default class NoleggoModal extends Component {
             }
         });
 
-
         this.state = {
             data: data,
             error: error,
+            idVideoCheck:[],
             checked: false,
             openModal: false,
             loader: false,
@@ -58,6 +58,7 @@ export default class NoleggoModal extends Component {
 
         this.state.data=data;
         this.state.error =error;
+        this.state.idVideoCheck = [];
         this.state.loader = false;
         this.state.checked = false;
         this.state.openModal = false;
@@ -157,7 +158,7 @@ export default class NoleggoModal extends Component {
     checked(){
         let data = this.state.data;
         let error = this.state.error;
-        //console.log(data);
+
         let checked = true;
         Object.keys(error).map((k,id) => {
             if(k=='id_cliente' && (error[k]!='' || data[k]=='' || data[k]==undefined))
@@ -174,6 +175,9 @@ export default class NoleggoModal extends Component {
                 )
                     data[k].some((v) =>{
                         if(v==''){
+                            checked= false;
+                            return true;
+                        }else if(k=='id_video' && this.state.idVideoCheck.includes(v)){
                             checked= false;
                             return true;
                         }
@@ -206,6 +210,10 @@ export default class NoleggoModal extends Component {
 
         let externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
 
+        let idVideoSearch = JSON.stringify(this.state.data.id_video);
+
+        let showError = false;
+
         return(
             <AddEditModal size="lg"
                 show={this.props.show}
@@ -220,6 +228,7 @@ export default class NoleggoModal extends Component {
                 <div className="form-group w-50 mb-4">
                     <SearchField
                         label="Cliente"
+                        query={'id_video_prenotazioni='+idVideoSearch}
                         placeholder='Cerca un Cliente'
                         searchClassName='w-100'
                         showList={true}
@@ -227,13 +236,15 @@ export default class NoleggoModal extends Component {
                         patternList={{id:'id', fields:{nome:[],cognome:[],cf:[]} } }//id di ritorno; i fields vengono usati come titolo
                         reloadOnClick={false}
                         onClick={(val) => {
-                                //console.log(val);
+                                //console.log(val.id_video);
                                 let data = this.state.data;
+                                let idVideoCheck = this.state.data;
                                 let error = this.state.error;
                                 data.id_cliente = val.id;
+                                idVideoCheck = val.id_video;
                                 error.id_cliente = '';
 
-                                this.setState({data,error},() => this.checked());
+                                this.setState({data,idVideoCheck,error},() => this.checked());
                             }
                         }
                         callback={(val) => {
@@ -242,6 +253,7 @@ export default class NoleggoModal extends Component {
                                 let error = this.state.error;
 
                                 data.id_cliente = '';
+                                data.idVideoCheck = [];
 
                                 if(val.length==0){
                                     error.id_cliente = INFO_ERROR['cliente'];
@@ -254,36 +266,42 @@ export default class NoleggoModal extends Component {
                 </div>
 
                 <div className="form-group">
-                            <div className='table-responsive'>
-                                <label>Film selezionati</label>
-                                <table className="table">
-                                    <thead>
-                                        <tr>
-                                            <th>N</th>
-                                            <th>Titolo</th>
-                                            <th>Prezzo</th>
-                                            <th>Data Uscita</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            externalRows.map((row,key) => {
-                                                let data = this.state.data;
+                        <div className='table-responsive'>
+                            <label>Film selezionati</label>
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>N</th>
+                                        <th>Titolo</th>
+                                        <th>Prezzo</th>
+                                        <th>Data Uscita</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        externalRows.map((row,key) => {
+                                            let data = this.state.data;
+                                            let check = this.state.idVideoCheck.includes(row.id);
+                                            if(check) showError = true;
+                                            //console.log(row.id);
 
-                                                return(
-                                                    <tr key={key}>
-                                                        <td>{(key+1)}</td>
-                                                        <td>{row.titolo}</td>
-                                                        <td>{parseFloat(row.prezzo).toFixed(2) +' €'}</td>
-                                                        <td>
-                                                            {row.data_uscita}
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })
-                                        }
-                                    </tbody>
-                                </table>
+                                            return(
+                                                <tr key={key} style={{background:check?'#ffb8b8':'inherit'}}>
+                                                    <td>{(key+1)}</td>
+                                                    <td>{row.titolo}</td>
+                                                    <td>{parseFloat(row.prezzo).toFixed(2) +' €'}</td>
+                                                    <td>
+                                                        {new Date(row.data_uscita).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})}
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                            {showError &&
+                               <div className="error-div">I video evidenziati in rosso risultano già prenotati</div>
+                            }
                         </div>
                     </div>
 

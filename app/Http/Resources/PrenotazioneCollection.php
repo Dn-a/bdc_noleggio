@@ -13,15 +13,19 @@ class PrenotazioneCollection extends ResourceCollection
         'video',
         'prezzo',
         'data_uscita',
-        'data_prenotazione'
+        'data_prenotazione',
+        'disp_magazzino'
     ];
     protected $withPagination;
+    private $idPtVendita;
 
-    public function __construct($items, $withPagination=false, $fields=null)
+    public function __construct($items, $withPagination=false, $fields=null,$idPtVendita)
     {
         parent::__construct($items);
         if($fields!=null && is_array($fields))
             $this->withFields = array_merge($this->withFields,$fields);
+        if($idPtVendita != null)
+            $this->idPtVendita = $idPtVendita;
         $this->withPagination = $withPagination;
     }
 
@@ -72,6 +76,14 @@ class PrenotazioneCollection extends ResourceCollection
             $cliente = ucfirst((string) $item->cliente->nome).' '.
             ucfirst((string) $item->cliente->cognome);
             $item['cliente'] = $cliente;
+        }
+        if(in_array('disp_magazzino',$fields) && $this->idPtVendita!=null){
+            $dispMagazzino = $item
+            //->with('magazzino')
+            ->magazzino
+            ->where('id_pt_vendita',$this->idPtVendita)
+            ->first()!=null;
+            $item['disp_magazzino'] = $dispMagazzino;
         }
 
 

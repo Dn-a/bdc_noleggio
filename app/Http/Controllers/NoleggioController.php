@@ -14,7 +14,7 @@ use PDF;
 
 class NoleggioController extends Controller
 {
-    private $percSconto = 40;
+    private $percSconto = 20;
 
     public function index(Request $request)
     {
@@ -84,7 +84,7 @@ class NoleggioController extends Controller
         ];
 
         if($storico)
-            $moreFields =  array_merge($moreFields,['data_restituzione']);
+            $moreFields =  array_merge($moreFields,['data_restituzione','danneggiato']);
         else
             $moreFields =  array_merge($moreFields,['prezzo']);
 
@@ -318,7 +318,6 @@ class NoleggioController extends Controller
             $idDipendente = $user->id;
             $idPtVendita = $user->id_pt_vendita;
 
-            date_default_timezone_set("Europe/Rome");
 
             $totaleParziale = 0;
             $totaleCostoDanni = 0;
@@ -341,8 +340,9 @@ class NoleggioController extends Controller
                 $date = date('Y-m-d');
                 $noleggio->update(['prezzo_extra' => $extra,'data_restituzione' => $date]);
                 $noleggio = $noleggio->first();
+                date_default_timezone_set("Europe/Rome");
                 $gg = ceil( (strtotime($noleggio->data_fine) - strtotime($noleggio->data_inizio)) / 86400 );
-                $ggExtra = ceil( (strtotime(date("Y-m-d ")) - strtotime($noleggio->data_fine)) / 86400 );
+                $ggExtra = ceil( (strtotime(date("Y-m-d")) - strtotime($noleggio->data_fine)) / 86400 );
                 $ggExtra = $ggExtra<0 ? 0 : $ggExtra;
 
                 $video = Video::where('id',$magazzino->id_video)->first();

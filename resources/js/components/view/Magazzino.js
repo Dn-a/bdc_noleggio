@@ -237,7 +237,6 @@ export default class Magazzino extends Component {
                                         onClick={this._handleRipristinoCaricati}>
                                         <i className="fa fa-upload" aria-hidden="true"></i>
                                         &nbsp;Ripristina Selezionati</Button>
-
                                     </div>
 
                                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Cliente;
 use App\Http\Resources\ClienteCollection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClienteController extends Controller
 {
@@ -15,20 +16,28 @@ class ClienteController extends Controller
 
         $cliente = Cliente::orderBy('id','DESC')->paginate($page);
 
-        return new ClienteCollection($cliente,true);
+        return new ClienteCollection($cliente,true,null,null,null);
     }
 
 
     public function search(Request $request, $val)
     {
 
+        //return response()->json(empty($request->id_video),201);exit;
+
         $arr = explode(' ',$val);
-        //var_dump($arr);exit;
-        //echo "cerca: ".$val;exit;
+
+        $user = Auth::user();
+        $idPtVendita = $user->id_pt_vendita;
+
+        // nella fase di prenotazione, quando viene selezionato un utente,
+        // per evitare che uno stesso film venisse prenotato più di una volta dalla stessa persona,
+        // viene eseguito un controllo sulla tabella prenotazioni, restituendo gli id dei video prenotati
+        $idVideoPrenotazioni = json_decode($request->input('id_video_prenotazioni'));
 
         $cliente = Cliente::
         //where('nome','like',"$arr[0]%")
-        orWhere(function($query) use($arr) {
+        where(function($query) use($arr) {
             if(count($arr)==1)
                 $query->where('nome','like',$arr[0].'%');
         })
@@ -74,7 +83,21 @@ class ClienteController extends Controller
         ->orWhere('telefono','like',"$arr[0]%")
         ->orWhere('cellulare','like',"$arr[0]%")->limit(10)->get();
 
-        return new ClienteCollection($cliente);
+        return new ClienteCollection($cliente,false,
+            $this->moreField($idVideoPrenotazioni),
+            $idVideoPrenotazioni, $idPtVendita
+        );
+    }
+
+    private function moreField($idVideoPrenotazioni)
+    {
+        $moreFields = [
+        ];
+
+        if($idVideoPrenotazioni!=null)
+            $moreFields =  array_merge($moreFields,['id_video']);
+
+        return $moreFields;
     }
 
 

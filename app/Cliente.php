@@ -25,4 +25,9 @@ class Cliente extends Model
         return $this->belongsTo('App\Fidelizzazione','id_fidelizzazione');
     }
 
+    public function prenotazione()
+    {
+        return $this->hasMany('App\Prenotazione','id_cliente','id');
+    }
+
 }

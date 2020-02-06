@@ -201,6 +201,7 @@ export default class Clienti extends Component {
                 <div className="row">
                     <div className="col-md-12">
                         <InfiniteTable
+                            id='tb-clienti'
                             reload={this.state.reloadInfiniteTable}
                             url={this.props.url+'/clienti'}
                             columns={COLUMNS}

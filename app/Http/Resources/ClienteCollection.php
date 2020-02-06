@@ -13,17 +13,23 @@ class ClienteCollection extends ResourceCollection
         'cf',
         'recapiti',
         'residenza',
-        'fidelizzazione',
+        'fidelizzazione'
 
     ];
     protected $withPagination;
+    private $idVideoPrenotazioni;
+    private $idPtVendita;
 
-
-    public function __construct($items, $withPagination=false, $fields=null)
+    public function __construct($items, $withPagination=false, $fields=null,
+        $idVideoPrenotazioni,$idPtVendita)
     {
         parent::__construct($items);
         if($fields!=null && is_array($fields))
             $this->withFields = array_merge($this->withFields,$fields);
+        if($idVideoPrenotazioni != null)
+            $this->idVideoPrenotazioni = $idVideoPrenotazioni;
+        if($idPtVendita != null)
+            $this->idPtVendita = $idPtVendita;
         $this->withPagination = $withPagination;
     }
 
@@ -66,10 +72,17 @@ class ClienteCollection extends ResourceCollection
             $fidelizzazione = $item->fidelizzazione;
             $item['fidelizzazione'] = $fidelizzazione;
         }
+        if($this->idVideoPrenotazioni!=null && $this->idPtVendita!=null){
+            $idptV = $this->idPtVendita;
+            $id_video = $item->prenotazione
+            ->where('id_pt_vendita',$this->idPtVendita)
+            ->whereIn('id_video',$this->idVideoPrenotazioni)
+            ->pluck('id_video');
+            $item['id_video'] = $id_video;
+        }
 
         $item['nome'] = ucfirst((string) $item->nome);
         $item['cognome'] = ucfirst((string) $item->cognome);
-
 
         /*unset(
             $item['telefono'], $item['cellulare'],

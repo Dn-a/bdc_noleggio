@@ -77194,7 +77194,7 @@ function (_Component) {
       complited: false,
       pdf: ''
     };
-    _this.scontoGiorni = 40;
+    _this.scontoGiorni = 20;
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
     _this._handleOnSave = _this._handleOnSave.bind(_assertThisInitialized(_this));
     return _this;
@@ -77381,10 +77381,14 @@ function (_Component) {
   }, {
     key: "_calcDay",
     value: function _calcDay(date) {
-      var now = new Date();
-      now = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-      var day = (Date.parse(date) - now.getTime()) / (3600000 * 24);
-      var giorni = date == '000-00-00' || Date.parse(date) <= now.getTime() ? 0 : Math.round(day); //console.log(day); console.log(giorni);
+      var now = new Date(); //console.log(date); console.log(now);
+
+      now = now.getFullYear() + '-' + ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2); //console.log(now);
+
+      now = Date.parse(now); //now = new Date(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
+
+      var day = (Date.parse(date) - now) / (3600000 * 24);
+      var giorni = date == '000-00-00' || Date.parse(date) <= now ? 0 : Math.round(day); //console.log(day); console.log(giorni);
 
       return giorni;
     }
@@ -77654,6 +77658,7 @@ function (_Component) {
     _this.state = {
       data: data,
       error: error,
+      idVideoCheck: [],
       checked: false,
       openModal: false,
       loader: false,
@@ -77677,6 +77682,7 @@ function (_Component) {
       });
       this.state.data = data;
       this.state.error = error;
+      this.state.idVideoCheck = [];
       this.state.loader = false;
       this.state.checked = false;
       this.state.openModal = false;
@@ -77783,9 +77789,10 @@ function (_Component) {
   }, {
     key: "checked",
     value: function checked() {
-      var data = this.state.data;
-      var error = this.state.error; //console.log(data);
+      var _this4 = this;
 
+      var data = this.state.data;
+      var error = this.state.error;
       var checked = true;
       Object.keys(error).map(function (k, id) {
         if (k == 'id_cliente' && (error[k] != '' || data[k] == '' || data[k] == undefined)) checked = false;else if (error[k] instanceof Array) // some ritorna true se all'interno del loop viene soddisfatta la condizione
@@ -77796,6 +77803,9 @@ function (_Component) {
             }
           })) data[k].some(function (v) {
             if (v == '') {
+              checked = false;
+              return true;
+            } else if (k == 'id_video' && _this4.state.idVideoCheck.includes(v)) {
               checked = false;
               return true;
             }
@@ -77817,18 +77827,20 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var divClassName = 'mb-3';
       var urlCliente = this.props.url + '/clienti/search';
       var externalRows = this.props.externalRows !== undefined ? this.props.externalRows : [];
+      var idVideoSearch = JSON.stringify(this.state.data.id_video);
+      var showError = false;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
         size: "lg",
         show: this.props.show,
         onHide: function onHide(a) {
-          _this4.props.onHide(a);
+          _this5.props.onHide(a);
 
-          _this4._resetAfterClose();
+          _this5._resetAfterClose();
         },
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
@@ -77840,6 +77852,7 @@ function (_Component) {
         className: "form-group w-50 mb-4"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
         label: "Cliente",
+        query: 'id_video_prenotazioni=' + idVideoSearch,
         placeholder: "Cerca un Cliente",
         searchClassName: "w-100",
         showList: true,
@@ -77855,34 +77868,38 @@ function (_Component) {
         ,
         reloadOnClick: false,
         onClick: function onClick(val) {
-          //console.log(val);
-          var data = _this4.state.data;
-          var error = _this4.state.error;
+          //console.log(val.id_video);
+          var data = _this5.state.data;
+          var idVideoCheck = _this5.state.data;
+          var error = _this5.state.error;
           data.id_cliente = val.id;
+          idVideoCheck = val.id_video;
           error.id_cliente = '';
 
-          _this4.setState({
+          _this5.setState({
             data: data,
+            idVideoCheck: idVideoCheck,
             error: error
           }, function () {
-            return _this4.checked();
+            return _this5.checked();
           });
         },
         callback: function callback(val) {
           //console.log(val);
-          var data = _this4.state.data;
-          var error = _this4.state.error;
+          var data = _this5.state.data;
+          var error = _this5.state.error;
           data.id_cliente = '';
+          data.idVideoCheck = [];
 
           if (val.length == 0) {
             error.id_cliente = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_4__["default"]['cliente'];
           }
 
-          _this4.setState({
+          _this5.setState({
             data: data,
             error: error
           }, function () {
-            return _this4.checked();
+            return _this5.checked();
           });
         }
       }), this.showError('id_cliente')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -77892,11 +77909,25 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Film selezionati"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         className: "table"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "N"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Titolo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Prezzo"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Data Uscita"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, externalRows.map(function (row, key) {
-        var data = _this4.state.data;
+        var data = _this5.state.data;
+
+        var check = _this5.state.idVideoCheck.includes(row.id);
+
+        if (check) showError = true; //console.log(row.id);
+
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-          key: key
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, key + 1), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.titolo), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(row.prezzo).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.data_uscita));
-      }))))));
+          key: key,
+          style: {
+            background: check ? '#ffb8b8' : 'inherit'
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, key + 1), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.titolo), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(row.prezzo).toFixed(2) + ' €'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, new Date(row.data_uscita).toLocaleDateString("it-IT", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        })));
+      }))), showError && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "error-div"
+      }, "I video evidenziati in rosso risultano gi\xE0 prenotati"))));
     }
   }]);
 
@@ -78724,6 +78755,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
  // Proprietà
 //
+// - id: required
 // - url: endpoint remoto
 // - columns: accetta una lista di oggetti {id:'',title:'',render:'',style:'',img:''}
 // - query: eventuali query string da accodare all'url
@@ -78853,7 +78885,7 @@ function (_Component) {
           moreData: moreData
         });
       })["catch"](function (error) {
-        console.log(error.response.data);
+        console.log(error.response);
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this4.home + '/login';
       });
     } // Multiselezione righe
@@ -78900,9 +78932,14 @@ function (_Component) {
   }, {
     key: "_isDescendant",
     value: function _isDescendant() {
-      if (this.props.id === undefined) return false;
+      if (this.props.id === undefined) {
+        console.error("InfiniteTable: id mancante");
+        return false;
+      }
+
       var node = document.getElementById(this.props.id).parentNode;
       var parent = document.getElementsByClassName('show active')[0];
+      if (parent == null || parent === undefined) return true;
 
       while (node != null) {
         if (node == parent) {
@@ -79272,10 +79309,10 @@ function (_Component) {
       }); //console.log(url);
 
       return axios.get(url, headers).then(function (res) {
-        var data = res.data;
+        var data = res.data; //console.log(data);
+
         if (_this2.props.callback !== undefined) _this2.props.callback(data);
         return data; //this.setState({ data:data, loader:false });
-        //console.log(rows);
         //this.setState({data});
       })["catch"](function (error) {
         console.log(error.response.data);
@@ -80198,6 +80235,7 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        id: "tb-clienti",
         reload: this.state.reloadInfiniteTable,
         url: this.props.url + '/clienti',
         columns: COLUMNS,
@@ -80401,6 +80439,7 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        id: "tb-dipendenti",
         reload: this.state.reloadInfiniteTable,
         url: this.url,
         columns: COLUMNS,
@@ -81241,6 +81280,12 @@ var COLUMNS_STORICO = [{
     });
   }
 }, {
+  title: 'Danneggiato',
+  field: 'danneggiato',
+  render: function render(cell) {
+    return cell == 0 ? 'No' : 'SI';
+  }
+}, {
   title: 'Giorni ritardo',
   field: 'giorni_ritardo'
 }, {
@@ -81615,7 +81660,7 @@ function (_Component) {
         className: "col-md-12"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
         key: "noleggi",
-        id: "noleggi",
+        id: "tb-noleggi",
         reload: this.state.reloadInfiniteTable,
         url: this.url,
         columns: COLUMNS_NOLEGGI,
@@ -81661,7 +81706,7 @@ function (_Component) {
         className: "col-md-12"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
         key: "storico",
-        id: "storico",
+        id: "tb-storico",
         reload: this.state.reloadInfiniteTable,
         query: "only=storico",
         url: this.url,
@@ -81690,7 +81735,7 @@ function (_Component) {
         className: "col-md-12"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
         key: "ricevute",
-        id: "ricevute",
+        id: "tb-ricevute",
         reload: this.state.reloadInfiniteTable,
         url: urlRicevute,
         columns: COLUMNS_RICEVUTE,
@@ -81719,11 +81764,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Noleggi; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
-/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
-/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
-/* harmony import */ var _modals_NoleggoModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modals/NoleggoModal */ "./resources/js/components/modals/NoleggoModal.js");
-/* harmony import */ var _modals_PrenotazioneModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/PrenotazioneModal */ "./resources/js/components/modals/PrenotazioneModal.js");
+/* harmony import */ var _Env__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Env */ "./resources/js/components/Env.js");
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
+/* harmony import */ var _modals_NoleggoModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/NoleggoModal */ "./resources/js/components/modals/NoleggoModal.js");
+/* harmony import */ var _modals_PrenotazioneModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modals/PrenotazioneModal */ "./resources/js/components/modals/PrenotazioneModal.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -81741,6 +81787,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -81824,12 +81871,27 @@ var COLUMNS_PRENOTAZIONI = [{
 }, {
   title: 'Data Uscita',
   field: 'data_uscita',
-  render: function render(cell) {
-    return new Date(cell).toLocaleDateString("it-IT", {
+  render: function render(cell, row) {
+    var now = new Date();
+    now = now.getFullYear() + '-' + ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
+    now = Date.parse(now);
+    var date = new Date(cell).toLocaleDateString("it-IT", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
     });
+    var check = Date.parse(date) <= now;
+    var disp = row.disp_magazzino == true;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      style: {
+        fontWeight: check ? '600' : '200'
+      }
+    }, check && 'uscito il ', date), disp && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      style: {
+        color: 'green',
+        fontSize: '0.9em'
+      }
+    }, "copia disponibile in magazzino"));
   }
 }, {
   title: 'Data Prenotazione',
@@ -81934,19 +81996,58 @@ function (_Component) {
       // row contenenti tutti i campi dei video selezionati - usato nel NOleggioMOdal
       selectedListPrenotazioni: [],
       // id dei video selezionati
-      rowsSelectedListPrenotazioni: [],
       recallSearch: false,
       reloadInfiniteTable: 0
     };
     _this.url = _this.props.url + '/prenotazioni';
+    _this.home = _Env__WEBPACK_IMPORTED_MODULE_1__["URL_HOME"];
     _this._handleClosePrenotazioneModal = _this._handleClosePrenotazioneModal.bind(_assertThisInitialized(_this));
     _this._handleShowPrenotazioneModal = _this._handleShowPrenotazioneModal.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldPrenotazioneCallback = _this._handleSearchFieldPrenotazioneCallback.bind(_assertThisInitialized(_this));
+    _this._handleVideoRitirati = _this._handleVideoRitirati.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(Noleggi, [{
+    key: "updateRemoteData",
+    value: function updateRemoteData() {
+      var _this2 = this;
+
+      var url = this.props.url + '/prenotazioni/0';
+      var headers = {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      };
+      var data = {
+        id_prenotazioni: this.state.selectedListPrenotazioni,
+        _method: 'put',
+        _token: CSRF_TOKEN
+      }; //console.log(data);return;
+
+      return axios.post(url, data, headers).then(function (result) {
+        console.log(result.data);
+
+        _this2.setState({
+          selectedListPrenotazioni: [],
+          reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+        });
+
+        return result;
+      })["catch"](function (error) {
+        console.error(error.response.data);
+
+        _this2.setState({
+          errorRemoteStore: error.response.status
+        });
+
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
+        throw error;
+      });
+    }
+  }, {
     key: "_handleClosePrenotazioneModal",
     value: function _handleClosePrenotazioneModal() {
       this.setState({
@@ -81961,9 +82062,9 @@ function (_Component) {
       });
     }
   }, {
-    key: "_handleCaricoVideo",
-    value: function _handleCaricoVideo(e) {
-      if (confirm("Confermi il carico dei video selezionati?")) return;
+    key: "_handleVideoRitirati",
+    value: function _handleVideoRitirati(e) {
+      if (confirm("Confermi il ritiro delle prenotazioni selezionate?")) this.updateRemoteData();
     }
   }, {
     key: "_handleSearchFieldCallback",
@@ -82005,7 +82106,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       var urlVideo = this.props.url + '/video';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -82050,44 +82151,44 @@ function (_Component) {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
         key: "s-video",
         showList: false,
         query: "only=in_uscita",
         url: urlVideo + '/search',
         callback: this._handleSearchFieldCallback,
         handles: function handles(reset, recall) {
-          var check = _this2.state.recallSearch;
+          var check = _this3.state.recallSearch;
           recall(check);
-          if (check) _this2.state.recallSearch = false;
+          if (check) _this3.state.recallSearch = false;
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
         className: "btn-success mr-3",
         disabled: this.state.selectedListVideo.length > 0 ? false : true,
         onClick: this._handleShowPrenotazioneModal
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fa fa-upload",
+        className: "fa fa-calendar-plus-o",
         "aria-hidden": "true"
-      }), "\xA0Prenota"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_PrenotazioneModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      }), "\xA0Prenota"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_PrenotazioneModal__WEBPACK_IMPORTED_MODULE_6__["default"], {
         url: this.props.url,
         externalRows: this.state.rowsSelectedListVideo,
         show: this.state.showPrenotazione,
         onHide: this._handleClosePrenotazioneModal,
         callback: function callback(row) {
-          _this2.setState({
+          _this3.setState({
             recallSearch: true,
-            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+            reloadInfiniteTable: ++_this3.state.reloadInfiniteTable
           });
         }
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
         key: "video",
-        id: "video",
+        id: "tb-video",
         reload: this.state.reloadInfiniteTable,
         url: urlVideo,
         query: "only=in_uscita",
@@ -82098,7 +82199,7 @@ function (_Component) {
         selectedList: this.state.selectedListVideo,
         multiSelectCallback: function multiSelectCallback(list, row) {
           //console.log(list)
-          _this2.setState({
+          _this3.setState({
             selectedListVideo: list,
             rowsSelectedListVideo: row
           });
@@ -82114,39 +82215,28 @@ function (_Component) {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
         key: "s-prenotati",
         showList: false,
         url: this.url + '/search',
         callback: this._handleSearchFieldPrenotazioneCallback
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-md-6 text-right"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
-        className: "btn-success mr-3",
-        disabled: this.state.selectedListVideo.length > 0 ? false : true,
-        onClick: this._handleShowPrenotazioneModal
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fa fa-upload",
-        "aria-hidden": "true"
-      }), "\xA0Prenota"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
         key: "prenotati",
-        id: "prenotati",
+        id: "tb-prenotati",
         reload: this.state.reloadInfiniteTable,
         url: this.url,
         columns: COLUMNS_PRENOTAZIONI,
-        externalRows: this.state.rowsPrenotazioni,
-        multiSelect: true //multiSelectSetting={MS_VIDEO}
+        externalRows: this.state.rowsPrenotazioni //multiSelect={true}
         ,
         selectedList: this.state.selectedListPrenotazioni,
         multiSelectCallback: function multiSelectCallback(list, row) {
           //console.log(list)
-          _this2.setState({
-            selectedListPrenotazioni: list,
-            rowsSelectedListPrenotazioni: row
+          _this3.setState({
+            selectedListPrenotazioni: list
           });
         }
       })))))));

@@ -4,6 +4,7 @@ import {URL_HOME} from '../Env';
 
 // Proprietà
 //
+// - id: required
 // - url: endpoint remoto
 // - columns: accetta una lista di oggetti {id:'',title:'',render:'',style:'',img:''}
 // - query: eventuali query string da accodare all'url
@@ -117,7 +118,7 @@ export default class InfiniteTable extends Component {
                 this.setState({data,moreData});
 
 			}).catch((error) => {
-				console.log(error.response.data);
+				console.log(error.response);
 				if(error.response.status==401)
 					if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
 						window.location.href=this.home + '/login';
@@ -183,11 +184,16 @@ export default class InfiniteTable extends Component {
     }
 
     _isDescendant() {
-        if(this.props.id === undefined)
+        if(this.props.id === undefined){
+            console.error("InfiniteTable: id mancante");
             return false;
+        }
 
         let node = document.getElementById(this.props.id).parentNode;
         let parent = document.getElementsByClassName('show active')[0];
+
+        if(parent==null || parent===undefined)
+            return true;
 
         while (node != null) {
             if (node == parent) {

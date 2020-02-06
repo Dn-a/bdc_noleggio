@@ -26,7 +26,10 @@ class PrenotazioneController extends Controller
             ->where('id_pt_vendita',$idPtVendita)
             ->orderBy('id','DESC')->paginate($page);
 
-        return new PrenotazioneCollection($prenotazione, true, $this->moreField($ruolo,$ritirati));
+        return new PrenotazioneCollection($prenotazione, true,
+            $this->moreField($ruolo,$ritirati),
+            $idPtVendita
+        );
     }
 
 
@@ -61,7 +64,7 @@ class PrenotazioneController extends Controller
         ->limit(15)->get();
 
 
-        return  new PrenotazioneCollection($noleggio,false, $this->moreField($ruolo,$ritirati));
+        return  new PrenotazioneCollection($noleggio,false, $this->moreField($ruolo,$ritirati),null);
     }
 
 
@@ -141,7 +144,28 @@ class PrenotazioneController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        try{
+            //return response()->json($request->all(),201);exit;
+            //Validate
+            $request->validate([
+                'id_prenotazioni' => 'required|array',
+                'id_prenotazioni.*' => 'required|integer'
+            ]);
+
+            //return response()->json($request->all(),201);exit;
+
+            $input = $request->all();
+
+            //$prenotazione = new Prenotazione();
+
+            $prenotazione = Prenotazione::whereIn('id',$input['id_prenotazioni'])
+            ->update(['ritirato' => 1]);
+
+            return response()->json(['msg' => 'updated'],201);
+
+        }catch( \Illuminate\Database\QueryException $e){
+            return response()->json(['msg' => $e->getMessage() ],500);
+        }
     }
 
 

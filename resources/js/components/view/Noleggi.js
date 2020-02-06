@@ -70,6 +70,7 @@ const COLUMNS_STORICO = [
     { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Data Restituzione', field: 'data_restituzione',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':'SI'},
     { title: 'Giorni ritardo', field: 'giorni_ritardo'},
     { title: 'Costo Complessivo (compresi Extra)', field: 'prezzo_tot', render:
     (cell,row) => parseFloat(cell+row.prezzo_extra).toFixed(2) +' €'},
@@ -353,7 +354,7 @@ export default class Noleggi extends Component {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <InfiniteTable key="noleggi"
-                                            id="noleggi"
+                                            id="tb-noleggi"
                                             reload={this.state.reloadInfiniteTable}
                                             url={this.url}
                                             columns={COLUMNS_NOLEGGI}
@@ -398,7 +399,7 @@ export default class Noleggi extends Component {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <InfiniteTable key="storico"
-                                            id="storico"
+                                            id="tb-storico"
                                             reload={this.state.reloadInfiniteTable}
                                             query='only=storico'
                                             url={this.url}
@@ -428,7 +429,7 @@ export default class Noleggi extends Component {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <InfiniteTable key="ricevute"
-                                            id="ricevute"
+                                            id="tb-ricevute"
                                             reload={this.state.reloadInfiniteTable}
                                             url={urlRicevute}
                                             columns={COLUMNS_RICEVUTE}
