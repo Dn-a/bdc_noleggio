@@ -84,10 +84,10 @@ class NoleggioCollection extends ResourceCollection
 
             $item['giorni'] = $giorni;
         }
-        if(in_array('prezzo',$fields)){
+        /*if(in_array('prezzo',$fields)){
             $item['prezzo'] = $item->magazzino->video->prezzo;
         }
-        /*if(in_array('prezzo_extra',$fields)){
+        if(in_array('prezzo_extra',$fields)){
             date_default_timezone_set("Europe/Rome");
             $date = date("Y-m-d ");
             $day = (strtotime($date) - strtotime($item->data_fine)) / 86400;

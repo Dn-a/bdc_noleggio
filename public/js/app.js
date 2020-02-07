@@ -76885,7 +76885,8 @@ function (_Component) {
 
         _this2.props.onHide();
 
-        _this2.state.loader = false;
+        _this2._resetAfterClose();
+
         return result;
       })["catch"](function (error) {
         console.error(error.response.data);
@@ -77194,7 +77195,15 @@ function (_Component) {
       complited: false,
       pdf: ''
     };
-    _this.scontoGiorni = 20;
+    _this.scontoGiorni = {
+      2: '0.1',
+      3: '0.1',
+      4: '0.2',
+      5: '0.2',
+      6: '0.3',
+      7: '0.3',
+      8: '0.4'
+    };
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
     _this._handleOnSave = _this._handleOnSave.bind(_assertThisInitialized(_this));
     return _this;
@@ -77409,8 +77418,9 @@ function (_Component) {
         var row = externalRows[eKey];
 
         if (eGiorni > 1) {
-          sconto = row.prezzo * (eGiorni / this.scontoGiorni);
-          sconto = sconto > row.prezzo / 2 ? row.prezzo / 2 : sconto;
+          var prc = this.scontoGiorni[eGiorni];
+          prc = prc === undefined ? this.scontoGiorni[Object.keys(this.scontoGiorni)[Object.keys(this.scontoGiorni).length - 1]] : prc;
+          sconto = row.prezzo * eGiorni * prc; //sconto =  sconto > (row.prezzo/2) ? row.prezzo/2 : sconto;
         }
 
         prezzo = eGiorni * row.prezzo;
@@ -77420,8 +77430,9 @@ function (_Component) {
         var giorni = _this4._calcDay(data.data_fine[key]);
 
         if (giorni > 1) {
-          sconto = row.prezzo * (giorni / _this4.scontoGiorni);
-          sconto = sconto > row.prezzo / 2 ? row.prezzo / 2 : sconto;
+          var _prc = _this4.scontoGiorni[giorni];
+          _prc = _prc === undefined ? _this4.scontoGiorni[Object.keys(_this4.scontoGiorni)[Object.keys(_this4.scontoGiorni).length - 1]] : _prc;
+          sconto = row.prezzo * giorni * _prc; //sconto = row.prezzo * ( giorni/this.scontoGiorni); sconto =  sconto > (row.prezzo/2) ? row.prezzo/2 : sconto;
         }
 
         prezzo = giorni * row.prezzo;
@@ -77745,7 +77756,8 @@ function (_Component) {
 
         _this2.props.onHide();
 
-        _this2.state.loader = false;
+        _this2._resetAfterClose();
+
         return result;
       })["catch"](function (error) {
         console.error(error.response.data);
@@ -78181,7 +78193,7 @@ function (_Component) {
         var prezzoExta = _this3.state.data.prezzo_extra[key];
         var complessivo = prezzoTot + prezzoExta;
         var danneggiato = _this3.state.data.danneggiato[key];
-        totPagare += complessivo; //console.log(danneggiato)
+        totPagare += complessivo; //console.log(row)
 
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: key
@@ -78193,7 +78205,12 @@ function (_Component) {
           handleChange: function handleChange(e) {
             return _this3._handleChange(e, key, row);
           }
-        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.giorni_ritardo), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(complessivo).toFixed(2) + ' €'));
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          style: {
+            fontSize: '0.5',
+            color: '#ccc'
+          }
+        }, parseFloat(row.prezzo * 2).toFixed(2), " (", row.prezzo, " * 2)  \u20AC")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, row.giorni_ritardo), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, parseFloat(complessivo).toFixed(2) + ' €'));
       }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -78345,7 +78362,8 @@ function (_Component) {
 
         _this2.props.onHide();
 
-        _this2.state.loader = false;
+        _this2._resetAfterClose();
+
         return result;
       })["catch"](function (error) {
         console.error(error.response.data);
@@ -78885,7 +78903,7 @@ function (_Component) {
           moreData: moreData
         });
       })["catch"](function (error) {
-        console.log(error.response);
+        if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this4.home + '/login';
       });
     } // Multiselezione righe
@@ -79626,6 +79644,7 @@ var DropdownSelect = function DropdownSelect(_ref) {
       required = _ref.required,
       values = _ref.values,
       selected = _ref.selected,
+      defaultSelected = _ref.defaultSelected,
       handleChange = _ref.handleChange;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "input-field " + divClassName
@@ -79635,11 +79654,11 @@ var DropdownSelect = function DropdownSelect(_ref) {
   }, label) : '', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
     name: name,
     className: 'form-control ' + className,
-    defaultValue: selected,
+    defaultValue: defaultSelected,
+    value: selected,
     required: required,
     onChange: handleChange
   }, placeholder !== undefined && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-    defaultValue: selected,
     value: "default",
     disabled: true
   }, placeholder), firstValue !== undefined && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
@@ -80270,9 +80289,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
-/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
-/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
-/* harmony import */ var _modals_DipendentiModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modals/DipendentiModal */ "./resources/js/components/modals/DipendentiModal.js");
+/* harmony import */ var _utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/form/DropdownSelect */ "./resources/js/components/utils/form/DropdownSelect.js");
+/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
+/* harmony import */ var _modals_DipendentiModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/DipendentiModal */ "./resources/js/components/modals/DipendentiModal.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -80290,6 +80310,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -80346,6 +80367,8 @@ function (_Component) {
     _this.state = {
       rows: '',
       show: false,
+      lstPtVendita: {},
+      idPtVenditaSelected: -1,
       reloadInfiniteTable: 0
     };
     _this.url = _this.props.url + '/dipendenti';
@@ -80358,6 +80381,36 @@ function (_Component) {
   }
 
   _createClass(Dipendenti, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.getRemoteData();
+    }
+  }, {
+    key: "getRemoteData",
+    value: function getRemoteData() {
+      var _this2 = this;
+
+      var url = this.props.url + '/punti-vendita';
+      var headers = {
+        headers: {
+          'Accept': 'application/json'
+        }
+      };
+      return axios.get(url, headers).then(function (res) {
+        var lstPtVendita = _this2.state.lstPtVendita;
+        res.data.map(function (i, k) {
+          lstPtVendita[i.id] = i.titolo;
+        }); //console.log(lstPtVendita);
+
+        _this2.setState({
+          lstPtVendita: lstPtVendita
+        });
+      })["catch"](function (error) {
+        if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
+        throw error;
+      });
+    }
+  }, {
     key: "_handleCloseModal",
     value: function _handleCloseModal() {
       this.setState({
@@ -80401,11 +80454,34 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
+      var user = USER_CONFIG;
+      var ruolo = user.ruolo;
+      var idPtVendita = -1;
+      if (this.state.idPtVenditaSelected != -1) idPtVendita = this.state.idPtVenditaSelected;else if (user.id_pt_vendita !== undefined) idPtVendita = user.id_pt_vendita;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
+      }, ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-3 mx-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-4"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        placeholder: "Scegli un Punto Vendita",
+        name: "lst_pt_vendita",
+        className: "form-control" //label="Punto Vendita"
+        ,
+        values: this.state.lstPtVendita,
+        selected: idPtVendita,
+        handleChange: function handleChange(e) {
+          return _this3.setState({
+            selectedList: [],
+            selectedListCaricati: [],
+            idPtVenditaSelected: e.target.value,
+            reloadInfiniteTable: ++_this3.state.reloadInfiniteTable
+          });
+        }
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -80416,32 +80492,34 @@ function (_Component) {
           fields: ['nome', 'cognome']
         },
         url: this.url + '/search',
+        query: idPtVendita != -1 ? 'id_pt_vendita=' + idPtVendita : '',
         callback: this._handleSearchFieldCallback,
         onClick: this._handleSearchFieldClick
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
-      }, USER_CONFIG.ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["AddButton"], {
+      }, USER_CONFIG.ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["AddButton"], {
         onClick: this._handleShowModal
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-plus-circle",
         "aria-hidden": "true"
-      }), "\xA0Nuovo Dipendente"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_DipendentiModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }), "\xA0Nuovo Dipendente"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_DipendentiModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
         url: this.props.url,
         show: this.state.show,
         onHide: this._handleCloseModal,
         callback: function callback(row) {
-          _this2.setState({
-            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+          _this3.setState({
+            reloadInfiniteTable: ++_this3.state.reloadInfiniteTable
           });
         }
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
         id: "tb-dipendenti",
         reload: this.state.reloadInfiniteTable,
         url: this.url,
+        query: idPtVendita != -1 ? 'id_pt_vendita=' + idPtVendita : '',
         columns: COLUMNS,
         externalRows: this.state.rows //multiSelect={true}
 
@@ -80685,9 +80763,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Env__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Env */ "./resources/js/components/Env.js");
 /* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
-/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
-/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
-/* harmony import */ var _modals_ScaricoVideoModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/ScaricoVideoModal */ "./resources/js/components/modals/ScaricoVideoModal.js");
+/* harmony import */ var _utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/form/DropdownSelect */ "./resources/js/components/utils/form/DropdownSelect.js");
+/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
+/* harmony import */ var _modals_ScaricoVideoModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../modals/ScaricoVideoModal */ "./resources/js/components/modals/ScaricoVideoModal.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -80705,6 +80784,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -80765,7 +80845,9 @@ var COLUMNS = [{
   title: 'Danneggiato',
   field: 'danneggiato',
   render: function render(cell) {
-    return cell == 0 ? 'No' : 'SI';
+    return cell == 0 ? 'No' : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: "highlight-error"
+    }, "SI");
   }
 }].map(function (a) {
   if (a != null) return a;
@@ -80794,6 +80876,8 @@ function (_Component) {
       show: false,
       selectedList: [],
       selectedListCaricati: [],
+      lstPtVendita: {},
+      idPtVenditaSelected: -1,
       reloadInfiniteTable: 0
     };
     _this.url = _this.props.url + '/magazzino';
@@ -80808,6 +80892,36 @@ function (_Component) {
   }
 
   _createClass(Magazzino, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.getRemoteData();
+    }
+  }, {
+    key: "getRemoteData",
+    value: function getRemoteData() {
+      var _this2 = this;
+
+      var url = this.props.url + '/punti-vendita';
+      var headers = {
+        headers: {
+          'Accept': 'application/json'
+        }
+      };
+      return axios.get(url, headers).then(function (res) {
+        var lstPtVendita = _this2.state.lstPtVendita;
+        res.data.map(function (i, k) {
+          lstPtVendita[i.id] = i.titolo;
+        }); //console.log(lstPtVendita);
+
+        _this2.setState({
+          lstPtVendita: lstPtVendita
+        });
+      })["catch"](function (error) {
+        if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
+        throw error;
+      });
+    }
+  }, {
     key: "_handleCloseModal",
     value: function _handleCloseModal() {
       this.setState({
@@ -80835,7 +80949,7 @@ function (_Component) {
   }, {
     key: "setRemoteUpdate",
     value: function setRemoteUpdate(type) {
-      var _this2 = this;
+      var _this3 = this;
 
       var url = this.props.url + '/magazzino/carico';
       var headers = {
@@ -80858,12 +80972,12 @@ function (_Component) {
       });
       return axios.post(url, data, headers).then(function (result) {
         //console.log(result.data);
-        _this2.setState({
+        _this3.setState({
           rows: '',
           rowsCaricati: '',
           selectedList: [],
           selectedListCaricati: [],
-          reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+          reloadInfiniteTable: ++_this3.state.reloadInfiniteTable
         });
         /*
         list.map((id,k) => {
@@ -80875,11 +80989,11 @@ function (_Component) {
       })["catch"](function (error) {
         console.error(error.response.data);
 
-        _this2.setState({
+        _this3.setState({
           errorRemoteStore: error.response.status
         });
 
-        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this3.home + '/login';
         throw error;
       });
     }
@@ -80920,9 +81034,32 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      var user = USER_CONFIG;
+      var ruolo = user.ruolo;
+      var idPtVendita = -1;
+      if (this.state.idPtVenditaSelected != -1) idPtVendita = this.state.idPtVenditaSelected;else if (user.id_pt_vendita !== undefined) idPtVendita = user.id_pt_vendita;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-3 mx-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-4"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        placeholder: "Scegli un Punto Vendita",
+        name: "lst_pt_vendita",
+        className: "form-control" //label="Punto Vendita"
+        ,
+        values: this.state.lstPtVendita,
+        selected: idPtVendita,
+        handleChange: function handleChange(e) {
+          return _this4.setState({
+            selectedList: [],
+            selectedListCaricati: [],
+            idPtVenditaSelected: e.target.value,
+            reloadInfiniteTable: ++_this4.state.reloadInfiniteTable
+          });
+        }
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "nav nav-tabs",
         id: "nav-tab",
         role: "tablist"
@@ -80965,48 +81102,49 @@ function (_Component) {
           fields: ['nome', 'cognome']
         },
         url: this.url + '/search',
-        callback: this._handleSearchFieldCallback //onClick={this._handleSearchFieldClick}
-
+        query: idPtVendita != -1 ? 'id_pt_vendita=' + idPtVendita : '',
+        callback: this._handleSearchFieldCallback
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_4__["Button"], {
         className: "btn-danger mr-3",
         disabled: this.state.selectedList.length > 0 ? false : true,
         onClick: this._handleCaricoVideo
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-upload",
         "aria-hidden": "true"
-      }), "\xA0Carico Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
+      }), "\xA0Carico Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_4__["Button"], {
         className: "btn-success",
         onClick: this._handleShowModal
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fa fa-download",
         "aria-hidden": "true"
-      }), "\xA0Scarico Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_ScaricoVideoModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      }), "\xA0Scarico Video"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_ScaricoVideoModal__WEBPACK_IMPORTED_MODULE_6__["default"], {
         url: this.props.url,
         show: this.state.show,
         onHide: this._handleCloseModal,
         callback: function callback(row) {
-          _this3.setState({
-            reloadInfiniteTable: ++_this3.state.reloadInfiniteTable
+          _this4.setState({
+            reloadInfiniteTable: ++_this4.state.reloadInfiniteTable
           });
         }
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_5__["default"], {
         key: "carico-scarico",
         id: "carico-scarico",
         reload: this.state.reloadInfiniteTable,
         url: this.url,
+        query: idPtVendita != -1 ? 'id_pt_vendita=' + idPtVendita : '',
         columns: COLUMNS,
         externalRows: this.state.rows,
         multiSelect: true,
         multiSelectSetting: MULTISEL_SETTING,
         selectedList: this.state.selectedList,
         multiSelectCallback: function multiSelectCallback(list) {
-          _this3.setState({
+          _this4.setState({
             selectedList: list
           }); //console.log(list)
 
@@ -81031,12 +81169,12 @@ function (_Component) {
           fields: ['nome', 'cognome']
         },
         url: this.url + '/search',
-        query: "only=caricati",
+        query: 'only=caricati' + (idPtVendita != -1 ? '&id_pt_vendita=' + idPtVendita : ''),
         callback: this._handleSearchFieldCaricatiCallback //onClick={this._handleSearchFieldClick}
 
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_4__["Button"], {
         className: "btn-warning mr-3",
         disabled: this.state.selectedListCaricati.length > 0 ? false : true,
         onClick: this._handleRipristinoCaricati
@@ -81047,18 +81185,18 @@ function (_Component) {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_5__["default"], {
         key: "caricati",
         id: "caricati",
         reload: this.state.reloadInfiniteTable,
         url: this.url,
-        query: "only=caricati",
+        query: 'only=caricati' + (idPtVendita != -1 ? '&id_pt_vendita=' + idPtVendita : ''),
         columns: COLUMNS,
         externalRows: this.state.rowsCaricati,
         multiSelect: true,
         selectedList: this.state.selectedListCaricati,
         multiSelectCallback: function multiSelectCallback(list) {
-          _this3.setState({
+          _this4.setState({
             selectedListCaricati: list
           }); //console.log(list)
 
@@ -81393,7 +81531,6 @@ function (_Component) {
     _this._handleSearchFieldNoleggiCallback = _this._handleSearchFieldNoleggiCallback.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldStoricoCallback = _this._handleSearchFieldStoricoCallback.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldRicevuteCallback = _this._handleSearchFieldRicevuteCallback.bind(_assertThisInitialized(_this));
-    _this._handleCaricoVideo = _this._handleCaricoVideo.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -81424,11 +81561,6 @@ function (_Component) {
       this.setState({
         showRestituzione: true
       });
-    }
-  }, {
-    key: "_handleCaricoVideo",
-    value: function _handleCaricoVideo(e) {
-      if (confirm("Confermi il carico dei video selezionati?")) return;
     }
   }, {
     key: "_handleSearchFieldCallback",
@@ -81564,8 +81696,7 @@ function (_Component) {
         key: "s-video",
         showList: false,
         query: "only=noleggi",
-        url: urlVideo + '/search' //url={urlVideo+'/search-noleggi'}
-        ,
+        url: urlVideo + '/search',
         callback: this._handleSearchFieldCallback,
         handles: function handles(reset, recall) {
           var check = _this2.state.recallSearch;
@@ -81601,6 +81732,7 @@ function (_Component) {
         id: "video",
         reload: this.state.reloadInfiniteTable,
         url: urlVideo,
+        query: "only=noleggi",
         columns: COLUMNS_VIDEO,
         externalRows: this.state.rowsVideo,
         multiSelect: true,
@@ -81875,18 +82007,19 @@ var COLUMNS_PRENOTAZIONI = [{
     var now = new Date();
     now = now.getFullYear() + '-' + ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
     now = Date.parse(now);
-    var date = new Date(cell).toLocaleDateString("it-IT", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit"
-    });
+    var date = cell;
     var check = Date.parse(date) <= now;
     var disp = row.disp_magazzino == true;
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: check ? 'highlight-confirm' : '',
       style: {
-        fontWeight: check ? '600' : '200'
+        fontWeight: check ? '600' : 'inherit'
       }
-    }, check && 'uscito il ', date), disp && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+    }, check && 'uscito il ', new Date(date).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    })), disp && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
       style: {
         color: 'green',
         fontSize: '0.9em'
@@ -82023,7 +82156,7 @@ function (_Component) {
       };
       var data = {
         id_prenotazioni: this.state.selectedListPrenotazioni,
-        _method: 'put',
+        _method: 'DELETE',
         _token: CSRF_TOKEN
       }; //console.log(data);return;
 
@@ -82064,7 +82197,7 @@ function (_Component) {
   }, {
     key: "_handleVideoRitirati",
     value: function _handleVideoRitirati(e) {
-      if (confirm("Confermi il ritiro delle prenotazioni selezionate?")) this.updateRemoteData();
+      if (confirm("Sicuro di voler annullare le prenotazioni selezionate?")) this.updateRemoteData();
     }
   }, {
     key: "_handleSearchFieldCallback",
@@ -82129,15 +82262,7 @@ function (_Component) {
         role: "tab",
         "aria-controls": "nav-prenotati",
         "aria-selected": "false"
-      }, "Prenotazioni Attive"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        className: "nav-item nav-link",
-        id: "nav-storico-tab",
-        "data-toggle": "tab",
-        href: "#nav-storico",
-        role: "tab",
-        "aria-controls": "nav-storico",
-        "aria-selected": "false"
-      }, "Ritirati"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, "Prenotazioni Attive"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-content pt-4",
         id: "nav-tabContent"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -82220,7 +82345,16 @@ function (_Component) {
         showList: false,
         url: this.url + '/search',
         callback: this._handleSearchFieldPrenotazioneCallback
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6 text-right"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
+        className: "btn-danger mr-3",
+        disabled: this.state.selectedListPrenotazioni.length > 0 ? false : true,
+        onClick: this._handleVideoRitirati
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-calendar-times-o",
+        "aria-hidden": "true"
+      }), "\xA0Annulla"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-12"
@@ -82230,8 +82364,8 @@ function (_Component) {
         reload: this.state.reloadInfiniteTable,
         url: this.url,
         columns: COLUMNS_PRENOTAZIONI,
-        externalRows: this.state.rowsPrenotazioni //multiSelect={true}
-        ,
+        externalRows: this.state.rowsPrenotazioni,
+        multiSelect: true,
         selectedList: this.state.selectedListPrenotazioni,
         multiSelectCallback: function multiSelectCallback(list, row) {
           //console.log(list)

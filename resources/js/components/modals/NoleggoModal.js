@@ -52,7 +52,7 @@ export default class NoleggoModal extends Component {
             pdf:''
         };
 
-        this.scontoGiorni = 20;
+        this.scontoGiorni = {2:'0.1',3:'0.1',4:'0.2',5:'0.2',6:'0.3',7:'0.3',8:'0.4'};
 
         this._handleChange = this._handleChange.bind(this);
         this._handleOnSave = this._handleOnSave.bind(this);
@@ -153,6 +153,7 @@ export default class NoleggoModal extends Component {
                 if(this.props.callback !== undefined)
                     this.props.callback(data);
             });
+
             return result;
         }).catch((error) => {
           console.error(error.response.data);
@@ -259,8 +260,10 @@ export default class NoleggoModal extends Component {
         if(eKey!=null && eGiorni!=null){
             let row = externalRows[eKey];
             if(eGiorni>1){
-                sconto = row.prezzo * (eGiorni/this.scontoGiorni);
-                sconto =  sconto > (row.prezzo/2) ? row.prezzo/2 : sconto;
+                let prc = this.scontoGiorni[eGiorni];
+                prc = prc===undefined? this.scontoGiorni[Object.keys(this.scontoGiorni)[Object.keys(this.scontoGiorni).length-1]] : prc;
+                sconto = row.prezzo* eGiorni * prc;
+                //sconto =  sconto > (row.prezzo/2) ? row.prezzo/2 : sconto;
             }
             prezzo = (eGiorni * row.prezzo);
 
@@ -272,8 +275,10 @@ export default class NoleggoModal extends Component {
                 let giorni = this._calcDay(data.data_fine[key]);
 
                 if(giorni>1){
-                    sconto = row.prezzo * ( giorni/this.scontoGiorni);
-                    sconto =  sconto > (row.prezzo/2) ? row.prezzo/2 : sconto;
+                    let prc = this.scontoGiorni[giorni];
+                    prc = prc===undefined? this.scontoGiorni[Object.keys(this.scontoGiorni)[Object.keys(this.scontoGiorni).length-1]] : prc;
+                    sconto = row.prezzo* giorni * prc;
+                    //sconto = row.prezzo * ( giorni/this.scontoGiorni); sconto =  sconto > (row.prezzo/2) ? row.prezzo/2 : sconto;
                 }
                 prezzo = (giorni * row.prezzo);
 

@@ -6,6 +6,7 @@ use App\Cliente;
 use App\Http\Resources\NoleggioCollection;
 use App\Magazzino;
 use App\Noleggio;
+use App\Prenotazione;
 use App\Ricevuta;
 use App\Video;
 use Illuminate\Http\Request;
@@ -14,7 +15,18 @@ use PDF;
 
 class NoleggioController extends Controller
 {
-    private $percSconto = 20;
+
+    private $percSconto = [
+        2 => '0.1',
+        3 => '0.1',
+        4 => '0.2',
+        5 => '0.2',
+        6 => '0.3',
+        7 => '0.3',
+        8 => '0.4'
+    ];
+
+    //private $percSconto = 20;{2:'0.1',3:'0.1',4:'0.2',5:'0.2',6:'0.3',7:'0.3',8:'0.4'}
 
     public function index(Request $request)
     {
@@ -80,13 +92,12 @@ class NoleggioController extends Controller
     private function moreField($ruolo,$storico)
     {
         $moreFields = [
-            'giorni_ritardo'
+            'giorni_ritardo',
+            'prezzo'
         ];
 
         if($storico)
             $moreFields =  array_merge($moreFields,['data_restituzione','danneggiato']);
-        else
-            $moreFields =  array_merge($moreFields,['prezzo']);
 
         if($ruolo!='Addetto')
             $moreFields =  array_merge($moreFields,['dipendente']);
@@ -125,50 +136,68 @@ class NoleggioController extends Controller
             $user = Auth::user();
             $idDipendente = $user->id;
             $idPtVendita = $user->id_pt_vendita;
-            $array = [];
+
+            $idCliente = $input['id_cliente'];
+
+            $arrayNlgInsert = [];
 
             // Field Ricevuta
             $totale = 0;
             $noleggi = [];
 
             for( $i=0 ; $i < count($input['id_video']) ; $i++ ){
+
+                $idVideo = $input['id_video'][$i];
+                $prezzoTot = $input['prezzo_tot'][$i];
+                $dataFine = $input['data_fine'][$i];
+
                 // prendo l'id magazzino
                 // seleziono il primo in ordine Ascendente
                 $magazzino = Magazzino::
-                        where('id_video',$input['id_video'][$i])
+                        where('id_video',$idVideo)
                         ->where('id_pt_vendita',$idPtVendita)
-                        ->where('noleggiato',0)->orderBy('id','ASC')->first('id');
+                        ->where('noleggiato',0)
+                        ->where('danneggiato',0)
+                        ->orderBy('id','ASC')
+                        ->first('id');
 
                 if(empty($magazzino))
                     return response()->json(
                         [
                             'mgs' => 'video in magazzino terminati',
-                            'id_video'=> $input['id_video'][$i]
+                            'id_video'=> $idVideo
                         ]
                     ,500);
 
                 $magazzino->update(['noleggiato' => 1]);
 
-                $array[$i] = [
+                $video = Video::where('id',$idVideo)->first();
+
+                $prenotazione = Prenotazione::
+                where('id_cliente',$idCliente)
+                ->where('id_video',$idVideo)
+                ->update(['ritirato' => 1]);
+
+                $arrayNlgInsert[$i] = [
                     'id_dipendente' => $idDipendente,
-                    'id_cliente' => $input['id_cliente'],
+                    'id_cliente' => $idCliente,
                     'id_magazzino' => $magazzino->id,
-                    'prezzo_tot' => $input['prezzo_tot'][$i],
-                    'data_fine' => $input['data_fine'][$i],
+                    'prezzo' =>   $video->prezzo,
+                    'prezzo_tot' => $prezzoTot,
+                    'data_fine' => $dataFine,
                 ];
+
 
                 date_default_timezone_set("Europe/Rome");
                 $gg = ceil( (strtotime($input['data_fine'][$i]) - time()) / 86400 );
 
-                $video = Video::where('id',$input['id_video'][$i])->first();
-
-                $importo = $input['prezzo_tot'][$i];
-
                 $scontoGG = 0;
                 if($gg>1){
-                    $scontoGG = $video->prezzo*($gg/$this->percSconto);
-                    $scontoGG = $scontoGG > ($video->prezzo/2)? ($video->prezzo/2) : $scontoGG;
+                    $prc = !isset($this->percSconto[$gg]) ? end($this->percSconto) : $this->percSconto[$gg];
+                    $scontoGG = $video->prezzo * $gg * $prc;
+                    //$scontoGG = $scontoGG > ($video->prezzo/2)? ($video->prezzo/2) : $scontoGG;
                 }
+
 
                 $noleggi[$i] = [
                     'descrizione' => $video->titolo,
@@ -176,10 +205,10 @@ class NoleggioController extends Controller
                     'n_giorni' => $gg,
                     'prezzo' => $video->prezzo,
                     'scontoGiorni' => $scontoGG,
-                    'importo' =>  $importo
+                    'importo' =>  $prezzoTot
                 ];
 
-                $totale += $importo;
+                $totale += $prezzoTot;
             }
 
             $cliente = Cliente::where('id',$input['id_cliente'])->first();
@@ -223,7 +252,7 @@ class NoleggioController extends Controller
 
             $noleggio = new Noleggio();
 
-            $noleggio->insert($array);
+            $noleggio->insert($arrayNlgInsert);
 
             return response()->json(['pdf' => $ricevuta],201);
 
@@ -337,22 +366,26 @@ class NoleggioController extends Controller
                 $magazzino->update(['noleggiato' => 0,'danneggiato' => $danneggiato]);
 
                 $noleggio = Noleggio::where('id',$idNoleggio);
+
                 $date = date('Y-m-d');
                 $noleggio->update(['prezzo_extra' => $extra,'data_restituzione' => $date]);
+
                 $noleggio = $noleggio->first();
+
                 date_default_timezone_set("Europe/Rome");
                 $gg = ceil( (strtotime($noleggio->data_fine) - strtotime($noleggio->data_inizio)) / 86400 );
                 $ggExtra = ceil( (strtotime(date("Y-m-d")) - strtotime($noleggio->data_fine)) / 86400 );
                 $ggExtra = $ggExtra<0 ? 0 : $ggExtra;
 
                 $video = Video::where('id',$magazzino->id_video)->first();
-                //$importo = $video->prezzo*$gg;
+
                 $importo = $noleggio->prezzo_tot;
 
                 $scontoGG = 0;
                 if($gg>1){
-                    $scontoGG = $video->prezzo*($gg/40);
-                    $scontoGG = $scontoGG > ($video->prezzo/2)? ($video->prezzo/2) : $scontoGG;
+                    $prc = !isset($this->percSconto[$gg]) ? end($this->percSconto) : $this->percSconto[$gg];
+                    $scontoGG = $video->prezzo * $gg * $prc;
+                    //$scontoGG = $video->prezzo*($gg/40); $scontoGG = $scontoGG > ($video->prezzo/2)? ($video->prezzo/2) : $scontoGG;
                 }
 
                 $noleggi[$i] = [

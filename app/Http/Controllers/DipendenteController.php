@@ -19,6 +19,8 @@ class DipendenteController extends Controller
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $ruolo=='Admin'? null: ($ruolo=='Addetto'? -1 :$user->id_pt_vendita);
 
+        $idPtVendita = $request->input('id_pt_vendita')? : $idPtVendita;
+
         $dipendente = Dipendente::
         where(function($query) use($idPtVendita) {
             if( $idPtVendita!=null )
@@ -40,6 +42,8 @@ class DipendenteController extends Controller
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $ruolo=='Admin'? null: ($ruolo=='Addetto'? -1 :$user->id_pt_vendita);
+
+        $idPtVendita = $request->input('id_pt_vendita')? : $idPtVendita;
 
         $dipendente = Dipendente::
         where(function($query) use($idPtVendita) {

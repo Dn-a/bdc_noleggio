@@ -117,7 +117,7 @@ export default class NoleggoModal extends Component {
             if(this.props.callback !== undefined)
                 this.props.callback(data);
             this.props.onHide();
-            this.state.loader = false;
+            this._resetAfterClose();
             return result;
         }).catch((error) => {
           console.error(error.response.data);

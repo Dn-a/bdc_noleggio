@@ -217,7 +217,7 @@ export default class RestNoleggioModal extends Component {
                                                 let danneggiato = this.state.data.danneggiato[key];
 
                                                 totPagare += complessivo;
-                                                //console.log(danneggiato)
+                                                //console.log(row)
                                                 return(
                                                     <tr key={key}>
                                                         <td>{row.id}</td>
@@ -232,6 +232,9 @@ export default class RestNoleggioModal extends Component {
                                                                 name={'danneggiato_'+key}
                                                                 handleChange={(e) => this._handleChange(e,key,row)}
                                                             />
+                                                            <span style={{fontSize:'0.5',color:'#ccc'}}>
+                                                                {parseFloat(row.prezzo*2).toFixed(2)} ({row.prezzo} * 2)  €
+                                                            </span>
                                                         </td>
                                                         <td>
                                                             {row.giorni_ritardo}

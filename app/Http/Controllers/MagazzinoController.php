@@ -22,13 +22,14 @@ class MagazzinoController extends Controller
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $ruolo=='Admin'? null: $user->id_pt_vendita;
 
+        $idPtVendita = $request->input('id_pt_vendita')? : $idPtVendita;
+
         $magazzino = Magazzino::where('restituito_al_fornitore', $caricati? 1:0 )
         ->where(function($query) use($idPtVendita) {
             if( $idPtVendita!=null )
                 $query->where('id_pt_vendita',$idPtVendita);
         })
         ->orderBy('id','DESC')->paginate($page);
-
 
         return new MagazzinoCollection($magazzino, true, $this->moreField($ruolo, $caricati));
     }
@@ -43,6 +44,8 @@ class MagazzinoController extends Controller
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $ruolo=='Admin'? null: $user->id_pt_vendita;
+
+        $idPtVendita = $request->input('id_pt_vendita')? : $idPtVendita;
 
         $magazzino = Magazzino::where('restituito_al_fornitore', $caricati? 1:0 )
         ->where(function($query) use($idPtVendita) {
@@ -79,8 +82,7 @@ class MagazzinoController extends Controller
         })
         ->limit(10)->get();
 
-
-        return  new MagazzinoCollection($magazzino,false,$this->moreField($ruolo,$caricati));
+        return new MagazzinoCollection($magazzino,false,$this->moreField($ruolo,$caricati));
     }
 
     private function moreField($ruolo, $caricati)

@@ -49,15 +49,16 @@ const COLUMNS_PRENOTAZIONI = [
             let now = new Date();
             now= now.getFullYear() +'-'+ ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
             now = Date.parse(now);
-            let date = new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})
+            let date = cell;
             let check = Date.parse(date) <= now;
+
             let disp = row.disp_magazzino == true;
 
             return(
                 <Fragment>
-                    <div style={{fontWeight:check?'600':'200'}}>
+                    <div className={check?'highlight-confirm':''} style={{fontWeight:check?'600':'inherit'}}>
                         {check && 'uscito il '}
-                        {date}
+                        {new Date(date).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})}
                     </div>
                     {disp && <span style={{color:'green',fontSize:'0.9em'}}>copia disponibile in magazzino</span>}
                 </Fragment>
@@ -126,7 +127,7 @@ export default class Noleggi extends Component {
 
         let data = {
             id_prenotazioni : this.state.selectedListPrenotazioni,
-            _method:'put',
+            _method:'DELETE',
             _token : CSRF_TOKEN
         };
 
@@ -159,7 +160,7 @@ export default class Noleggi extends Component {
     }
 
     _handleVideoRitirati(e){
-        if(confirm("Confermi il ritiro delle prenotazioni selezionate?"))
+        if(confirm("Sicuro di voler annullare le prenotazioni selezionate?"))
             this.updateRemoteData();
     }
 
@@ -209,9 +210,6 @@ export default class Noleggi extends Component {
                     </a>
                     <a className="nav-item nav-link" id="nav-prenotati-tab" data-toggle="tab" href="#nav-prenotati" role="tab" aria-controls="nav-prenotati" aria-selected="false">
                         Prenotazioni Attive
-                    </a>
-                    <a className="nav-item nav-link" id="nav-storico-tab" data-toggle="tab" href="#nav-storico" role="tab" aria-controls="nav-storico" aria-selected="false">
-                        Ritirati
                     </a>
 
                 </div>
@@ -290,14 +288,14 @@ export default class Noleggi extends Component {
                                         callback={this._handleSearchFieldPrenotazioneCallback}
                                         />
                                     </div>
-                                    {/*
+
                                     <div className="col-md-6 text-right">
-                                        <Button className="btn-warning mr-3" disabled={this.state.selectedListPrenotazioni.length>0?false:true}
+                                        <Button className="btn-danger mr-3" disabled={this.state.selectedListPrenotazioni.length>0?false:true}
                                         onClick={this._handleVideoRitirati}>
                                         <i className="fa fa-calendar-times-o" aria-hidden="true"></i>
-                                        &nbsp;Ritirato</Button>
+                                        &nbsp;Annulla</Button>
                                     </div>
-                                    */}
+
 
                                 </div>
                                 <div className="row">
@@ -308,7 +306,7 @@ export default class Noleggi extends Component {
                                             url={this.url}
                                             columns={COLUMNS_PRENOTAZIONI}
                                             externalRows={this.state.rowsPrenotazioni}
-                                            //multiSelect={true}
+                                            multiSelect={true}
                                             selectedList={this.state.selectedListPrenotazioni}
                                             multiSelectCallback={ (list,row) =>{
                                                 //console.log(list)

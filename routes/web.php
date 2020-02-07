@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group( function () {
 
     // Punti Vendita
     Route::get('punti-vendita/search/{val}', 'PuntoVenditaController@search')->name('punti-vendita.search');
+    Route::get('punti-vendita', 'PuntoVenditaController@index')->name('punti-vendita');
 
     // Clienti
     Route::get('clienti/search/{val}', 'ClienteController@search')->name('clienti.search');

@@ -37,6 +37,6 @@ class Magazzino extends Model
 
     public function noleggio()
     {
-        return $this->hasMany('App\Noleggio','id_magazzino','id');
+        return $this->hasOne('App\Noleggio','id_magazzino','id');
     }
 }

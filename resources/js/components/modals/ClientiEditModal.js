@@ -111,7 +111,7 @@ export default class ClientiModal extends Component {
             if(this.props.callback !== undefined)
                 this.props.callback(data);
             this.props.onHide();
-            this.state.loader = false;
+            this._resetAfterClose();
             /*var reader = new FileReader();
             reader.readAsDataURL(data.privacy);
             reader.onload= () =>  {

@@ -118,7 +118,10 @@ export default class InfiniteTable extends Component {
                 this.setState({data,moreData});
 
 			}).catch((error) => {
-				console.log(error.response);
+                if(error.response.data!==undefined)
+                    console.log(error.response.data);
+                else
+                    console.log(error.response);
 				if(error.response.status==401)
 					if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
 						window.location.href=this.home + '/login';

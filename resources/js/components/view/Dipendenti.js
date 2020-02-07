@@ -1,6 +1,7 @@
 import React, { Component , Fragment } from 'react';
 
 import SearchField from '../utils/SearchField';
+import DropDownSelect from '../utils/form/DropdownSelect';
 import { Button, AddButton } from '../utils/Button';
 import InfiniteTable from '../utils/InfiniteTable';
 import DipendentiModal from '../modals/DipendentiModal';
@@ -26,6 +27,8 @@ export default class Dipendenti extends Component {
         this.state = {
             rows: '',
             show:false,
+            lstPtVendita:{},
+            idPtVenditaSelected:-1,
             reloadInfiniteTable:0
         };
 
@@ -37,6 +40,35 @@ export default class Dipendenti extends Component {
         this._handleSearchFieldClick = this._handleSearchFieldClick.bind(this);
     }
 
+    componentDidMount(){
+        this.getRemoteData();
+    }
+
+    getRemoteData(){
+        let url = this.props.url+'/punti-vendita';
+
+        let headers = {headers: {'Accept': 'application/json'}
+        };
+
+        return axios.get(url, headers )
+			.then(res => {
+                let lstPtVendita = this.state.lstPtVendita;
+
+                res.data.map((i,k) => {
+                    lstPtVendita[i.id] = i.titolo;
+                });
+
+                //console.log(lstPtVendita);
+
+                this.setState({lstPtVendita});
+			}).catch((error) => {
+                if(error.response.data!==undefined)
+                    console.log(error.response.data);
+                else
+                    console.log(error.response);
+                throw error;
+			});
+    }
 
     _handleCloseModal () {
         this.setState({show : false});
@@ -72,18 +104,53 @@ export default class Dipendenti extends Component {
 
     render() {
 
+        let user = USER_CONFIG;
+        let ruolo = user.ruolo;
+
+        let idPtVendita = -1;
+
+        if( this.state.idPtVenditaSelected != -1 )
+            idPtVendita = this.state.idPtVenditaSelected;
+        else if( user.id_pt_vendita !== undefined )
+            idPtVendita = user.id_pt_vendita;
+
         return (
             <div className="container-fluid pl-3">
+
+                {ruolo=='Admin' &&
+                    <div className="row mb-3 mx-2">
+                        <div className="col-md-4">
+                            <DropDownSelect placeholder="Scegli un Punto Vendita"
+                            name="lst_pt_vendita" className="form-control"
+                            //label="Punto Vendita"
+                            values={this.state.lstPtVendita}
+                            selected={idPtVendita}
+                            handleChange={(e) =>
+                                this.setState({
+                                    selectedList:[],
+                                    selectedListCaricati:[],
+                                    idPtVenditaSelected : e.target.value,
+                                    reloadInfiniteTable : ++this.state.reloadInfiniteTable
+                                })
+                            }
+                            />
+                        </div>
+                    </div>
+                }
+
                 <div className="row mb-3 px-2">
 
                     <div className="col-md-6">
                         <SearchField showList={false} patternList={{id:'id',fields:['nome','cognome']}}
-                        url={this.url+'/search'} callback={this._handleSearchFieldCallback}
+                        url={this.url+'/search'}
+                        query={idPtVendita!=-1 ? 'id_pt_vendita='+idPtVendita : ''}
+                        callback={this._handleSearchFieldCallback}
                         onClick={this._handleSearchFieldClick}
                         />
                     </div>
 
                     <div className="col-md-6 text-right">
+
                         {USER_CONFIG.ruolo=='Admin' &&
                             <AddButton onClick={this._handleShowModal}>
                             <i className="fa fa-plus-circle" aria-hidden="true"></i>
@@ -106,6 +173,7 @@ export default class Dipendenti extends Component {
                             id='tb-dipendenti'
                             reload={this.state.reloadInfiniteTable}
                             url={this.url}
+                            query={idPtVendita!=-1 ? 'id_pt_vendita='+idPtVendita : ''}
                             columns={COLUMNS}
                             externalRows={this.state.rows}
                             //multiSelect={true}

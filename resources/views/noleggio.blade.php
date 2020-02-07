@@ -110,7 +110,9 @@
 
     @php
         $array = array('home', 'prenotazioni', 'noleggi', 'clienti', 'magazzino');
-        $ruolo = Auth::user()->ruolo->titolo;
+        $user = Auth::user();
+        $ruolo = $user->ruolo->titolo;
+        $idPtVendita = $user->id_pt_vendita;
         if($ruolo != 'Addetto')
             $array = array_merge($array,['dipendenti','incassi']);
 
@@ -118,8 +120,9 @@
                 let array =".json_encode($array).'; '.
                 "const USER_CONFIG = {
                     ruolo:'".$ruolo."',".
-                    'menu:array
-                }; //console.log(USER_CONFIG)'.
+                    "menu:array,".
+                    "id_pt_vendita:'".$idPtVendita."'".
+                '}; //console.log(USER_CONFIG)'.
             "</script>";
     @endphp
 

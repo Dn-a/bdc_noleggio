@@ -138,7 +138,6 @@ export default class Noleggi extends Component {
         this._handleSearchFieldNoleggiCallback = this._handleSearchFieldNoleggiCallback.bind(this);
         this._handleSearchFieldStoricoCallback = this._handleSearchFieldStoricoCallback.bind(this);
         this._handleSearchFieldRicevuteCallback = this._handleSearchFieldRicevuteCallback.bind(this);
-        this._handleCaricoVideo = this._handleCaricoVideo.bind(this);
     }
 
 
@@ -154,11 +153,6 @@ export default class Noleggi extends Component {
     }
     _handleShowRestituzioneModal (){
         this.setState({showRestituzione : true});
-    }
-
-    _handleCaricoVideo(e){
-        if(confirm("Confermi il carico dei video selezionati?"))
-        return;
     }
 
     _handleSearchFieldCallback(data,reset){
@@ -262,7 +256,6 @@ export default class Noleggi extends Component {
                                         <SearchField key="s-video" showList={false}
                                         query='only=noleggi'
                                         url={urlVideo+'/search'}
-                                        //url={urlVideo+'/search-noleggi'}
                                         callback={this._handleSearchFieldCallback}
                                         handles={(reset,recall) =>{
                                             let check = this.state.recallSearch;
@@ -298,6 +291,7 @@ export default class Noleggi extends Component {
                                             id="video"
                                             reload={this.state.reloadInfiniteTable}
                                             url={urlVideo}
+                                            query='only=noleggi'
                                             columns={COLUMNS_VIDEO}
                                             externalRows={this.state.rowsVideo}
                                             multiSelect={true}

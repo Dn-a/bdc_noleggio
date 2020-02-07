@@ -18,6 +18,7 @@ class CreateNoleggiTable extends Migration
             $table->unsignedInteger('id_dipendente');
             $table->unsignedInteger('id_cliente');
             $table->unsignedInteger('id_magazzino');
+            $table->float('prezzo');
             $table->float('prezzo_tot');
             $table->float('prezzo_extra');
             $table->timestamp('data_inizio')->useCurrent();

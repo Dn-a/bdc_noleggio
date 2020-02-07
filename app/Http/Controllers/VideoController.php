@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class VideoController extends Controller
 {
+    private $lmtSearch = 10;
 
     public function index(Request $request)
     {
@@ -17,24 +18,21 @@ class VideoController extends Controller
 
         //
         $only = $request->input('only') ?: '';
+        $noleggi = in_array('noleggi', explode('-',$only));
         $inUscita = in_array('in_uscita', explode('-',$only));
 
         $user = Auth::user();
-        $ruolo = $user->ruolo->titolo;
-        $idPtVendita = $user->id_pt_vendita;//$ruolo=='Admin'? null:
+        $idPtVendita = $user->id_pt_vendita;
 
         $date = Carbon::now();
         $date = $date->toDateString();
-
-        // Vengono visualizzati solo
-        // i video disponibili al momento in magazzino  nello specifico p.to vendita
 
 
         $video = Video::
         //where('in_uscita', $inUscita ? 1 : 0 )
         where('data_uscita',$inUscita?'>=':'<',$date)
-        ->where(function($query) use($idPtVendita,$inUscita) {
-            if(!$inUscita)
+        ->where(function($query) use($idPtVendita,$noleggi) {
+            if($noleggi)
                 $query->whereHas('magazzino',function($query) use($idPtVendita) {
                     $query->where('id_pt_vendita',$idPtVendita);
                 });
@@ -62,10 +60,8 @@ class VideoController extends Controller
         $date = $date->toDateString();
 
         $video = Video::
-        //where('in_uscita', $inUscita ? 1 : 0 )
         where('data_uscita',$inUscita?'>=':'<',$date)
         ->where(function($query) use($idPtVendita,$noleggi) {
-            //if($noleggi || !$inUscita)
             if($noleggi)
                 $query->whereHas('magazzino',function($query) use($idPtVendita) {
                     $query->where('id_pt_vendita',$idPtVendita);
@@ -77,7 +73,7 @@ class VideoController extends Controller
                 $query->where('titolo','like',$arr[0].'%');
             });
         })
-        ->limit(10)->get();
+        ->limit($this->lmtSearch)->get();
 
         return  new VideoCollection($video,false, $this->moreField($inUscita), $idPtVendita );
     }

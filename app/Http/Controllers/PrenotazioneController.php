@@ -144,6 +144,12 @@ class PrenotazioneController extends Controller
 
     public function update(Request $request, $id)
     {
+        //
+    }
+
+
+    public function destroy(Request $request, $id)
+    {
         try{
             //return response()->json($request->all(),201);exit;
             //Validate
@@ -156,21 +162,16 @@ class PrenotazioneController extends Controller
 
             $input = $request->all();
 
-            //$prenotazione = new Prenotazione();
+            $idPrenotazioni = $input['id_prenotazioni'];
 
-            $prenotazione = Prenotazione::whereIn('id',$input['id_prenotazioni'])
-            ->update(['ritirato' => 1]);
+            //$prenotazione = Prenotazione:: whereIn('id',$idPrenotazioni) ->destroy();
 
-            return response()->json(['msg' => 'updated'],201);
+            $prenotazione = Prenotazione::destroy($idPrenotazioni);
+
+            return response()->json(['msg' => 'deleted'],201);
 
         }catch( \Illuminate\Database\QueryException $e){
             return response()->json(['msg' => $e->getMessage() ],500);
         }
-    }
-
-
-    public function destroy($id)
-    {
-        //
     }
 }

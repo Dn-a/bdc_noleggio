@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\DB;
 
 class MagazzinoCollection extends ResourceCollection
 {
@@ -15,13 +16,15 @@ class MagazzinoCollection extends ResourceCollection
         'danneggiato',
     ];
     protected $withPagination;
+    private $lstPtVendita;
 
-
-    public function __construct($items, $withPagination=false, $fields=null)
+    public function __construct($items, $withPagination=false, $fields=null,$lstPtVendita = false)
     {
         parent::__construct($items);
         if($fields!=null && is_array($fields))
             $this->withFields = array_merge($this->withFields,$fields);
+
+        $this->lstPtVendita = $lstPtVendita;
         $this->withPagination = $withPagination;
     }
 
@@ -33,8 +36,8 @@ class MagazzinoCollection extends ResourceCollection
                 return $this->filterFields($copia);
             });
 
-        if($this->withPagination )
-            return [
+        if($this->withPagination ){
+            $rtn = [
                 'data' => $collection,
                 'pagination' => [
                     'total' => $this->total(),
@@ -44,6 +47,12 @@ class MagazzinoCollection extends ResourceCollection
                     'total_pages' => $this->lastPage()
                 ]
             ];
+            if($this->lstPtVendita)
+                $rtn = array_merge($rtn,[
+                    'lst_pt_vendita' => DB::table('pt_vendita')->select('id','titolo')->get()
+                ]);
+            return $rtn;
+        }
 
         return $collection;
     }

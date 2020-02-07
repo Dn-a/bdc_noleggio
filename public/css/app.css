@@ -11370,6 +11370,14 @@ ul {
   color: #3490dc;
 }
 
+.highlight-confirm {
+  color: #0b9b47;
+}
+
+.highlight-error {
+  color: #bb1414;
+}
+
 .modal-body {
   overflow: hidden;
 }

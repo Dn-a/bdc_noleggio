@@ -7,6 +7,15 @@ use Illuminate\Http\Request;
 
 class PuntoVenditaController extends Controller
 {
+
+    public function index(Request $request)
+    {
+
+        $ptVendita = PuntoVendita::select('id','titolo')->get();
+
+        return  $ptVendita;
+    }
+
     public function search(Request $request, $val)
     {
         $arr = explode(' ',$val);
@@ -22,7 +31,7 @@ class PuntoVenditaController extends Controller
             elseif(isset($arr[0]))
                 $query->where('nome','like',$arr[0].'%');
         })*/
-        ->limit(5)->get();
+        ->limit(10)->get();
 
         return  $ptVendita;
     }
