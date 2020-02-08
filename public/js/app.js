@@ -76299,7 +76299,7 @@ var routes = [{
 }, {
   path: "/incassi",
   name: "Incassi",
-  title: 'Report Incassi giornalieri',
+  title: 'Report Incassi',
   icon: 'fa-area-chart',
   Component: _view_Incassi__WEBPACK_IMPORTED_MODULE_10__["default"]
 }, {
@@ -80405,6 +80405,7 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Dipendenti).call(this, props));
     _this.state = {
       rows: '',
+      loader: false,
       show: false,
       lstPtVendita: {},
       idPtVenditaSelected: -1,
@@ -80435,14 +80436,18 @@ function (_Component) {
           'Accept': 'application/json'
         }
       };
+      this.setState({
+        loader: true
+      });
       return axios.get(url, headers).then(function (res) {
         var lstPtVendita = _this2.state.lstPtVendita;
         res.data.map(function (i, k) {
           lstPtVendita[i.id] = i.titolo;
-        }); //console.log(lstPtVendita);
+        }); //console.log(lstPtVendita)
 
         _this2.setState({
-          lstPtVendita: lstPtVendita
+          lstPtVendita: lstPtVendita,
+          loader: false
         });
       })["catch"](function (error) {
         if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
@@ -80502,7 +80507,7 @@ function (_Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
       }, ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row mb-3 mx-2"
+        className: "row mb-3 mx-2 pt-vendita"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-4"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -80520,7 +80525,10 @@ function (_Component) {
             reloadInfiniteTable: ++_this3.state.reloadInfiniteTable
           });
         }
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+        className: "loader-2" + (this.state.loader == true ? ' d-inline-block' : ''),
+        src: "../img/loader_2.gif"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -80749,6 +80757,8 @@ function (_Component) {
       });
       return axios.get(url, headers).then(function (res) {
         //console.log(res.data);
+        if (res.data.length == 0) return;
+
         if (type == 'ptVendita') {
           var lstPtVendita = _this2.state.lstPtVendita;
           res.data.map(function (i, k) {
@@ -80760,7 +80770,7 @@ function (_Component) {
             loader: false
           });
         } else if (type == 'incassi') {
-          console.log(res.data);
+          //console.log(res.data);
           var incassi = _this2.state.incassi;
           incassi = res.data;
 
@@ -80794,42 +80804,36 @@ function (_Component) {
       });
       var ptVendita = this.state.incassi.pt_vendita; //console.log(ptVendita)
 
-      var colors = ['#4ed087', '#6adb9b', '#7cdfa7', '#97e6b9', '#afecc9'];
       var series = [{
+        name: "Ieri",
+        data: dipendenti.map(function (d, k) {
+          return d.incasso_ieri;
+        })
+      }, {
+        name: "Oggi",
         data: dipendenti.map(function (d, k) {
           return d.incasso_oggi;
         })
       }];
       var options = {
-        chart: {
-          type: 'bar',
-          height: 350
+        stroke: {
+          width: 1,
+          colors: ["#fff"]
         },
-        plotOptions: {
-          bar: {
-            horizontal: true
+        legend: {
+          itemMargin: {
+            vertical: 20
           }
         },
-        colors: dipendenti.map(function (d, k) {
-          return colors[k == 0 ? k : colors.length - 1 - dipendenti.length];
-        }),
-        legend: {
-          show: false
-        },
-
-        /*labels: {
-            style: {
-              colors: ['#aaa'],
-              fontSize: '12px'
-            }
-        },*/
         dataLabels: {
           enabled: true,
           formatter: function formatter(val) {
             return val + " €";
           }
         },
+        colors: ['#ccc', '#4ed087'],
         xaxis: {
+          //type: 'category',
           categories: dipendenti.map(function (d, k) {
             return d.nome.toUpperCase();
           })
@@ -80837,8 +80841,13 @@ function (_Component) {
       };
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3 incassi"
-      }, ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row mb-3 mx-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "mx-4 mb-3",
+        style: {
+          color: '#666'
+        }
+      }, "I dati sul server vengono aggiornati ogni 5 minuti."), ruolo != 'Addetto' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-3 mx-2 pt-vendita"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-4"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -80863,12 +80872,12 @@ function (_Component) {
         src: "../img/loader_2.gif"
       })), ptVendita.map(function (pv, k) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "row mb-3 mx-2",
+          className: "row mb-5 mx-2",
           key: k
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "col-md-4"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "card px-3 py-2",
+          className: "card px-3 py-2 mb-3",
           style: {
             background: '#89d1cf'
           }
@@ -80901,7 +80910,7 @@ function (_Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, parseFloat(pv.incasso_oggi ? pv.incasso_oggi : 0).toFixed(2) + ' €')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "INCASSO TOTALE"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "col-md-4"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "card px-3 py-2",
+          className: "card px-3 py-2 mb-3",
           style: {
             background: '#d38b87'
           }
@@ -80934,7 +80943,7 @@ function (_Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, parseFloat(pv.incasso_week ? pv.incasso_week : 0).toFixed(2) + ' €')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "INCASSO TOTALE"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "col-md-4"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "card px-3 py-2",
+          className: "card px-3 py-2 mb-3",
           style: {
             background: '#bfbfbf'
           }
@@ -80965,12 +80974,21 @@ function (_Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "info"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, parseFloat(pv.incasso_month ? pv.incasso_month : 0).toFixed(2) + ' €')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "INCASSO TOTALE"))))));
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_apexcharts__WEBPACK_IMPORTED_MODULE_1___default.a, {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mx-2 py-4 px-2",
+        style: {
+          background: '#fff'
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
+        className: "mb-4"
+      }, "Incasso giornaliero dei singoli Dipendenti"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_apexcharts__WEBPACK_IMPORTED_MODULE_1___default.a, {
         options: options,
         series: series,
         type: "bar",
         height: 350
-      }));
+      })))));
     }
   }]);
 

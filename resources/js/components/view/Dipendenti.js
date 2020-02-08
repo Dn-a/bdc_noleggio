@@ -26,6 +26,7 @@ export default class Dipendenti extends Component {
 
         this.state = {
             rows: '',
+            loader: false,
             show:false,
             lstPtVendita:{},
             idPtVenditaSelected:-1,
@@ -50,6 +51,8 @@ export default class Dipendenti extends Component {
         let headers = {headers: {'Accept': 'application/json'}
         };
 
+        this.setState({loader:true});
+
         return axios.get(url, headers )
 			.then(res => {
                 let lstPtVendita = this.state.lstPtVendita;
@@ -58,9 +61,9 @@ export default class Dipendenti extends Component {
                     lstPtVendita[i.id] = i.titolo;
                 });
 
-                //console.log(lstPtVendita);
+                //console.log(lstPtVendita)
+                this.setState({lstPtVendita,  loader:false});
 
-                this.setState({lstPtVendita});
 			}).catch((error) => {
                 if(error.response.data!==undefined)
                     console.log(error.response.data);
@@ -118,7 +121,7 @@ export default class Dipendenti extends Component {
             <div className="container-fluid pl-3">
 
                 {ruolo=='Admin' &&
-                    <div className="row mb-3 mx-2">
+                    <div className="row mb-3 mx-2 pt-vendita">
                         <div className="col-md-4">
                             <DropDownSelect placeholder="Scegli un Punto Vendita"
                             name="lst_pt_vendita" className="form-control"
@@ -135,6 +138,7 @@ export default class Dipendenti extends Component {
                             }
                             />
                         </div>
+                        <img className={"loader-2"+(this.state.loader==true?' d-inline-block':'')} src="../img/loader_2.gif"></img>
                     </div>
                 }
 

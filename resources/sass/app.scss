@@ -248,6 +248,13 @@ ul{
         display: inline-block;
     }
 }
+.pt-vendita .loader-2 {
+    filter: invert(50%);
+    width: 25px;
+    margin-top: 6px;
+    height: 25px;
+    padding: 0;
+}
 .loader-2 {
     display: none;
     width:32px;
@@ -336,13 +343,6 @@ ul{
 .incassi .info{
     font-size: 2em;
     line-height: 1em;
-}
-.incassi .loader-2 {
-    filter: invert(50%);
-    width: 25px;
-    margin-top: 6px;
-    height: 25px;
-    padding: 0;
 }
 .incassi i {
     font-size: 2.5em;

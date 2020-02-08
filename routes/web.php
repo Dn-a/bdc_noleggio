@@ -26,8 +26,33 @@ if(request()->header('accept')!='application/json')
     ->where('name','(|home|clienti|dipendenti|video|magazzino|noleggi|prenotazioni|restituzioni|incassi|setting)');
 
 
-Route::middleware(['auth'])->group( function () {
-//Route::group(['middleware' => ['guest','auth']], function () {
+// ADMIN
+//
+Route::middleware(['auth','ruolo:admin'])->group( function () {
+
+    // Punti Vendita
+    Route::get('punti-vendita/search/{val}', 'PuntoVenditaController@search')->name('punti-vendita.search');
+    Route::get('punti-vendita', 'PuntoVenditaController@index')->name('punti-vendita');
+
+});
+
+
+// ADMIN | RESPONSABILE
+//
+Route::middleware(['auth','ruolo:admin|responsabile'])->group( function () {
+
+    // Dipendenti
+    Route::get('dipendenti/search/{val}', 'DipendenteController@search')->name('dipendenti.search');
+    Route::resource('dipendenti', 'DipendenteController',['as' => 'dipendenti']);
+
+    // Incasssi
+    Route::get('incassi', 'IncassoController@index')->name('incassi');
+});
+
+
+// ADMIN | RESPONSABILE | ADDETTO
+//
+Route::middleware(['auth','ruolo:admin|responsabile|addetto'])->group( function () {
 
     // Video
     Route::get('video/search/{val}', 'VideoController@search')->name('video.search');
@@ -53,25 +78,13 @@ Route::middleware(['auth'])->group( function () {
     // Comuni
     Route::get('comuni/search/{val}', 'ComuneController@search')->name('comuni.search');
 
-    // Punti Vendita
-    Route::get('punti-vendita/search/{val}', 'PuntoVenditaController@search')->name('punti-vendita.search');
-    Route::get('punti-vendita', 'PuntoVenditaController@index')->name('punti-vendita');
-
     // Clienti
     Route::get('clienti/search/{val}', 'ClienteController@search')->name('clienti.search');
     Route::resource('clienti', 'ClienteController',['as' => 'clienti']);
-
-    // Dipendenti
-    Route::get('dipendenti/search/{val}', 'DipendenteController@search')->name('dipendenti.search');
-    Route::resource('dipendenti', 'DipendenteController',['as' => 'dipendenti']);
-
-    // Incasssi
-    Route::get('incassi', 'IncassoController@index')->name('incassi');
 
     // Magazzino
     Route::get('magazzino/search/{val}', 'MagazzinoController@search')->name('magazzino.search');
     Route::post('magazzino/carico', 'MagazzinoController@carico')->name('magazzino.carico');
     Route::resource('magazzino', 'MagazzinoController',['as' => 'magazzino']);
-
 
 });

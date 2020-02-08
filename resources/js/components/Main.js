@@ -17,7 +17,7 @@ const routes = [
     {path: "/noleggi", name:"Noleggi",title:'Gestione Noleggi', icon:'fa-film', Component: Noleggi},
     {path: "/clienti", name:"Clienti",title:'Gestione Clienti', icon:'fa-address-card-o', Component: Clienti},
     {path: "/dipendenti", name:"Dipendenti",title:'Gestione Dipendenti', icon:'fa-users', Component: Dipendenti},
-    {path: "/incassi", name:"Incassi",title:'Report Incassi giornalieri', icon:'fa-area-chart', Component: Incassi},
+    {path: "/incassi", name:"Incassi",title:'Report Incassi', icon:'fa-area-chart', Component: Incassi},
     {path: "/magazzino", name:"Magazzino",title:'Gestione Magazzino', icon:'fa-list-alt', Component: Magazzino},
 ];
 

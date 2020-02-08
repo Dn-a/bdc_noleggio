@@ -11657,6 +11657,15 @@ footer:hover {
   display: inline-block;
 }
 
+.pt-vendita .loader-2 {
+  -webkit-filter: invert(50%);
+          filter: invert(50%);
+  width: 25px;
+  margin-top: 6px;
+  height: 25px;
+  padding: 0;
+}
+
 .loader-2 {
   display: none;
   width: 32px;
@@ -11765,15 +11774,6 @@ footer:hover {
 .incassi .info {
   font-size: 2em;
   line-height: 1em;
-}
-
-.incassi .loader-2 {
-  -webkit-filter: invert(50%);
-          filter: invert(50%);
-  width: 25px;
-  margin-top: 6px;
-  height: 25px;
-  padding: 0;
 }
 
 .incassi i {

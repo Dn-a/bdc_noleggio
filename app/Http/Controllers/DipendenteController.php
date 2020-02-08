@@ -17,9 +17,10 @@ class DipendenteController extends Controller
 
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
-        $idPtVendita = $ruolo=='Admin'? null: ($ruolo=='Addetto'? -1 :$user->id_pt_vendita);
+        $idPtVendita = $ruolo=='Addetto'? -1 :$user->id_pt_vendita;
 
-        $idPtVendita = $request->input('id_pt_vendita')? : $idPtVendita;
+        if($ruolo=='Admin' && $request->input('id_pt_vendita'))
+            $idPtVendita = $request->input('id_pt_vendita');
 
         $dipendente = Dipendente::
         where(function($query) use($idPtVendita) {
@@ -41,9 +42,10 @@ class DipendenteController extends Controller
 
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
-        $idPtVendita = $ruolo=='Admin'? null: ($ruolo=='Addetto'? -1 :$user->id_pt_vendita);
+        $idPtVendita = $ruolo=='Addetto'? -1 :$user->id_pt_vendita;
 
-        $idPtVendita = $request->input('id_pt_vendita')? : $idPtVendita;
+        if($ruolo=='Admin' && $request->input('id_pt_vendita'))
+            $idPtVendita = $request->input('id_pt_vendita');
 
         $dipendente = Dipendente::
         where(function($query) use($idPtVendita) {
