@@ -11760,3 +11760,42 @@ footer:hover {
   color: red;
 }
 
+/*--- INCASSI --- */
+
+.incassi .info {
+  font-size: 2em;
+  line-height: 1em;
+}
+
+.incassi .loader-2 {
+  -webkit-filter: invert(50%);
+          filter: invert(50%);
+  width: 25px;
+  margin-top: 6px;
+  height: 25px;
+  padding: 0;
+}
+
+.incassi i {
+  font-size: 2.5em;
+}
+
+.incassi .card {
+  background: #35aaae;
+  color: #fff;
+}
+
+.incassi hr {
+  background-color: #fff;
+}
+
+/*--- CHART ---*/
+
+.rv-xy-plot {
+  position: relative;
+}
+
+.rv-xy-plot__grid-lines__line {
+  stroke: #e6e6e9;
+}
+

@@ -65,6 +65,9 @@ Route::middleware(['auth'])->group( function () {
     Route::get('dipendenti/search/{val}', 'DipendenteController@search')->name('dipendenti.search');
     Route::resource('dipendenti', 'DipendenteController',['as' => 'dipendenti']);
 
+    // Incasssi
+    Route::get('incassi', 'IncassoController@index')->name('incassi');
+
     // Magazzino
     Route::get('magazzino/search/{val}', 'MagazzinoController@search')->name('magazzino.search');
     Route::post('magazzino/carico', 'MagazzinoController@carico')->name('magazzino.carico');

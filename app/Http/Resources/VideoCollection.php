@@ -67,12 +67,12 @@ class VideoCollection extends ResourceCollection
                 ->where('id_pt_vendita',$this->idPtVendita)
                 ->where('restituito_al_fornitore',0)
                 ->where('noleggiato',0)
-                ->where('danneggiato',0)->count()
-                -
+                ->where('danneggiato',0)->count();
+                /*-
                 DB::table('prenotazioni')
                 ->where('id_video',$item->id)
                 ->where('id_pt_vendita',$idPtVendita)
-                ->where('ritirato',0)->count();
+                ->where('ritirato',0)->count();*/
 
             $item['qta_disponibili'] = $qta_disponibili;
         }
