@@ -144,8 +144,7 @@ export default class Magazzino extends Component {
 
             return result;
         }).catch((error) => {
-          console.error(error.response.data);
-          this.setState({errorRemoteStore:error.response.status});
+          console.error(error.response);
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
               window.location.href=this.home + '/login';

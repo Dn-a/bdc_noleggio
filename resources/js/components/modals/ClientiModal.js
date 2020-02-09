@@ -1,4 +1,5 @@
 import React, { Component , Fragment } from 'react';
+import {URL_HOME} from '../Env';
 
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
@@ -42,6 +43,8 @@ export default class ClientiModal extends Component {
             checked: false,
             loader:false
         };
+
+        this.home = URL_HOME;
 
         this._handleChange = this._handleChange.bind(this);
         this._handleOnSave = this._handleOnSave.bind(this);
@@ -105,8 +108,7 @@ export default class ClientiModal extends Component {
             }*/
             return result;
         }).catch((error) => {
-          console.error(error.response.data);
-          this.setState({errorRemoteStore:error.response.status});
+          console.error(error.response);
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
               window.location.href=this.home + '/login';
@@ -122,7 +124,6 @@ export default class ClientiModal extends Component {
     _handleChange(e){
         let value = e.target.value.toLowerCase();
         let field = e.target.name;
-
 
         let error = this.state.error;
         let data = this.state.data;
@@ -170,7 +171,7 @@ export default class ClientiModal extends Component {
                 let date = new Date(value);
                 date = new Date(date.toDateString()).getTime();
                 if(date > today)
-                    error.data_nascita = INFO_ERROR['data'];
+                    error.data_nascita = INFO_ERROR['data_2'];
                 break;
             case 'privacy':
                 value = e.target.files[0];
@@ -291,7 +292,7 @@ export default class ClientiModal extends Component {
                         <DropDownSelect placeholder="Scegli un valore"
                         name="id_fidelizzazione" className="form-control" label="Fidelizzazione"
                         values={objFid}
-                        selected='default'
+                        defaultSelected='default'
                         handleChange={this._handleChange} />
                     </div>
 

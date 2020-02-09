@@ -124,7 +124,7 @@ class NoleggioController extends Controller
                 'id_video' => 'required|array',
                 'id_video.*' => 'required|integer',
                 'prezzo_tot' => 'required|array',
-                'prezzo_tot.*' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+                'prezzo_tot.*' => 'required|regex:/^\d+(\.\d{1,6})?$/',
                 'data_fine' => 'required|array',
                 'data_fine.*' => 'required|date|date_format:Y-m-d',
             ]);
@@ -148,7 +148,7 @@ class NoleggioController extends Controller
             for( $i=0 ; $i < count($input['id_video']) ; $i++ ){
 
                 $idVideo = $input['id_video'][$i];
-                $prezzoTot = $input['prezzo_tot'][$i];
+                $prezzoTot = round($input['prezzo_tot'][$i],2);
                 $dataFine = $input['data_fine'][$i];
 
                 // prendo l'id magazzino
@@ -336,7 +336,7 @@ class NoleggioController extends Controller
                 'danneggiato' => 'required|array',
                 'danneggiato.*' => 'required|integer',
                 'prezzo_extra' => 'required|array',
-                'prezzo_extra.*' => 'required|regex:/^\d+(\.\d{1,2})?$/'
+                'prezzo_extra.*' => 'required|regex:/^\d+(\.\d{1,6})?$/'
             ]);
 
             $input = $request->all();
@@ -357,7 +357,7 @@ class NoleggioController extends Controller
 
                 $idNoleggio = $input['id_noleggio'][$i];
                 $danneggiato = $input['danneggiato'][$i];
-                $extra = $input['prezzo_extra'][$i];
+                $extra = round($input['prezzo_extra'][$i],2);
 
                 $magazzino = Magazzino::whereHas('noleggio',function($query) use($idNoleggio) {
                     $query->where('id',$idNoleggio);

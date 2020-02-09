@@ -1,6 +1,7 @@
 const InfoError = {
     'vuoto': 'campo vuoto',
     'data': 'inserire una data superiore a quella corrente',
+    'data_2': 'inserire una data inferiore a quella corrente',
     'caratteri': 'Inserire caratteri validi',
     'password': 'Inserire almeno 8 caratteri',
     'confirm_password': 'Le password non corrispondono',

@@ -1,5 +1,6 @@
 import React, { Component , Fragment } from 'react';
 import cx from "classnames";
+import {URL_HOME} from '../Env';
 
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
@@ -54,8 +55,15 @@ export default class NoleggoModal extends Component {
 
         this.scontoGiorni = {2:'0.1',3:'0.1',4:'0.2',5:'0.2',6:'0.3',7:'0.3',8:'0.4'};
 
+        this.home = URL_HOME;
+
         this._handleChange = this._handleChange.bind(this);
         this._handleOnSave = this._handleOnSave.bind(this);
+    }
+
+    componentDidUpdate (){
+        if(this.props.show)
+            this._onOpenModal();
     }
 
     _resetAfterClose () {
@@ -84,11 +92,6 @@ export default class NoleggoModal extends Component {
         this.state.openModal = false;
         this.state.complited = false;
         this.state.pdf = '';
-    }
-
-    componentDidUpdate (){
-        if(this.props.show)
-            this._onOpenModal();
     }
 
     _onOpenModal(){
@@ -148,7 +151,7 @@ export default class NoleggoModal extends Component {
 
         return axios.post(url,data,headers)
         .then(result => {
-            //console.log(result.data.pdf);return;
+            //console.log(result.data);return;
             this.setState({complited:true, pdf:result.data.pdf, loader:false},()=>{
                 if(this.props.callback !== undefined)
                     this.props.callback(data);
@@ -157,10 +160,9 @@ export default class NoleggoModal extends Component {
             return result;
         }).catch((error) => {
           console.error(error.response.data);
-          this.setState({errorRemoteStore:error.response.status});
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-              window.location.href=this.url + '/login';
+              window.location.href=this.home + '/login';
           throw error;
         });
     }
@@ -228,7 +230,6 @@ export default class NoleggoModal extends Component {
                         }
                     })
         });
-
 
         this.setState({checked});
     }
@@ -300,13 +301,6 @@ export default class NoleggoModal extends Component {
           );
     }
 
-    _complited(){
-        return(
-            <div>
-                suca
-            </div>
-        )
-    }
 
     render(){
 

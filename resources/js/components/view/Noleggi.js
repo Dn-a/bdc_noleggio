@@ -337,7 +337,12 @@ export default class Noleggi extends Component {
                                             show={this.state.showRestituzione} onHide={this._handleCloseRestituzioneModal}
                                             callback={
                                                 (row) => {
-                                                    this.setState({recallSearchNoleggi:true, reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
+                                                    this.setState({
+                                                        selectedListNoleggi: [],
+                                                        rowsSelectedListNoleggi: [],
+                                                        recallSearchNoleggi:true,
+                                                        reloadInfiniteTable:++(this.state.reloadInfiniteTable)
+                                                    });
                                                 }
                                             }
                                         />

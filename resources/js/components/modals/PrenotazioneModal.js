@@ -1,5 +1,6 @@
 import React, { Component , Fragment } from 'react';
 import cx from "classnames";
+import {URL_HOME} from '../Env';
 
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
@@ -38,6 +39,8 @@ export default class NoleggoModal extends Component {
             loader: false,
             complited: false
         };
+
+        this.home = URL_HOME;
 
         this._handleChange = this._handleChange.bind(this);
         this._handleOnSave = this._handleOnSave.bind(this);
@@ -120,11 +123,10 @@ export default class NoleggoModal extends Component {
             this._resetAfterClose();
             return result;
         }).catch((error) => {
-          console.error(error.response.data);
-          this.setState({errorRemoteStore:error.response.status});
+          console.error(error.response);
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-              window.location.href=this.url + '/login';
+              window.location.href=this.home + '/login';
           throw error;
         });
     }

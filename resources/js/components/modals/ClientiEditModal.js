@@ -1,4 +1,5 @@
 import React, { Component , Fragment } from 'react';
+import {URL_HOME} from '../Env';
 
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
@@ -42,6 +43,8 @@ export default class ClientiModal extends Component {
             checked: false,
             loader:false
         };
+
+        this.home = URL_HOME;
 
         this._handleChange = this._handleChange.bind(this);
         this._handleOnSave = this._handleOnSave.bind(this);

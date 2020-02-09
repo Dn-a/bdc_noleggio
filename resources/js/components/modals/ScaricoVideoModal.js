@@ -1,4 +1,5 @@
 import React, { Component , Fragment } from 'react';
+import {URL_HOME} from '../Env';
 
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
@@ -39,6 +40,8 @@ export default class ScaricoVideoModal extends Component {
             checked: false,
             loader:false
         };
+
+        this.home = URL_HOME;
 
         this._handleChange = this._handleChange.bind(this);
         this._handleOnSave = this._handleOnSave.bind(this);
@@ -95,8 +98,7 @@ export default class ScaricoVideoModal extends Component {
             this._resetAfterClose();
             return result;
         }).catch((error) => {
-          console.error(error.response.data);
-          this.setState({errorRemoteStore:error.response.status});
+          console.error(error.response);
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
               window.location.href=this.home + '/login';
