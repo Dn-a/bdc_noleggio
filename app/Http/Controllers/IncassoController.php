@@ -20,7 +20,7 @@ class IncassoController extends Controller
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $ruolo=='Addetto'? -1 :$user->id_pt_vendita;
 
-        if($ruolo=='Admin' && $request->input('id_pt_vendita'))
+        if($ruolo=='Admin' && is_numeric($request->input('id_pt_vendita')))
             $idPtVendita = $request->input('id_pt_vendita');
 
         if($idPtVendita==-1) return;
@@ -41,22 +41,24 @@ class IncassoController extends Controller
         $check = $check->where('update_at','>',$checkTime);
 
         if(empty($check->first())){
+            $date = 'n.data_inizio';
+            //$date = 'n.data_fine';
 
             $incassiDipendenti = DB::select( DB::raw(
                 "SELECT d.id, CONCAT(d.nome,' ',d.cognome) AS nome,
                     IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n
-                        WHERE DATE(n.data_inizio) >='$thirtyDayAgo' AND DATE(n.data_inizio) <='$today'
+                        WHERE DATE($date) >='$thirtyDayAgo' AND DATE($date) <='$today'
                         AND n.id_dipendente = d.id
                     ),0) AS incasso_month,
                     IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n
-                        WHERE DATE(n.data_inizio) >='$sevenDayAgo' AND DATE(n.data_inizio) <='$today'
+                        WHERE DATE($date) >='$sevenDayAgo' AND DATE($date) <='$today'
                         AND n.id_dipendente = d.id
                     ),0) AS incasso_week,
                     IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n
-                        WHERE DATE(n.data_inizio) ='$yesterday' AND n.id_dipendente = d.id
+                        WHERE DATE($date) ='$yesterday' AND n.id_dipendente = d.id
                     ),0) AS incasso_ieri,
                     IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n
-                        WHERE DATE(n.data_inizio) ='$today' AND n.id_dipendente = d.id
+                        WHERE DATE($date) ='$today' AND n.id_dipendente = d.id
                     ),0) AS incasso_oggi
                     FROM noleggi AS n RIGHT JOIN dipendenti AS d ON n.id_dipendente = d.id
                     WHERE d.id_pt_vendita = $idPtVendita
@@ -67,31 +69,31 @@ class IncassoController extends Controller
             $incassiPtVendita = DB::select( DB::raw(
                 "SELECT p.titolo AS titolo,
                     IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
-                        WHERE DATE(n.data_inizio) ='$yesterday' AND n.id_magazzino = m.id
+                        WHERE DATE($date) ='$yesterday' AND n.id_magazzino = m.id
                         AND m.id_pt_vendita = p.id
                     ),0) AS incasso_ieri,
                     IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
-                        WHERE DATE(n.data_inizio) ='$today' AND n.id_magazzino = m.id
+                        WHERE DATE($date) ='$today' AND n.id_magazzino = m.id
                         AND m.id_pt_vendita = p.id
                     ),0) AS incasso_oggi,
                     IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
-                        WHERE DATE(n.data_inizio) >='$sevenDayAgo' AND DATE(n.data_inizio) <='$today'
+                        WHERE DATE($date) >='$sevenDayAgo' AND DATE($date) <='$today'
                         AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
                     ),0) AS incasso_week,
                     IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
-                        WHERE DATE(n.data_inizio) >='$thirtyDayAgo' AND DATE(n.data_inizio) <='$today'
+                        WHERE DATE($date) >='$thirtyDayAgo' AND DATE($date) <='$today'
                         AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
                     ),0) AS incasso_month,
                     IFNULL((SELECT count(*) FROM noleggi AS n, magazzino AS m
-                        WHERE DATE(n.data_inizio) ='$today' AND n.id_magazzino = m.id
+                        WHERE DATE($date) ='$today' AND n.id_magazzino = m.id
                         AND m.id_pt_vendita = p.id
                     ),0) AS n_noleggi_oggi,
                     IFNULL((SELECT count(*) FROM noleggi AS n, magazzino AS m
-                        WHERE DATE(n.data_inizio) >='$sevenDayAgo' AND DATE(n.data_inizio) <='$today'
+                        WHERE DATE($date) >='$sevenDayAgo' AND DATE($date) <='$today'
                         AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
                     ),0) AS n_noleggi_week,
                     IFNULL((SELECT count(*) FROM noleggi AS n, magazzino AS m
-                        WHERE DATE(n.data_inizio) >='$thirtyDayAgo' AND DATE(n.data_inizio) <='$today'
+                        WHERE DATE($date) >='$thirtyDayAgo' AND DATE($date) <='$today'
                         AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
                     ),0) AS n_noleggi_month
                     FROM pt_vendita AS p WHERE p.id = $idPtVendita GROUP BY titolo

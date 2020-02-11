@@ -80574,6 +80574,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -80595,43 +80596,170 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+var COLUMNS_VIDEO = [{
+  title: 'Titolo',
+  field: 'titolo',
+  img: '',
+  render: function render(cell, row) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      style: {
+        display: 'inline-block'
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      style: {
+        textTransform: 'capitalize',
+        fontWeight: '600'
+      }
+    }, row['titolo']), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['durata']), " -\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['categoria']), " -\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['regista'], " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "data uscita:"), " ", new Date(row['data_uscita']).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null)));
+  }
+}, {
+  title: 'Prenotazioni',
+  field: 'numero_prenotazioni'
+}];
+
 var Home =
 /*#__PURE__*/
 function (_Component) {
   _inherits(Home, _Component);
 
-  function Home() {
+  function Home(props) {
+    var _this;
+
     _classCallCheck(this, Home);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Home).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Home).call(this, props));
+    _this.state = {
+      rows: '',
+      loader: false,
+      incassi: {
+        dipendenti: [],
+        pt_vendita: []
+      },
+      lstPtVendita: {},
+      idPtVenditaSelected: -1,
+      reloadInfiniteTable: 0
+    };
+    return _this;
   }
 
   _createClass(Home, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.getRemoteData('incassi');
+    }
+  }, {
+    key: "getRemoteData",
+    value: function getRemoteData(type, id) {
+      var _this2 = this;
+
+      var urlType = {
+        ptVendita: 'punti-vendita',
+        incassi: 'incassi' + (id != null ? '?id_pt_vendita=' + id : '')
+      };
+      var url = this.props.url + '/' + urlType[type];
+      var headers = {
+        headers: {
+          'Accept': 'application/json'
+        }
+      };
+      this.setState({
+        loader: true
+      });
+      return axios.get(url, headers).then(function (res) {
+        //console.log(res.data);
+        if (res.data.length == 0) return;
+
+        if (type == 'ptVendita') {
+          var lstPtVendita = _this2.state.lstPtVendita;
+          res.data.map(function (i, k) {
+            lstPtVendita[i.id] = i.titolo;
+          });
+
+          _this2.setState({
+            lstPtVendita: lstPtVendita,
+            loader: false
+          });
+        } else if (type == 'incassi') {
+          //console.log(res.data);
+          var incassi = _this2.state.incassi;
+          incassi = res.data;
+
+          _this2.setState({
+            incassi: incassi,
+            loader: false
+          });
+        }
+      })["catch"](function (error) {
+        if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
+        throw error;
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
+      var user = USER_CONFIG;
+      var nome = user.nome;
+      var ruolo = user.ruolo;
+      var urlVideo = this.props.url + '/video';
+      var ptVendita = this.state.incassi.pt_vendita[0];
+      ptVendita = ptVendita !== undefined ? ptVendita : {
+        n_noleggi_oggi: 0,
+        incasso_oggi: 0
+      };
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "container-fluid py-4"
+        className: "container-fluid py-1"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row justify-content-center"
+        className: "row mb-3 mx-4"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", null, "Bentornato ", nome.charAt(0).toUpperCase() + nome.slice(1), "!")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-5 mx-2 "
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-8 table-responsive card p-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
+        className: "mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "FILM in uscita")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        key: "video",
+        id: "tb-video",
+        url: urlVideo,
+        query: "only=in_uscita",
+        columns: COLUMNS_VIDEO
+      })), ruolo != 'Addetto' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-4 incassi"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card px-3 py-2 mb-3",
+        style: {
+          background: '#89d1cf'
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "INCASSI DI OGGI"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mt-2 "
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-2 mx-3 pt-2 "
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-video-camera",
+        "aria-hidden": "true"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-8 "
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "info"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, ptVendita.n_noleggi_oggi)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "NUMERO NOLEGGI"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row my-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", {
+        className: "col-md-8"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-2 mx-3 pt-2 "
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-bar-chart",
+        "aria-hidden": "true"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-8"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card-header"
-      }, "Example Component"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card-body"
-      }, "I'm an example component!")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row justify-content-center"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-md-8"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card-header"
-      }, "Example Component"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card-body"
-      }, "I'm an example component!")))));
+        className: "info"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, parseFloat(ptVendita.incasso_oggi ? ptVendita.incasso_oggi : 0).toFixed(2) + ' €')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "INCASSO TOTALE")))))));
     }
   }]);
 

@@ -111,6 +111,7 @@
     @php
         $array = array('home', 'prenotazioni', 'noleggi', 'clienti', 'magazzino');
         $user = Auth::user();
+        $nome = $user->nome;// .' '. $user->cognome;
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $user->id_pt_vendita;
         if($ruolo != 'Addetto')
@@ -119,6 +120,7 @@
         echo "<script>
                 let array =".json_encode($array).'; '.
                 "const USER_CONFIG = {
+                    nome:'".$nome."',
                     ruolo:'".$ruolo."',".
                     "menu:array,".
                     "id_pt_vendita:'".$idPtVendita."'".

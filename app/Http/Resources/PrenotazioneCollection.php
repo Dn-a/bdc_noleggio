@@ -14,7 +14,8 @@ class PrenotazioneCollection extends ResourceCollection
         'prezzo',
         'data_uscita',
         'data_prenotazione',
-        'disp_magazzino'
+        'disp_magazzino',
+        'img'
     ];
     protected $withPagination;
     private $idPtVendita;
@@ -62,6 +63,10 @@ class PrenotazioneCollection extends ResourceCollection
         }
         if(in_array('prezzo',$fields)){
             $item['prezzo'] = $item->video->prezzo;
+        }
+        if(in_array('img',$fields)){
+            $img = (string) $item->video->img;
+            $item['img'] = $img;
         }
         if(in_array('video',$fields)){
             $video = (string) $item->video->titolo;
