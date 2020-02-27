@@ -6,19 +6,20 @@ import { AddButton, Button } from '../utils/Button';
 import InfiniteTable from '../utils/InfiniteTable';
 import ClientiModal from '../modals/ClientiModal';
 import RadioField from '../utils/form/RadioField';
+import AddEditModal from '../utils/AddEditModal';
 
 
 const COLUMNS = [
-    /*{ title: '', field: 'actions', render:(cell,row,handle) => {
+    { title: 'Storico', field: 'actions', render:(cell,row,handle) => {
             return(
                 <Button className='btn-light' title="Modifica"
-                    onClick={ () => handle({row:row})}
+                    onClick={ () => handle(row,'storico')}
                 >
-                    <i className="fa fa-pencil-square-o" aria-hidden="true"></i>
+                    <i className="fa fa-list" aria-hidden="true"></i>
                 </Button>
             )
         }
-    },*/
+    },
     { title: 'id', field: 'id'},
     { title: 'Nome', field: 'nome', style: {textTransform:'capitalize'}  },
     { title: 'Cognome', field: 'cognome', style: {textTransform:'capitalize'} },
@@ -29,6 +30,25 @@ const COLUMNS = [
     { title: 'Recapiti', field: 'recapiti', padding:'none' },
     { title: 'Residenza', field: 'residenza', style: {textTransform:'capitalize'} },
     { title: 'Email', field: 'email', },
+    { title: 'Privacy', field: 'privacy', render:
+        (cell,row) => {
+
+            if(cell==null ) return;
+
+            let linkSource = 'data:application/pdf;base64,'+cell;
+            //let downloadLink = document.createElement("a");
+            let fileName = 'privacy_'+row.nome+'_'+row.cognome+'.pdf';
+
+            return(
+                <a className="privacy-file" href={linkSource} download={fileName}>
+                    <i className="fa fa-file-pdf-o" aria-hidden="true"></i>
+                </a>
+            );
+            //downloadLink.href = linkSource;
+            //downloadLink.download = fileName;
+            //downloadLink.click();
+        }
+    },
     { title: 'Fidelizzazione', field:'fidelizzazione', render:
         (cell,row,handle) => {
             if(USER_CONFIG.ruolo!='Addetto'){
@@ -54,25 +74,21 @@ const COLUMNS = [
             else
                 return(cell.titolo)
         }
-    },
-    { title: 'Privacy', field: 'privacy', render:(cell,row) => {
-
-        if(cell==null ) return;
-
-        let linkSource = 'data:application/pdf;base64,'+cell;
-        //let downloadLink = document.createElement("a");
-        let fileName = 'privacy_'+row.nome+'_'+row.cognome+'.pdf';
-
-        return(
-            <a className="privacy-file" href={linkSource} download={fileName}>
-                <i className="fa fa-file-pdf-o" aria-hidden="true"></i>
-            </a>
-        );
-        //downloadLink.href = linkSource;
-        //downloadLink.download = fileName;
-        //downloadLink.click();
-    } },
+    },    
   ];
+
+const COLUMNS_STORICO = [
+    { title: 'id', field: 'id' , align:'right'},
+    { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },        
+    { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Data Restituzione', field: 'data_restituzione',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':'SI'},
+    { title: 'Giorni ritardo', field: 'giorni_ritardo'},
+    { title: 'Costo Complessivo (compresi Extra)', field: 'prezzo_tot', render:
+        (cell,row) => parseFloat(cell+row.prezzo_extra).toFixed(2) +' €'
+    },
+];
 
 
 export default class Clienti extends Component {
@@ -82,19 +98,22 @@ export default class Clienti extends Component {
 
         this.state = {
             rows: '',
-            show:false,
-            showEdit:false,
-            loader:false,
-            recallSearch:false,
-            reloadInfiniteTable:0
+            show: false,
+            showStorico: false,
+            clienteStorico: {id:'',nome:''},
+            loader: false,
+            recallSearch: false,
+            reloadInfiniteTable: 0
         };
 
         this.home = URL_HOME;
 
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
-        this._handleCloseEditModal = this._handleCloseEditModal.bind(this);
-        this._handleShowEditModal = this._handleShowEditModal.bind(this);
+        
+        this._handleCloseStoricoModal = this._handleCloseStoricoModal.bind(this);
+        this._handleShowStoricoModal = this._handleShowStoricoModal.bind(this);
+
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
     }
 
@@ -106,12 +125,12 @@ export default class Clienti extends Component {
         this.setState({show : true});
     }
 
-    // Edit CLienti Modal
-    _handleCloseEditModal () {
-        this.setState({showEdit : false,rowEdit:{}});
+    // Storico CLienti Modal
+    _handleCloseStoricoModal () {
+        this.setState({showStorico : false});
     }
-    _handleShowEditModal (){
-        this.setState({showEdit : true});
+    _handleShowStoricoModal (cliente){
+        this.setState({showStorico : true, clienteStorico:cliente});
     }
 
     _handleSearchFieldCallback(data,reset){
@@ -205,17 +224,39 @@ export default class Clienti extends Component {
                             url={this.props.url+'/clienti'}
                             columns={COLUMNS}
                             externalRows={this.state.rows}
-                            onActions={(obj) =>{
-                                if(confirm("Sicuro di volerlo cambiare?")){
-                                    //console.log(obj)
-                                    this.updateRemoteData(obj.idC,obj.idF)
-                                }
+                            onActions={(obj,type) =>{
+                                //console.log(type)
+                                if(type=='storico'){                                
+                                    let cliente = {id: obj.id, nome: obj.nome+ ' '+ obj.cognome};
+                                    this._handleShowStoricoModal(cliente);
+                                }else
+                                    if(confirm("Sicuro di volerlo cambiare?")){
+                                        //console.log(obj)
+                                        this.updateRemoteData(obj.idC,obj.idF)
+                                    }
                             }}
                         />
                     </div>
+
+                    <AddEditModal size="lg"
+                            show={this.state.showStorico}
+                            onHide={this._handleCloseStoricoModal}
+                            confirmButton={false} 
+                            title={this.state.clienteStorico.nome} type="Storico Noleggi"
+                        >
+                            
+                            <InfiniteTable
+                                id='tb-cliente-storico'
+                                url={this.props.url+'/noleggi'}
+                                query={'only=storico&id_cliente=' + this.state.clienteStorico.id}
+                                columns={COLUMNS_STORICO}
+                            />
+
+                    </AddEditModal>
                 </div>
             </div>
         );
     }
 }
+
 

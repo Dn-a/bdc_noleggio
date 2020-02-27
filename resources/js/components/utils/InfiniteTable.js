@@ -99,6 +99,9 @@ export default class InfiniteTable extends Component {
             }
         };
         //console.log(url);
+        
+        this.setState({loader:true});
+
         return axios.get(url, headers )
 			.then(res => {
                 let data = this.state.data;
@@ -115,7 +118,7 @@ export default class InfiniteTable extends Component {
                 data.total = pagination.total;
                 data.perPage = pagination.per_page;
 
-                this.setState({data,moreData});
+                this.setState({data,moreData,loader:false});
 
 			}).catch((error) => {
                 if(error.response.data!==undefined)
@@ -280,10 +283,10 @@ export default class InfiniteTable extends Component {
     }
 
     // Metodo richiamabile dall'actions
-    _handleActions(obj){
+    _handleActions(obj,type){
 
         if(this.props.onActions !== undefined)
-            this.props.onActions(obj);
+            this.props.onActions(obj,type);
 
         //console.log(array)
     }
@@ -301,7 +304,7 @@ export default class InfiniteTable extends Component {
                 //console.log(data==null)
                 let size = data!=null && data.data !== undefined ? data.data: data;
 
-                this.setState({ data: size==null? []: data, infoSearch: size==0? 'nessun risultato':'', loader:false })}
+                this.setState({ data: size==null? []: data, infoSearch: size==0? 'nessun risultato':'', searchLoader:false })}
         );
     }
 
@@ -339,7 +342,7 @@ export default class InfiniteTable extends Component {
         if(!reload)
             this.setState({ data:[], infoSearch:''});
         else
-            this._timeOut(txt,0).then((data) => { if(data!=null) this.setState({ data:[], loader:false })} );
+            this._timeOut(txt,0).then((data) => { if(data!=null) this.setState({ data:[], searchLoader:false })} );
 
         if(this.props.onClick!== undefined)
             this.props.onClick(val);
@@ -403,75 +406,83 @@ export default class InfiniteTable extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {
-                            rows.map((row,id) => {
-                                let idField = row.id;
-                                let sl = this.props.selectedList!==undefined?
-                                        this.props.selectedList: this.state.selectedList;
+                        <Fragment>
+                            {
+                                rows.map((row,id) => {
+                                    let idField = row.id;
+                                    let sl = this.props.selectedList!==undefined?
+                                            this.props.selectedList: this.state.selectedList;
 
-                                return(
-                                    <tr className={
-                                            (
-                                                this.props.multiSelectSetting!=undefined &&
-                                                this.props.multiSelectSetting.disableSelect!=undefined &&
-                                                this.props.multiSelectSetting.disableSelect(row)
-                                            )
-                                            ?
-                                            '':
-                                            (
-                                                sl.indexOf(idField)>-1?'active':''
-                                            )
-                                        }
-                                        key={id}
-                                        onClick={() => this._handleMultiSelection(idField,row)}
-                                    >
-                                        {
-                                            columns.map((column,id) => {
-                                                //console.log(row['img']);
-                                                let value = '';
+                                    return(
+                                        <tr className={
+                                                (
+                                                    this.props.multiSelectSetting!=undefined &&
+                                                    this.props.multiSelectSetting.disableSelect!=undefined &&
+                                                    this.props.multiSelectSetting.disableSelect(row)
+                                                )
+                                                ?
+                                                '':
+                                                (
+                                                    sl.indexOf(idField)>-1?'active':''
+                                                )
+                                            }
+                                            key={id}
+                                            onClick={() => this._handleMultiSelection(idField,row)}
+                                        >
+                                            {
+                                                columns.map((column,id) => {
+                                                    //console.log(row['img']);
+                                                    let value = '';
 
-                                                if(column.render != undefined)
-                                                    value = column.render('',row,this._handleActions);
+                                                    if(column.render != undefined)
+                                                        value = column.render('',row,this._handleActions);
 
-                                                if(column.field=='actions')
+                                                    if(column.field=='actions')
+                                                        return(
+                                                            <td style={column.style!==undefined?column.style:{}} key={id}>
+                                                                {value}
+                                                            </td>
+                                                        );
+
+                                                    // IMAGE
+                                                    let img = '';
+                                                    if(column.img !== undefined &&  row['img']!== undefined)
+                                                        img=  row['img'];
+                                                    else if(column.img !== undefined && column.img !='')
+                                                        img= column.img;
+
+                                                    // RENDER
+                                                    if(rows[0][column.field] === undefined)
+                                                        return;
+                                                    else if(column.render != undefined)
+                                                        value = column.render(row[column.field],row,this._handleActions);
+                                                    else
+                                                        value = row[column.field];//cell
+
                                                     return(
                                                         <td style={column.style!==undefined?column.style:{}} key={id}>
+                                                            {img!='' &&
+                                                                <div className="img-video">
+                                                                    <img src={img} />
+                                                                </div>
+                                                            }
                                                             {value}
                                                         </td>
                                                     );
-
-                                                // IMAGE
-                                                let img = '';
-                                                if(column.img !== undefined &&  row['img']!== undefined)
-                                                    img=  row['img'];
-                                                else if(column.img !== undefined && column.img !='')
-                                                    img= column.img;
-
-                                                // RENDER
-                                                if(rows[0][column.field] === undefined)
-                                                    return;
-                                                else if(column.render != undefined)
-                                                    value = column.render(row[column.field],row,this._handleActions);
-                                                else
-                                                    value = row[column.field];//cell
-
-                                                return(
-                                                    <td style={column.style!==undefined?column.style:{}} key={id}>
-                                                        {img!='' &&
-                                                            <div className="img-video">
-                                                                <img src={img} />
-                                                            </div>
-                                                        }
-                                                        {value}
-                                                    </td>
-                                                );
-                                            })
-                                        }
-                                    </tr>
-                                );
-                            })
-                        }
-
+                                                })
+                                            }
+                                        </tr>
+                                    );
+                                })
+                            }
+                            <tr>
+                                <td>
+                            <div className={"img-loader loader-3 " + (this.state.loader ? "active":'' )}>
+                                <img src="../img/loader_3.gif" />
+                            </div>  
+                            </td>
+                            </tr>
+                        </Fragment>
                     </tbody>
                 </table>
 

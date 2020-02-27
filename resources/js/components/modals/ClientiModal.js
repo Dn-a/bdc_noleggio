@@ -41,7 +41,8 @@ export default class ClientiModal extends Component {
             data: data,
             error: error,
             checked: false,
-            loader:false
+            loader:false,
+            remoteError:''
         };
 
         this.home = URL_HOME;
@@ -109,6 +110,8 @@ export default class ClientiModal extends Component {
             return result;
         }).catch((error) => {
           console.error(error.response);
+          let msgError = 'Qualcosa è andato storto. Errore: '+ error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+          this.setState({remoteError: msgError});
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
               window.location.href=this.home + '/login';
@@ -227,6 +230,7 @@ export default class ClientiModal extends Component {
                 onConfirm={this._handleOnSave}
                 loader={this.state.loader}
                 disabledConfirmButton={!this.state.checked}
+                error = {this.state.remoteError}
                 title="Cliente" type="Nuovo"
             >
 

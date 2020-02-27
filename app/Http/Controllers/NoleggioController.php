@@ -36,11 +36,17 @@ class NoleggioController extends Controller
         $only = $request->input('only') ?: '';
         $storico = in_array('storico', explode('-',$only));
 
+        $idCliente = $request->input('id_cliente') ? : null;
+
         $user = Auth::user();
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $user->id_pt_vendita;
 
         $noleggio = Noleggio::where('data_restituzione',$storico?'!=':'=', null )
+            ->where(function($query) use ($idCliente){
+                if($idCliente!=null)
+                    $query->where('id_cliente',$idCliente);   
+            })
             ->whereHas('magazzino',function($query) use($idPtVendita) {
                 $query->where('id_pt_vendita',$idPtVendita);
             })

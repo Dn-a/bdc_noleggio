@@ -35,6 +35,7 @@ export default class RestNoleggioModal extends Component {
         this.state = {
             data: data,
             checked: true,
+            remoteError:'',
             openModal: false,
             loader: false,
             complited: false,
@@ -121,6 +122,8 @@ export default class RestNoleggioModal extends Component {
             return result;
         }).catch((error) => {
           console.error(error.response);
+          let msgError = 'Qualcosa è andato storto. Errore: '+ error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+          this.setState({remoteError: msgError});
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
               window.location.href=this.home + '/login';
@@ -181,6 +184,7 @@ export default class RestNoleggioModal extends Component {
                 onConfirm={this._handleOnSave}
                 txtConfirmButton={this.state.complited ? 'Confermato':'Conferma'}
                 disabledConfirmButton={!this.state.checked || this.state.complited}
+                error = {this.state.remoteError}
                 title="Video" type="Restituzione"
             >
                 <div className=

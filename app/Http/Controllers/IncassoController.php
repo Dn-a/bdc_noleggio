@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class IncassoController extends Controller
 {
+    private $minutes = 1;
 
     public function index(Request $request)
     {
@@ -30,7 +31,7 @@ class IncassoController extends Controller
         $yesterday = Carbon::yesterday()->format('Y-m-d');
         $today = Carbon::today()->format('Y-m-d');
         $lastHour = Carbon::now()->add('-1','hour');
-        $lastMinutes = Carbon::now()->add('-5','minute');
+        $lastMinutes = Carbon::now()->add('-'.$this->minutes,'minute');
 
         $checkTime = $lastMinutes;
 

@@ -76473,7 +76473,8 @@ function (_Component) {
       data: data,
       error: error,
       checked: false,
-      loader: false
+      loader: false,
+      remoteError: ''
     };
     _this.home = _Env__WEBPACK_IMPORTED_MODULE_1__["URL_HOME"];
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
@@ -76540,6 +76541,12 @@ function (_Component) {
         return result;
       })["catch"](function (error) {
         console.error(error.response);
+        var msgError = 'Qualcosa è andato storto. Errore: ' + error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+
+        _this2.setState({
+          remoteError: msgError
+        });
+
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
         throw error;
       });
@@ -76661,6 +76668,7 @@ function (_Component) {
         onConfirm: this._handleOnSave,
         loader: this.state.loader,
         disabledConfirmButton: !this.state.checked,
+        error: this.state.remoteError,
         title: "Cliente",
         type: "Nuovo"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -76872,7 +76880,8 @@ function (_Component) {
       data: data,
       error: error,
       checked: false,
-      loader: false
+      loader: false,
+      remoteError: ''
     };
     _this.home = _Env__WEBPACK_IMPORTED_MODULE_1__["URL_HOME"];
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
@@ -76930,6 +76939,12 @@ function (_Component) {
         return result;
       })["catch"](function (error) {
         console.error(error.response);
+        var msgError = 'Qualcosa è andato storto. Errore: ' + error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+
+        _this2.setState({
+          remoteError: msgError
+        });
+
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
         throw error;
       });
@@ -77030,6 +77045,7 @@ function (_Component) {
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
         disabledConfirmButton: !this.state.checked,
+        error: this.state.remoteError,
         title: "Dipendente",
         type: "Nuovo"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -77226,6 +77242,7 @@ function (_Component) {
       data: data,
       error: error,
       tempData: tempData,
+      remoteError: '',
       checked: false,
       openModal: false,
       loader: false,
@@ -77351,6 +77368,12 @@ function (_Component) {
         return result;
       })["catch"](function (error) {
         console.error(error.response.data);
+        var msgError = 'Qualcosa è andato storto. Errore: ' + error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+
+        _this2.setState({
+          remoteError: msgError
+        });
+
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
         throw error;
       });
@@ -77509,6 +77532,7 @@ function (_Component) {
         onConfirm: this._handleOnSave,
         txtConfirmButton: this.state.complited ? 'Noleggiato' : 'Noleggia',
         disabledConfirmButton: !this.state.checked || this.state.complited,
+        error: this.state.remoteError,
         title: "Video",
         type: "Noleggio"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -77703,7 +77727,8 @@ function (_Component) {
       checked: false,
       openModal: false,
       loader: false,
-      complited: false
+      complited: false,
+      remoteError: ''
     };
     _this.home = _Env__WEBPACK_IMPORTED_MODULE_2__["URL_HOME"];
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
@@ -77792,6 +77817,12 @@ function (_Component) {
         return result;
       })["catch"](function (error) {
         console.error(error.response);
+        var msgError = 'Qualcosa è andato storto. Errore: ' + error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+
+        _this2.setState({
+          remoteError: msgError
+        });
+
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
         throw error;
       });
@@ -77884,6 +77915,7 @@ function (_Component) {
         onConfirm: this._handleOnSave,
         txtConfirmButton: this.state.complited ? 'Prenotato' : 'Prenota',
         disabledConfirmButton: !this.state.checked || this.state.complited,
+        error: this.state.remoteError,
         title: "Video",
         type: "Prenotazione"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -78039,6 +78071,7 @@ function (_Component) {
     _this.state = {
       data: data,
       checked: true,
+      remoteError: '',
       openModal: false,
       loader: false,
       complited: false,
@@ -78130,6 +78163,12 @@ function (_Component) {
         return result;
       })["catch"](function (error) {
         console.error(error.response);
+        var msgError = 'Qualcosa è andato storto. Errore: ' + error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+
+        _this2.setState({
+          remoteError: msgError
+        });
+
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
         throw error;
       });
@@ -78193,6 +78232,7 @@ function (_Component) {
         onConfirm: this._handleOnSave,
         txtConfirmButton: this.state.complited ? 'Confermato' : 'Conferma',
         disabledConfirmButton: !this.state.checked || this.state.complited,
+        error: this.state.remoteError,
         title: "Video",
         type: "Restituzione"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -78335,7 +78375,8 @@ function (_Component) {
       data: data,
       error: error,
       checked: false,
-      loader: false
+      loader: false,
+      remoteError: ''
     };
     _this.home = _Env__WEBPACK_IMPORTED_MODULE_1__["URL_HOME"];
     _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
@@ -78394,6 +78435,12 @@ function (_Component) {
         return result;
       })["catch"](function (error) {
         console.error(error.response);
+        var msgError = 'Qualcosa è andato storto. Errore: ' + error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+
+        _this2.setState({
+          remoteError: msgError
+        });
+
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
         throw error;
       });
@@ -78469,6 +78516,7 @@ function (_Component) {
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
         disabledConfirmButton: !this.state.checked,
+        error: this.state.remoteError,
         title: "Nuovi Video",
         type: "Scarico"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -78611,6 +78659,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function AddEditModal(props) {
   //console.log(props);
+  var confirmButton = props.confirmButton !== undefined ? props.confirmButton : true;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_1__["default"], {
     show: props.show,
     onHide: props.onHide,
@@ -78620,10 +78669,13 @@ function AddEditModal(props) {
     closeButton: true
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_1__["default"].Title, {
     id: "contained-modal-title-vcenter"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, props.type, ":"), " ", props.title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_1__["default"].Body, null, props.children !== null && props.children), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_1__["default"].Footer, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Button__WEBPACK_IMPORTED_MODULE_2__["BackButton"], {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, props.type, ":"), " ", props.title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_1__["default"].Body, null, props.children !== null && props.children), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_1__["default"].Footer, null, props.error != null && props.error != '' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "alert alert-danger text-left",
+    role: "alert"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Attenzione!"), " ", props.error), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Button__WEBPACK_IMPORTED_MODULE_2__["BackButton"], {
     className: "btn-light",
     onClick: props.onHide
-  }, "Chiudi"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Button__WEBPACK_IMPORTED_MODULE_2__["ConfirmButton"], {
+  }, "Chiudi"), confirmButton && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Button__WEBPACK_IMPORTED_MODULE_2__["ConfirmButton"], {
     disabled: props.disabledConfirmButton !== undefined ? props.disabledConfirmButton : false,
     className: "btn-success",
     onClick: props.onConfirm
@@ -78905,6 +78957,9 @@ function (_Component) {
         }
       }; //console.log(url);
 
+      this.setState({
+        loader: true
+      });
       return axios.get(url, headers).then(function (res) {
         var _data$rows;
 
@@ -78922,7 +78977,8 @@ function (_Component) {
 
         _this4.setState({
           data: data,
-          moreData: moreData
+          moreData: moreData,
+          loader: false
         });
       })["catch"](function (error) {
         if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
@@ -79057,8 +79113,8 @@ function (_Component) {
 
   }, {
     key: "_handleActions",
-    value: function _handleActions(obj) {
-      if (this.props.onActions !== undefined) this.props.onActions(obj); //console.log(array)
+    value: function _handleActions(obj, type) {
+      if (this.props.onActions !== undefined) this.props.onActions(obj, type); //console.log(array)
     } // SEARCH FIELD
     // dopo aver inserito un carattere nel campo
 
@@ -79080,7 +79136,7 @@ function (_Component) {
         _this7.setState({
           data: size == null ? [] : data,
           infoSearch: size == 0 ? 'nessun risultato' : '',
-          loader: false
+          searchLoader: false
         });
       });
     } // Click sugli elementi della lista risultati
@@ -79123,7 +79179,7 @@ function (_Component) {
       });else this._timeOut(txt, 0).then(function (data) {
         if (data != null) _this8.setState({
           data: [],
-          loader: false
+          searchLoader: false
         });
       });
       if (this.props.onClick !== undefined) this.props.onClick(val);
@@ -79171,7 +79227,7 @@ function (_Component) {
           key: id,
           className: "text-center"
         }, column.title);
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, rows.map(function (row, id) {
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, rows.map(function (row, id) {
         var idField = row.id;
         var sl = _this10.props.selectedList !== undefined ? _this10.props.selectedList : _this10.state.selectedList;
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
@@ -79203,7 +79259,11 @@ function (_Component) {
             src: img
           })), value);
         }));
-      }))));
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "img-loader loader-3 " + (this.state.loader ? "active" : '')
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+        src: "../img/loader_3.gif"
+      }))))))));
     }
   }]);
 
@@ -79979,6 +80039,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
 /* harmony import */ var _modals_ClientiModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modals/ClientiModal */ "./resources/js/components/modals/ClientiModal.js");
 /* harmony import */ var _utils_form_RadioField__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/RadioField */ "./resources/js/components/utils/form/RadioField.js");
+/* harmony import */ var _utils_AddEditModal__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/AddEditModal */ "./resources/js/components/utils/AddEditModal.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -80004,18 +80065,23 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-var COLUMNS = [
-/*{ title: '', field: 'actions', render:(cell,row,handle) => {
-        return(
-            <Button className='btn-light' title="Modifica"
-                onClick={ () => handle({row:row})}
-            >
-                <i className="fa fa-pencil-square-o" aria-hidden="true"></i>
-            </Button>
-        )
-    }
-},*/
-{
+
+var COLUMNS = [{
+  title: 'Storico',
+  field: 'actions',
+  render: function render(cell, row, handle) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["Button"], {
+      className: "btn-light",
+      title: "Modifica",
+      onClick: function onClick() {
+        return handle(row, 'storico');
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      className: "fa fa-list",
+      "aria-hidden": "true"
+    }));
+  }
+}, {
   title: 'id',
   field: 'id'
 }, {
@@ -80052,6 +80118,25 @@ var COLUMNS = [
 }, {
   title: 'Email',
   field: 'email'
+}, {
+  title: 'Privacy',
+  field: 'privacy',
+  render: function render(cell, row) {
+    if (cell == null) return;
+    var linkSource = 'data:application/pdf;base64,' + cell; //let downloadLink = document.createElement("a");
+
+    var fileName = 'privacy_' + row.nome + '_' + row.cognome + '.pdf';
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      className: "privacy-file",
+      href: linkSource,
+      download: fileName
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      className: "fa fa-file-pdf-o",
+      "aria-hidden": "true"
+    })); //downloadLink.href = linkSource;
+    //downloadLink.download = fileName;
+    //downloadLink.click();
+  }
 }, {
   title: 'Fidelizzazione',
   field: 'fidelizzazione',
@@ -80092,24 +80177,61 @@ var COLUMNS = [
       }));
     } else return cell.titolo;
   }
+}];
+var COLUMNS_STORICO = [{
+  title: 'id',
+  field: 'id',
+  align: 'right'
 }, {
-  title: 'Privacy',
-  field: 'privacy',
+  title: 'Video',
+  field: 'video',
+  style: {
+    textTransform: 'capitalize'
+  }
+}, {
+  title: 'Data Inizio',
+  field: 'data_inizio',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Data Fine',
+  field: 'data_fine',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Data Restituzione',
+  field: 'data_restituzione',
+  render: function render(cell) {
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  }
+}, {
+  title: 'Danneggiato',
+  field: 'danneggiato',
+  render: function render(cell) {
+    return cell == 0 ? 'No' : 'SI';
+  }
+}, {
+  title: 'Giorni ritardo',
+  field: 'giorni_ritardo'
+}, {
+  title: 'Costo Complessivo (compresi Extra)',
+  field: 'prezzo_tot',
   render: function render(cell, row) {
-    if (cell == null) return;
-    var linkSource = 'data:application/pdf;base64,' + cell; //let downloadLink = document.createElement("a");
-
-    var fileName = 'privacy_' + row.nome + '_' + row.cognome + '.pdf';
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-      className: "privacy-file",
-      href: linkSource,
-      download: fileName
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-      className: "fa fa-file-pdf-o",
-      "aria-hidden": "true"
-    })); //downloadLink.href = linkSource;
-    //downloadLink.download = fileName;
-    //downloadLink.click();
+    return parseFloat(cell + row.prezzo_extra).toFixed(2) + ' €';
   }
 }];
 
@@ -80127,7 +80249,11 @@ function (_Component) {
     _this.state = {
       rows: '',
       show: false,
-      showEdit: false,
+      showStorico: false,
+      clienteStorico: {
+        id: '',
+        nome: ''
+      },
       loader: false,
       recallSearch: false,
       reloadInfiniteTable: 0
@@ -80135,8 +80261,8 @@ function (_Component) {
     _this.home = _Env__WEBPACK_IMPORTED_MODULE_1__["URL_HOME"];
     _this._handleCloseModal = _this._handleCloseModal.bind(_assertThisInitialized(_this));
     _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
-    _this._handleCloseEditModal = _this._handleCloseEditModal.bind(_assertThisInitialized(_this));
-    _this._handleShowEditModal = _this._handleShowEditModal.bind(_assertThisInitialized(_this));
+    _this._handleCloseStoricoModal = _this._handleCloseStoricoModal.bind(_assertThisInitialized(_this));
+    _this._handleShowStoricoModal = _this._handleShowStoricoModal.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
     return _this;
   } // New Clienti Modal
@@ -80155,21 +80281,21 @@ function (_Component) {
       this.setState({
         show: true
       });
-    } // Edit CLienti Modal
+    } // Storico CLienti Modal
 
   }, {
-    key: "_handleCloseEditModal",
-    value: function _handleCloseEditModal() {
+    key: "_handleCloseStoricoModal",
+    value: function _handleCloseStoricoModal() {
       this.setState({
-        showEdit: false,
-        rowEdit: {}
+        showStorico: false
       });
     }
   }, {
-    key: "_handleShowEditModal",
-    value: function _handleShowEditModal() {
+    key: "_handleShowStoricoModal",
+    value: function _handleShowStoricoModal(cliente) {
       this.setState({
-        showEdit: true
+        showStorico: true,
+        clienteStorico: cliente
       });
     }
   }, {
@@ -80277,12 +80403,32 @@ function (_Component) {
         url: this.props.url + '/clienti',
         columns: COLUMNS,
         externalRows: this.state.rows,
-        onActions: function onActions(obj) {
-          if (confirm("Sicuro di volerlo cambiare?")) {
+        onActions: function onActions(obj, type) {
+          //console.log(type)
+          if (type == 'storico') {
+            var cliente = {
+              id: obj.id,
+              nome: obj.nome + ' ' + obj.cognome
+            };
+
+            _this3._handleShowStoricoModal(cliente);
+          } else if (confirm("Sicuro di volerlo cambiare?")) {
             //console.log(obj)
             _this3.updateRemoteData(obj.idC, obj.idF);
           }
         }
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_7__["default"], {
+        size: "lg",
+        show: this.state.showStorico,
+        onHide: this._handleCloseStoricoModal,
+        confirmButton: false,
+        title: this.state.clienteStorico.nome,
+        type: "Storico Noleggi"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        id: "tb-cliente-storico",
+        url: this.props.url + '/noleggi',
+        query: 'only=storico&id_cliente=' + this.state.clienteStorico.id,
+        columns: COLUMNS_STORICO
       }))));
     }
   }]);
@@ -80733,7 +80879,7 @@ function (_Component) {
         style: {
           background: '#89d1cf'
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "INCASSI DI OGGI"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "INCASSO DI OGGI"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mt-2 "
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-2 mx-3 pt-2 "
@@ -80953,7 +81099,7 @@ function (_Component) {
         style: {
           color: '#666'
         }
-      }, "I dati sul server vengono aggiornati ogni 5 minuti."), ruolo != 'Addetto' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, "I dati sul server vengono aggiornati ciclicamente ogni minuto."), ruolo != 'Addetto' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 mx-2 pt-vendita"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-4"
@@ -81203,7 +81349,7 @@ var COLUMNS = [{
   field: 'danneggiato',
   render: function render(cell) {
     return cell == 0 ? 'No' : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-      className: "highlight-error"
+      className: "highlight highlight-error"
     }, "SI");
   }
 }].map(function (a) {

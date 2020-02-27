@@ -135,7 +135,7 @@ export default class Incassi extends Component {
 
         return (
             <div className="container-fluid pl-3 incassi">
-                <div className="mx-4 mb-3" style={{color:'#666'}}>I dati sul server vengono aggiornati ogni 5 minuti.</div>
+                <div className="mx-4 mb-3" style={{color:'#666'}}>I dati sul server vengono aggiornati ciclicamente ogni minuto.</div>
                 {ruolo!='Addetto' &&
                 <Fragment>
 

@@ -17,13 +17,16 @@ ul{
     list-style: none;
 }
 .highlight{
-    color: #3490dc;
+    color: #fefeff;
+    background:#3490dc;
+    padding: 1px 5px;
+    border-radius: 50px;
 }
 .highlight-confirm{
     color: #0b9b47;
 }
 .highlight-error{
-    color: #bb1414;
+    background-color: #bb1414;
 }
 .modal-body{
     overflow: hidden;
@@ -266,6 +269,12 @@ ul{
 .img-loader img,
 .loader-2 img {
     width: 100%;
+}
+.loader-3 {
+    right: 45%;
+    width: 50px;
+    height: 50px;
+    bottom: -35px;
 }
 
 /*--- TABLE ---*/

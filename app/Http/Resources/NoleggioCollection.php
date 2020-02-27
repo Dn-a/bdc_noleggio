@@ -99,6 +99,9 @@ class NoleggioCollection extends ResourceCollection
         if(in_array('giorni_ritardo',$fields)){
             date_default_timezone_set("Europe/Rome");
             $date = date("Y-m-d ");
+            $dataRest = $item->data_restituzione;
+            if($dataRest!=null)
+                $date = $dataRest;
             $day = (strtotime($date) - strtotime($item->data_fine)) / 86400;
             $gg = round($day);
             $giorniRitardo = $gg>=0 ? $gg : 0;

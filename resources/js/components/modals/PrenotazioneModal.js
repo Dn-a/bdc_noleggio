@@ -37,7 +37,8 @@ export default class NoleggoModal extends Component {
             checked: false,
             openModal: false,
             loader: false,
-            complited: false
+            complited: false,
+            remoteError:''
         };
 
         this.home = URL_HOME;
@@ -124,6 +125,8 @@ export default class NoleggoModal extends Component {
             return result;
         }).catch((error) => {
           console.error(error.response);
+          let msgError = 'Qualcosa è andato storto. Errore: '+ error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+          this.setState({remoteError: msgError});
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
               window.location.href=this.home + '/login';
@@ -224,6 +227,7 @@ export default class NoleggoModal extends Component {
                 onConfirm={this._handleOnSave}
                 txtConfirmButton={this.state.complited? 'Prenotato': 'Prenota'}
                 disabledConfirmButton={!this.state.checked || this.state.complited}
+                error = {this.state.remoteError}
                 title="Video" type="Prenotazione"
             >
 

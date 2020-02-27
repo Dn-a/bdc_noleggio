@@ -14,7 +14,6 @@ class ClienteCollection extends ResourceCollection
         'recapiti',
         'residenza',
         'fidelizzazione'
-
     ];
     protected $withPagination;
     private $idVideoPrenotazioni;

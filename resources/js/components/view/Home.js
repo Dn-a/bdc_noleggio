@@ -121,7 +121,7 @@ export default class Home extends Component {
                     {ruolo!='Addetto' &&
                         <div className="col-md-4 incassi" >
                             <div className="card px-3 py-2 mb-3" style={{background:'#89d1cf'}}>
-                                <h4>INCASSI DI OGGI</h4>
+                                <h4>INCASSO DI OGGI</h4>
                                 <div className="row mt-2 " >
                                     <div className="col-md-2 mx-3 pt-2 ">
                                         <i className="fa fa-video-camera" aria-hidden="true"></i>

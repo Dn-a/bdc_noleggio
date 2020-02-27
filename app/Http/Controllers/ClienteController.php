@@ -16,7 +16,7 @@ class ClienteController extends Controller
 
         $cliente = Cliente::orderBy('id','DESC')->paginate($page);
 
-        return new ClienteCollection($cliente,true,null,null,null);
+        return new ClienteCollection($cliente,true,$this->moreField(null),null,null);
     }
 
 
@@ -92,6 +92,7 @@ class ClienteController extends Controller
     private function moreField($idVideoPrenotazioni)
     {
         $moreFields = [
+            'privacy'
         ];
 
         if($idVideoPrenotazioni!=null)

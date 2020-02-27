@@ -23,7 +23,7 @@ const COLUMNS = [
     { title: 'Data Scarico', field: 'data_scarico',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Giorni al Ritiro', field:'ritiro'},
     { title: 'Noleggiato', field:'noleggiato', render: cell => cell==0 ? 'No' : <span className="highlight">Si</span>},
-    { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':<span className="highlight-error">SI</span>},
+    { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':<span className="highlight highlight-error">SI</span>},
 ].map((a) => { if(a!=null) return a; return false; } );
 const MULTISEL_SETTING = {
     disableSelect: (row) => {
