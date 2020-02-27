@@ -16,6 +16,7 @@ class CreateVideoTable extends Migration
         Schema::create('video', function (Blueprint $table) {
             $table->increments('id');
             $table->string('titolo',50);
+            $table->string('trama');
             $table->unsignedInteger('durata');
             $table->unsignedInteger('id_categoria');
             $table->unsignedInteger('id_regista');

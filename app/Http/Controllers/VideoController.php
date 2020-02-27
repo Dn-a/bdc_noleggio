@@ -40,7 +40,7 @@ class VideoController extends Controller
         ->orderBy('id','DESC')->paginate($page);
 
         return new VideoCollection($video, true,
-            $this->moreField($inUscita),//,$this->moreField($ruolo)
+            $this->moreField($inUscita,$noleggi),//,$this->moreField($ruolo)
             $idPtVendita
         );
     }
@@ -75,11 +75,11 @@ class VideoController extends Controller
         })
         ->limit($this->lmtSearch)->get();
 
-        return  new VideoCollection($video,false, $this->moreField($inUscita), $idPtVendita );
+        return  new VideoCollection($video,false, $this->moreField($inUscita,$noleggi), $idPtVendita );
     }
 
 
-    private function moreField($inUscita)
+    private function moreField($inUscita,$noleggi)
     {
         $moreFields = [
 
@@ -87,6 +87,9 @@ class VideoController extends Controller
 
         if($inUscita)
             $moreFields =  array_merge($moreFields,['numero_prenotazioni']);
+        
+        if($noleggi)
+            $moreFields =  array_merge($moreFields,['trama','attori']);
 
         return $moreFields;
     }

@@ -15,7 +15,7 @@ class Video extends Model
 
     public function attori()
 	{
-        return $this->belongsToMany('App\Attore','attori_video','id_video','id_attore')->withTimestamps();//,'category_newspapers','newspaper_id','category_id'
+        return $this->belongsToMany('App\Attore','attori_video','id_video','id_attore');//,'category_newspapers','newspaper_id','category_id'
     }
 
     public function caseProduzione()

@@ -98,6 +98,12 @@ class VideoCollection extends ResourceCollection
             $item->prenotazione->where('id_pt_vendita',$this->idPtVendita)
             ->count();
         }
+        if(in_array('attori',$fields)){
+            $ctn = 0;
+            foreach($item->attori as $attore){
+                $item['attori'][$ctn++] = $attore->nome .' '. $attore->cognome;
+            }
+        }
 
         $item['durata'] = (string) $item->durata .' minuti';
 

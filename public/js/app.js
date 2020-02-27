@@ -81773,7 +81773,26 @@ var COLUMNS_VIDEO = [{
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
-    }))));
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      id: "accordion-" + row.id
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      className: "btn btn-link pl-0",
+      "data-toggle": "collapse",
+      "data-target": "#collapse-" + row.id,
+      "aria-expanded": "false",
+      "aria-controls": "collapse-" + row.id
+    }, "Maggiori Info"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      id: "collapse-" + row.id,
+      className: "collapse",
+      "aria-labelledby": "heading-" + row.id,
+      "data-parent": "#accordion-" + row.id
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: ""
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Attori:"), " ", row.attori.map(function (a, k) {
+      return a + ' | ';
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "mb-3"
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Trama:"), " ", row.trama)))));
   }
 }, {
   title: 'Prezzo',
