@@ -88,7 +88,7 @@ class VideoController extends Controller
         if($inUscita)
             $moreFields =  array_merge($moreFields,['numero_prenotazioni']);
         
-        if($noleggi)
+        if($noleggi || $inUscita)
             $moreFields =  array_merge($moreFields,['trama','attori']);
 
         return $moreFields;
