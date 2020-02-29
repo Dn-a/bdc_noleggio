@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Auth;
 class ClienteController extends Controller
 {
 
+    private $SQLCode = [
+        23000 => 'Impossibile inserire i dati (Integrity constraint violation). E-mail o CF duplicati'
+    ];
+
     public function index(Request $request)
     {
         $page = $request->input('per-page') ?: 10;
@@ -150,7 +154,8 @@ class ClienteController extends Controller
             //$this->notifyEmail($request);
 
         }catch( \Illuminate\Database\QueryException $e){
-            return response()->json(['msg' => $e->getMessage() ],200);
+            $txt = $this->SQLCode[$e->getCode()];
+            return response()->json($txt,500);
         }
     }
 
@@ -191,7 +196,7 @@ class ClienteController extends Controller
 
 
         }catch( \Illuminate\Database\QueryException $e){
-            return response()->json(['msg' => $e->getMessage() ],200);
+            return response()->json(['msg' => $e->getMessage() ],500);
         }
     }
 
