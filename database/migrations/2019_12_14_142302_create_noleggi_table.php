@@ -18,6 +18,8 @@ class CreateNoleggiTable extends Migration
             $table->unsignedInteger('id_dipendente');
             $table->unsignedInteger('id_cliente');
             $table->unsignedInteger('id_magazzino');
+            $table->unsignedInteger('id_ricevuta_noleggio')->default(NULL);
+            $table->unsignedInteger('id_ricevuta_pagamento')->default(NULL);
             $table->float('prezzo');
             $table->float('prezzo_tot');
             $table->float('prezzo_extra');
@@ -30,6 +32,8 @@ class CreateNoleggiTable extends Migration
         	$table->foreign('id_cliente')->references('id')->on('clienti')->onDelete('restrict');
         	$table->foreign('id_dipendente')->references('id')->on('dipendenti')->onDelete('restrict');
             $table->foreign('id_magazzino')->references('id')->on('magazzino')->onDelete('restrict');
+            $table->foreign('id_ricevuta_noleggio')->references('id')->on('ricevute')->onDelete('restrict');
+            $table->foreign('id_ricevuta_pagamento')->references('id')->on('ricevute')->onDelete('restrict');
         	//$table->foreign('id_tariffa')->references('id')->on('tariffe')->onDelete('restrict');
         });
     }

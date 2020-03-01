@@ -21,7 +21,7 @@ const COLUMNS = [
         null,
     { title: 'Fornitore', field: 'fornitore',style: {textTransform:'capitalize'} },
     { title: 'Data Scarico', field: 'data_scarico',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
-    { title: 'Giorni al Ritiro', field:'ritiro'},
+    { title: 'Giorni al Ritiro', field:'ritiro',render: cell => cell!=0 ? cell :<span className="highlight highlight-error">{cell}</span>},
     { title: 'Noleggiato', field:'noleggiato', render: cell => cell==0 ? 'No' : <span className="highlight">Si</span>},
     { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':<span className="highlight highlight-error">SI</span>},
 ].map((a) => { if(a!=null) return a; return false; } );
@@ -80,6 +80,7 @@ export default class Magazzino extends Component {
 
                 this.setState({lstPtVendita});
 			}).catch((error) => {
+                if(error.response===undefined) return;
                 if(error.response.data!==undefined)
                     console.log(error.response.data);
                 else
@@ -232,6 +233,13 @@ export default class Magazzino extends Component {
 
                         <div className="container-fluid pl-3">
 
+                            <div className="row mb-2 px-2">
+                                <div className="col-md-12 description-txt">                                   
+                                    <p>Cliccando su <strong>Scarico Video</strong> si aprirà una finestra che consente di scaricare i nuovi video.</p>
+                                    <p>Tramite il tasto <strong>Carico Video</strong>, puoi caricare uno o più video selezionati. Non è possibile selezionare i video che risultanto ancora noleggiati.</p>
+                                </div>
+                            </div>
+
                             <div className="row mb-3 px-2">
 
                                 <div className="col-md-6">
@@ -289,6 +297,12 @@ export default class Magazzino extends Component {
                     <div className="tab-pane fade" id="nav-caricati" role="tabpanel" aria-labelledby="nav-caricati-tab">
 
                         <div className="container-fluid pl-3">
+
+                            <div className="row mb-2 px-2">
+                                <div className="col-md-12 description-txt">                                   
+                                    <p>Puoi ripristinare uno o più video caricati accidentalmente.</p>
+                                </div>
+                            </div>
 
                             <div className="row mb-3 px-2">
 

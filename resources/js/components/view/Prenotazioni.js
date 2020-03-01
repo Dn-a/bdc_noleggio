@@ -159,6 +159,7 @@ export default class Noleggi extends Component {
             return result;
 
         }).catch((error) => {
+          if(error.response===undefined) return;
           console.error(error.response);
           if(error.response.status==401)
             if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
@@ -235,6 +236,14 @@ export default class Noleggi extends Component {
                     <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 
                         <div className="container-fluid pl-3">
+
+                            <div className="row mb-2 px-2">
+                                <div className="col-md-12">                                   
+                                    <p>Selezionando uno o più video si attiverà il tasto <strong>Prenota</strong></p>
+                                    <p>Puoi cercare un <strong>Video</strong> in base a : TITOLO | GENERE</p>
+                                </div>
+                            </div>
+
                             <div className="row mb-3 px-2">
 
                                     <div className="col-md-6">

@@ -68,6 +68,7 @@ export default class Incassi extends Component {
 
 
 			}).catch((error) => {
+                if(error.response===undefined) return;
                 if(error.response.data!==undefined)
                     console.log(error.response.data);
                 else

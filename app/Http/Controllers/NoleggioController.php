@@ -11,6 +11,7 @@ use App\Ricevuta;
 use App\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PDF;
 
 class NoleggioController extends Controller
@@ -103,7 +104,7 @@ class NoleggioController extends Controller
         ];
 
         if($storico)
-            $moreFields =  array_merge($moreFields,['data_restituzione','danneggiato']);
+            $moreFields =  array_merge($moreFields,['data_restituzione','danneggiato','ricevuta_noleggio','ricevuta_pagamento']);
 
         if($ruolo!='Addetto')
             $moreFields =  array_merge($moreFields,['dipendente']);
@@ -150,8 +151,8 @@ class NoleggioController extends Controller
             // Field Ricevuta
             $totale = 0;
             $noleggi = [];
-
-            for( $i=0 ; $i < count($input['id_video']) ; $i++ ){
+            $cntVideo = count($input['id_video']);
+            for( $i=0 ; $i < $cntVideo ; $i++ ){
 
                 $idVideo = $input['id_video'][$i];
                 $prezzoTot = round($input['prezzo_tot'][$i],2);
@@ -244,7 +245,7 @@ class NoleggioController extends Controller
 
             $ricevuta = $this->pdfGenerate($datiRicevutaNoleggio,'noleggio');
 
-            Ricevuta::insert(
+            $idRicevuta = DB::table('ricevute')->insertGetId(
                 [
                     'tipo' => 'noleggio',
                     'id_pt_vendita' => $idPtVendita,
@@ -253,6 +254,9 @@ class NoleggioController extends Controller
                     'pdf' => $ricevuta
                 ]
             );
+            
+            for( $j=0 ; $j <$cntVideo; $j++ )
+                $arrayNlgInsert[$j]['id_ricevuta_noleggio'] = $idRicevuta;
 
             //return response()->json($datiRicevutaNoleggio,201);exit;
 
@@ -358,8 +362,8 @@ class NoleggioController extends Controller
             $totaleCostoDanni = 0;
             $totaleGiorniExtra = 0;
             $noleggi = [];
-
-            for( $i=0 ; $i < count($input['id_noleggio']) ; $i++ ){
+            $cntNoleggi = count($input['id_noleggio']);
+            for( $i=0 ; $i < $cntNoleggi ; $i++ ){
 
                 $idNoleggio = $input['id_noleggio'][$i];
                 $danneggiato = $input['danneggiato'][$i];
@@ -443,7 +447,7 @@ class NoleggioController extends Controller
 
             //return response()->json(['pdf' => $ricevuta],201);exit;
 
-            Ricevuta::insert(
+            $idRicevuta = DB::table('ricevute')->insertGetId(
                 [
                     'tipo' => 'pagamento',
                     'id_pt_vendita' => $idPtVendita,
@@ -452,6 +456,12 @@ class NoleggioController extends Controller
                     'pdf' => $ricevuta
                 ]
             );
+                        
+            $noleggio = new Noleggio();
+
+            $noleggio->whereIn('id',$input['id_noleggio'])
+            ->update(['id_ricevuta_pagamento' => $idRicevuta]);
+
 
             return response()->json(['pdf' => $ricevuta],201);
 

@@ -69818,7 +69818,7 @@ function useWaitForDOMRef(ref, onResolved) {
 /*!***************************************************************!*\
   !*** ./node_modules/react-router-dom/esm/react-router-dom.js ***!
   \***************************************************************/
-/*! exports provided: BrowserRouter, HashRouter, Link, NavLink, MemoryRouter, Prompt, Redirect, Route, Router, StaticRouter, Switch, __RouterContext, generatePath, matchPath, useHistory, useLocation, useParams, useRouteMatch, withRouter */
+/*! exports provided: MemoryRouter, Prompt, Redirect, Route, Router, StaticRouter, Switch, __RouterContext, generatePath, matchPath, useHistory, useLocation, useParams, useRouteMatch, withRouter, BrowserRouter, HashRouter, Link, NavLink */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -77137,7 +77137,7 @@ function (_Component) {
         className: "form-control",
         label: "Ruolo",
         values: objFid,
-        selected: "default",
+        defaultSelected: "default",
         handleChange: this._handleChange
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
@@ -78522,7 +78522,12 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        label: "Film",
+        label: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, "Film - ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          style: {
+            color: '#666',
+            fontSize: '0.9em'
+          }
+        }, "visualizza tutti i video gi\xE0 usciti presenti nel catalogo.")),
         placeholder: "Cerca un Film",
         searchClassName: "w-100",
         showList: true,
@@ -78979,8 +78984,10 @@ function (_Component) {
           data: data,
           moreData: moreData,
           loader: false
-        });
+        }); //console.log(res.data);
+
       })["catch"](function (error) {
+        //if(error.response===undefined) return;
         if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this4.home + '/login';
       });
@@ -79217,7 +79224,7 @@ function (_Component) {
       var rows = this.props.externalRows != null && this.props.externalRows instanceof Array ? this.props.externalRows : data.rows;
       var idTable = this.props.id !== undefined ? this.props.id : '';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, this._moreInfoTable(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
-        className: "table",
+        className: "table " + (this.props.className != undefined ? this.props.className : ''),
         id: idTable
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, columns.map(function (column, id) {
         if (column.field == 'actions') return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
@@ -80189,6 +80196,32 @@ var COLUMNS_STORICO = [{
     textTransform: 'capitalize'
   }
 }, {
+  title: 'Ricevute',
+  field: 'ricevuta_noleggio',
+  style: {
+    fontSize: '0.9em'
+  },
+  render: function render(cell, row) {
+    if (row.ricevuta_noleggio == null && row.ricevuta_pagamento == null) return;
+    var linkRicevutaNoleggio = 'data:application/pdf;base64,' + row.ricevuta_noleggio;
+    var linkRicevutaPagamento = 'data:application/pdf;base64,' + row.ricevuta_pagamento;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, row.ricevuta_noleggio != null && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      className: "privacy-file",
+      href: linkRicevutaNoleggio,
+      download: "ricevuta_noleggio.pdf"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      className: "fa fa-file-pdf-o",
+      "aria-hidden": "true"
+    }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "ricevuta Noleggio"))), row.ricevuta_pagamento != null && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      className: "privacy-file",
+      href: linkRicevutaPagamento,
+      download: "ricevuta_pagamento.pdf"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      className: "fa fa-file-pdf-o",
+      "aria-hidden": "true"
+    }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "ricevuta Pagamento"))));
+  }
+}, {
   title: 'Data Inizio',
   field: 'data_inizio',
   render: function render(cell) {
@@ -80343,6 +80376,7 @@ function (_Component) {
 
         return result;
       })["catch"](function (error) {
+        if (error.response === undefined) return;
         console.error(error.response);
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
         throw error;
@@ -80357,6 +80391,10 @@ function (_Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12 description-txt"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Solo i Responsabili o gli Amministratori del punto vendita possono assegnare il tipo di ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "fidelizzazione"), " che consente al cliente di ricevere uno sconto sul noleggio."), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "La colonna storico consente di poter visualizzare lo ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "storico noleggi"), " di ogni singolo cliente."), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Puoi cercare un ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Cliente"), " in base a : NOME | COGNOME | CF "))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -80418,7 +80456,7 @@ function (_Component) {
           }
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_7__["default"], {
-        size: "lg",
+        size: "xl",
         show: this.state.showStorico,
         onHide: this._handleCloseStoricoModal,
         confirmButton: false,
@@ -80426,6 +80464,7 @@ function (_Component) {
         type: "Storico Noleggi"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_4__["default"], {
         id: "tb-cliente-storico",
+        className: "table-responsive",
         url: this.props.url + '/noleggi',
         query: 'only=storico&id_cliente=' + this.state.clienteStorico.id,
         columns: COLUMNS_STORICO
@@ -80575,6 +80614,7 @@ function (_Component) {
           loader: false
         });
       })["catch"](function (error) {
+        if (error.response === undefined) return;
         if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
         throw error;
       });
@@ -80840,6 +80880,7 @@ function (_Component) {
           });
         }
       })["catch"](function (error) {
+        if (error.response === undefined) return;
         if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
         throw error;
       });
@@ -81033,6 +81074,7 @@ function (_Component) {
           });
         }
       })["catch"](function (error) {
+        if (error.response === undefined) return;
         if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
         throw error;
       });
@@ -81335,7 +81377,12 @@ var COLUMNS = [{
   }
 }, {
   title: 'Giorni al Ritiro',
-  field: 'ritiro'
+  field: 'ritiro',
+  render: function render(cell) {
+    return cell != 0 ? cell : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: "highlight highlight-error"
+    }, cell);
+  }
 }, {
   title: 'Noleggiato',
   field: 'noleggiato',
@@ -81420,6 +81467,7 @@ function (_Component) {
           lstPtVendita: lstPtVendita
         });
       })["catch"](function (error) {
+        if (error.response === undefined) return;
         if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
         throw error;
       });
@@ -81588,6 +81636,10 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12 description-txt"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Cliccando su ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Scarico Video"), " si aprir\xE0 una finestra che consente di scaricare i nuovi video."), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Tramite il tasto ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Carico Video"), ", puoi caricare uno o pi\xF9 video selezionati. Non \xE8 possibile selezionare i video che risultanto ancora noleggiati."))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -81655,6 +81707,10 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12 description-txt"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Puoi ripristinare uno o pi\xF9 video caricati accidentalmente."))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -81853,7 +81909,7 @@ var COLUMNS_NOLEGGI = [{
     });
   }
 }, {
-  title: 'Data Fine',
+  title: 'Data Riconsegna',
   field: 'data_fine',
   render: function render(cell) {
     return new Date(cell).toLocaleDateString("it-IT", {
@@ -81891,6 +81947,32 @@ var COLUMNS_STORICO = [{
   field: 'video',
   style: {
     textTransform: 'capitalize'
+  }
+}, {
+  title: 'Ricevute',
+  field: 'ricevuta_noleggio',
+  style: {
+    fontSize: '0.9em'
+  },
+  render: function render(cell, row) {
+    if (row.ricevuta_noleggio == null && row.ricevuta_pagamento == null) return;
+    var linkRicevutaNoleggio = 'data:application/pdf;base64,' + row.ricevuta_noleggio;
+    var linkRicevutaPagamento = 'data:application/pdf;base64,' + row.ricevuta_pagamento;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, row.ricevuta_noleggio != null && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      className: "privacy-file",
+      href: linkRicevutaNoleggio,
+      download: "ricevuta_noleggio.pdf"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      className: "fa fa-file-pdf-o",
+      "aria-hidden": "true"
+    }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "ricevuta Noleggio"))), row.ricevuta_pagamento != null && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      className: "privacy-file",
+      href: linkRicevutaPagamento,
+      download: "ricevuta_pagamento.pdf"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+      className: "fa fa-file-pdf-o",
+      "aria-hidden": "true"
+    }), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "ricevuta Pagamento"))));
   }
 }, {
   title: 'Cliente',
@@ -81938,7 +82020,9 @@ var COLUMNS_STORICO = [{
   title: 'Danneggiato',
   field: 'danneggiato',
   render: function render(cell) {
-    return cell == 0 ? 'No' : 'SI';
+    return cell == 0 ? 'No' : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: "highlight highlight-error"
+    }, "SI");
   }
 }, {
   title: 'Giorni ritardo',
@@ -82206,6 +82290,10 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12 description-txt"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Da qui \xE8 possibile selezionare uno o pi\xF9 video da noleggiare. La disponibilit\xE0 tiene conto dei video presenti in magazzino che non risultano ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "danneggiati"), ".", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "Il tasto ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Noleggia"), " si attiver\xE0 solo in presenza di almeno un video selezionato."), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "\xC8 possibile cercare un ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Video"), " in base a: TITOLO | GENERE "))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -82270,6 +82358,10 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12 description-txt"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Puoi selezionare contemporaneamente soltanto i video noleggiati dallo stesso cliente."), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "\xC8 possibile cercare un ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Noleggio"), " in base a: TITOLO VIDEO | CLIENTE "))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -82342,6 +82434,10 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12 description-txt"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "\xC8 possibile cercare un ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Noleggio"), " in base a: TITOLO VIDEO | CLIENTE "))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -82372,6 +82468,10 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12 description-txt"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "\xC8 possibile cercare una ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Ricevuta"), " in base a: TIPO | CLIENTE "))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -82708,6 +82808,7 @@ function (_Component) {
 
         return result;
       })["catch"](function (error) {
+        if (error.response === undefined) return;
         console.error(error.response);
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
         throw error;
@@ -82806,6 +82907,10 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid pl-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Selezionando uno o pi\xF9 video si attiver\xE0 il tasto ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Prenota")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Puoi cercare un ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Video"), " in base a : TITOLO | GENERE"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mb-3 px-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"

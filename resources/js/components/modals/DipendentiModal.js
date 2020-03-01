@@ -272,7 +272,7 @@ export default class DipendentiModal extends Component {
                         <DropDownSelect placeholder="Scegli un valore"
                         name="id_ruolo" className="form-control" label="Ruolo"
                         values={objFid}
-                        selected='default'
+                        defaultSelected='default'
                         handleChange={this._handleChange} />
                     </div>
 

@@ -112,6 +112,14 @@ class NoleggioCollection extends ResourceCollection
             $danneggiato = $item->magazzino->danneggiato;
             $item['danneggiato'] = $danneggiato;
         }
+        if(in_array('ricevuta_noleggio',$fields)){
+            $ricevutaNoleggio = $item->ricevutaNoleggio['pdf'];
+            $item['ricevuta_noleggio'] = $ricevutaNoleggio;
+        }
+        if(in_array('ricevuta_pagamento',$fields)){
+            $ricevutaPagamento = $item->ricevutaPagamento['pdf'];
+            $item['ricevuta_pagamento'] = $ricevutaPagamento;
+        }
 
         if(empty($this->withFields)) return $item;
 

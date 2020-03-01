@@ -79,7 +79,37 @@ const COLUMNS = [
 
 const COLUMNS_STORICO = [
     { title: 'id', field: 'id' , align:'right'},
-    { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },        
+    { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },
+    { title: 'Ricevute', field: 'ricevuta_noleggio', style:{fontSize:'0.9em'}, render:(cell,row) =>
+        {
+            if(row.ricevuta_noleggio==null && row.ricevuta_pagamento == null) return;
+
+            let linkRicevutaNoleggio = 'data:application/pdf;base64,'+row.ricevuta_noleggio;
+            let linkRicevutaPagamento = 'data:application/pdf;base64,'+row.ricevuta_pagamento;
+                        
+            return(
+                <Fragment>
+                    {row.ricevuta_noleggio !=null &&
+                        <div>
+                            <a className="privacy-file" href={linkRicevutaNoleggio} download='ricevuta_noleggio.pdf'>
+                                <i className="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;
+                                <span>ricevuta Noleggio</span>
+                            </a>
+                        </div>
+                    }
+                    {row.ricevuta_pagamento !=null && 
+                        <div>
+                            <a className="privacy-file" href={linkRicevutaPagamento} download='ricevuta_pagamento.pdf'>
+                                <i className="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;
+                                <span>ricevuta Pagamento</span>
+                            </a>
+                        </div>
+                    }
+                </Fragment>
+            );
+
+        }
+    },     
     { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Data Restituzione', field: 'data_restituzione',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
@@ -173,11 +203,12 @@ export default class Clienti extends Component {
             this.setState({recallSearch:true, reloadInfiniteTable: ++this.state.reloadInfiniteTable})
             return result;
         }).catch((error) => {
-          console.error(error.response);
-          if(error.response.status==401)
-            if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-              window.location.href=this.home + '/login';
-          throw error;
+            if(error.response===undefined) return;
+            console.error(error.response);
+            if(error.response.status==401)
+                if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
+                window.location.href=this.home + '/login';
+            throw error;
         });
     }
 
@@ -186,6 +217,15 @@ export default class Clienti extends Component {
         let urlClienti = this.props.url+'/clienti/search';
         return (
             <div className="container-fluid pl-3">
+
+                <div className="row mb-2 px-2">
+                    <div className="col-md-12 description-txt">                                   
+                        <p>Solo i Responsabili o gli Amministratori del punto vendita possono assegnare il tipo di <strong>fidelizzazione</strong> che consente al cliente di ricevere uno sconto sul noleggio.</p>
+                        <p>La colonna storico consente di poter visualizzare lo <strong>storico noleggi</strong> di ogni singolo cliente.</p>
+                        <p>Puoi cercare un <strong>Cliente</strong> in base a : NOME | COGNOME | CF </p>
+                    </div>
+                </div>
+
                 <div className="row mb-3 px-2">
 
                     <div className="col-md-6">
@@ -238,7 +278,7 @@ export default class Clienti extends Component {
                         />
                     </div>
 
-                    <AddEditModal size="lg"
+                    <AddEditModal size="xl"
                             show={this.state.showStorico}
                             onHide={this._handleCloseStoricoModal}
                             confirmButton={false} 
@@ -247,6 +287,7 @@ export default class Clienti extends Component {
                             
                             <InfiniteTable
                                 id='tb-cliente-storico'
+                                className='table-responsive'
                                 url={this.props.url+'/noleggi'}
                                 query={'only=storico&id_cliente=' + this.state.clienteStorico.id}
                                 columns={COLUMNS_STORICO}

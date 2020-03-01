@@ -71,7 +71,7 @@ const COLUMNS_NOLEGGI = [
     :
         null,
     { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
-    { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Data Riconsegna', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Giorni Ritardo', field: 'giorni_ritardo', render: (cell) => <span style={{color:cell==0?'':'red'}}>{cell}</span>},
     { title: 'Importo Complessivo', field: 'prezzo_tot', render: cell => parseFloat(cell).toFixed(2) +' €'},
 ].map((a) => { if(a!=null) return a; return false; } );
@@ -79,6 +79,36 @@ const COLUMNS_NOLEGGI = [
 const COLUMNS_STORICO = [
     { title: 'id', field: 'id' , align:'right'},
     { title: 'Video', field: 'video', style: {textTransform:'capitalize'}  },
+    { title: 'Ricevute', field: 'ricevuta_noleggio', style:{fontSize:'0.9em'}, render:(cell,row) =>
+        {
+            if(row.ricevuta_noleggio==null && row.ricevuta_pagamento == null) return;
+
+            let linkRicevutaNoleggio = 'data:application/pdf;base64,'+row.ricevuta_noleggio;
+            let linkRicevutaPagamento = 'data:application/pdf;base64,'+row.ricevuta_pagamento;
+                        
+            return(
+                <Fragment>
+                    {row.ricevuta_noleggio !=null &&
+                        <div>
+                            <a className="privacy-file" href={linkRicevutaNoleggio} download='ricevuta_noleggio.pdf'>
+                                <i className="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;
+                                <span>ricevuta Noleggio</span>
+                            </a>
+                        </div>
+                    }
+                    {row.ricevuta_pagamento !=null && 
+                        <div>
+                            <a className="privacy-file" href={linkRicevutaPagamento} download='ricevuta_pagamento.pdf'>
+                                <i className="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;
+                                <span>ricevuta Pagamento</span>
+                            </a>
+                        </div>
+                    }
+                </Fragment>
+            );
+
+        }
+    },
     { title: 'Cliente', field: 'cliente', style: {textTransform:'capitalize'} },
     USER_CONFIG.ruolo!='Addetto'?
         { title: 'Dipendente', field: 'dipendente', style: {textTransform:'capitalize'} }
@@ -87,7 +117,7 @@ const COLUMNS_STORICO = [
     { title: 'Data Inizio', field: 'data_inizio',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Data Fine', field: 'data_fine',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
     { title: 'Data Restituzione', field: 'data_restituzione',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
-    { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':'SI'},
+    { title: 'Danneggiato', field:'danneggiato', render: cell => cell==0?'No':<span className="highlight highlight-error">SI</span>},
     { title: 'Giorni ritardo', field: 'giorni_ritardo'},
     { title: 'Costo Complessivo (compresi Extra)', field: 'prezzo_tot', render:
     (cell,row) => parseFloat(cell+row.prezzo_extra).toFixed(2) +' €'},
@@ -267,65 +297,84 @@ export default class Noleggi extends Component {
                     <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 
                         <div className="container-fluid pl-3">
+                            <div className="row mb-2 px-2">
+                                <div className="col-md-12 description-txt">
+                                    <p>Da qui è possibile selezionare uno o più video da noleggiare. La disponibilità tiene conto dei video presenti in magazzino che non risultano <strong>danneggiati</strong>.<br/>
+                                    Il tasto <strong>Noleggia</strong> si attiverà solo in presenza di almeno un video selezionato.</p>
+                                    <p>È possibile cercare un <strong>Video</strong> in base a: TITOLO | GENERE </p>
+                                </div>
+                            </div>
+
                             <div className="row mb-3 px-2">
 
-                                    <div className="col-md-6">
-                                        <SearchField key="s-video" showList={false}
-                                        query='only=noleggi'
-                                        url={urlVideo+'/search'}
-                                        callback={this._handleSearchFieldCallback}
-                                        handles={(reset,recall) =>{
-                                            let check = this.state.recallSearch;
-                                            recall(check);
-                                            if(check) this.state.recallSearch=false;
-                                        }}
-                                        />
-                                    </div>
+                                <div className="col-md-6">
+                                    <SearchField key="s-video" showList={false}
+                                    query='only=noleggi'
+                                    url={urlVideo+'/search'}
+                                    callback={this._handleSearchFieldCallback}
+                                    handles={(reset,recall) =>{
+                                        let check = this.state.recallSearch;
+                                        recall(check);
+                                        if(check) this.state.recallSearch=false;
+                                    }}
+                                    />
+                                </div>
 
-                                    <div className="col-md-6 text-right">
-                                        <Button className="btn-success mr-3"
-                                        disabled={this.state.selectedListVideo.length>0?false:true}
-                                        onClick={this._handleShowNoleggioModal}>
-                                        <i className="fa fa-upload" aria-hidden="true"></i>
-                                        &nbsp;Noleggia</Button>
+                                <div className="col-md-6 text-right">
+                                    <Button className="btn-success mr-3"
+                                    disabled={this.state.selectedListVideo.length>0?false:true}
+                                    onClick={this._handleShowNoleggioModal}>
+                                    <i className="fa fa-upload" aria-hidden="true"></i>
+                                    &nbsp;Noleggia</Button>
 
 
-                                        <NoleggoModal url={this.props.url}
-                                            externalRows={this.state.rowsSelectedListVideo}
-                                            show={this.state.showNoleggio} onHide={this._handleCloseNoleggioModal}
-                                            callback={
-                                                (row) => {
-                                                    this.setState({recallSearch:true,reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
-                                                }
+                                    <NoleggoModal url={this.props.url}
+                                        externalRows={this.state.rowsSelectedListVideo}
+                                        show={this.state.showNoleggio} onHide={this._handleCloseNoleggioModal}
+                                        callback={
+                                            (row) => {
+                                                this.setState({recallSearch:true,reloadInfiniteTable:++(this.state.reloadInfiniteTable)});
                                             }
-                                        />
-                                    </div>
+                                        }
+                                    />
+                                </div>
 
+                            </div>
+
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <InfiniteTable key="video"
+                                        id="video"
+                                        reload={this.state.reloadInfiniteTable}
+                                        url={urlVideo}
+                                        query='only=noleggi'
+                                        columns={COLUMNS_VIDEO}
+                                        externalRows={this.state.rowsVideo}
+                                        multiSelect={true}
+                                        multiSelectSetting={MS_VIDEO}
+                                        selectedList={this.state.selectedListVideo}
+                                        multiSelectCallback={ (list,row) =>{
+                                            this.setState({selectedListVideo:list, rowsSelectedListVideo:row})
+                                            //console.log(row)
+                                        }}
+                                    />
                                 </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <InfiniteTable key="video"
-                                            id="video"
-                                            reload={this.state.reloadInfiniteTable}
-                                            url={urlVideo}
-                                            query='only=noleggi'
-                                            columns={COLUMNS_VIDEO}
-                                            externalRows={this.state.rowsVideo}
-                                            multiSelect={true}
-                                            multiSelectSetting={MS_VIDEO}
-                                            selectedList={this.state.selectedListVideo}
-                                            multiSelectCallback={ (list,row) =>{
-                                                this.setState({selectedListVideo:list, rowsSelectedListVideo:row})
-                                                //console.log(row)
-                                            }}
-                                        />
-                                    </div>
-                                </div>
+                            </div>
+
                         </div>
                     </div>
 
                     <div className="tab-pane fade" id="nav-caricati" role="tabpanel" aria-labelledby="nav-caricati-tab">
                         <div className="container-fluid pl-3">
+
+                            <div className="row mb-2 px-2">
+                                <div className="col-md-12 description-txt">    
+                                    <p>Puoi selezionare contemporaneamente soltanto i video noleggiati dallo stesso cliente.
+                                    </p>                               
+                                    <p>È possibile cercare un <strong>Noleggio</strong> in base a: TITOLO VIDEO | CLIENTE </p>
+                                </div>
+                            </div>
+
                             <div className="row mb-3 px-2">
 
                                     <div className="col-md-6">
@@ -399,6 +448,13 @@ export default class Noleggi extends Component {
 
                     <div className="tab-pane fade" id="nav-storico" role="tabpanel" aria-labelledby="nav-storico-tab">
                         <div className="container-fluid pl-3">
+                            
+                            <div className="row mb-2 px-2">
+                                <div className="col-md-12 description-txt">                                   
+                                    <p>È possibile cercare un <strong>Noleggio</strong> in base a: TITOLO VIDEO | CLIENTE </p>
+                                </div>
+                            </div>
+
                             <div className="row mb-3 px-2">
 
                                     <div className="col-md-6">
@@ -430,6 +486,13 @@ export default class Noleggi extends Component {
 
                     <div className="tab-pane fade" id="nav-ricevute" role="tabpanel" aria-labelledby="nav-ricevute-tab">
                         <div className="container-fluid pl-3">
+
+                            <div className="row mb-2 px-2">
+                                <div className="col-md-12 description-txt">                                   
+                                    <p>È possibile cercare una <strong>Ricevuta</strong> in base a: TIPO | CLIENTE </p>
+                                </div>
+                            </div>
+
                             <div className="row mb-3 px-2">
 
                                     <div className="col-md-6">

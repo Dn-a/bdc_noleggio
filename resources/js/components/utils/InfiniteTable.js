@@ -120,7 +120,10 @@ export default class InfiniteTable extends Component {
 
                 this.setState({data,moreData,loader:false});
 
+                //console.log(res.data);
+
 			}).catch((error) => {
+                //if(error.response===undefined) return;
                 if(error.response.data!==undefined)
                     console.log(error.response.data);
                 else
@@ -384,7 +387,7 @@ export default class InfiniteTable extends Component {
 
                 { this._moreInfoTable() }
 
-                <table className="table" id={idTable}>
+                <table className={"table "+ (this.props.className!=undefined?this.props.className:'')} id={idTable}>
                     <thead>
                         <tr>
                             {

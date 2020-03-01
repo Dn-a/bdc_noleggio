@@ -11,7 +11,7 @@ class Noleggio extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id_cliente', 'id_dipendente', 'id_magazzino',
+        'id_cliente', 'id_dipendente', 'id_magazzino','id_ricevuta_noleggio','id_ricevuta_pagamento',
         'prezzo_tot', 'prezzo_extra', 'data_inizio', 'data_fine'
     ];
 
@@ -30,4 +30,15 @@ class Noleggio extends Model
     {
         return $this->belongsTo('App\Dipendente','id_dipendente');
     }
+
+    public function ricevutaNoleggio()
+    {
+        return $this->belongsTo('App\Ricevuta','id_ricevuta_noleggio');
+    }
+
+    public function ricevutaPagamento()
+    {
+        return $this->belongsTo('App\Ricevuta','id_ricevuta_pagamento');
+    }
 }
+

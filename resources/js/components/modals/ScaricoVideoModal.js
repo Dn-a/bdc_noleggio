@@ -183,10 +183,14 @@ export default class ScaricoVideoModal extends Component {
             >
 
                 <form>
-
+                
                 <div className="form-group">
                         <SearchField
-                            label="Film"
+                            label={(
+                                <Fragment>
+                                    Film - <span style={{color:'#666',fontSize:'0.9em'}}>visualizza tutti i video già usciti presenti nel catalogo.</span>
+                                </Fragment>
+                            )}
                             placeholder='Cerca un Film'
                             searchClassName='w-100'
                             showList={true}

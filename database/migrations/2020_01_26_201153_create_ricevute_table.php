@@ -15,7 +15,7 @@ class CreateRicevuteTable extends Migration
     {
         Schema::create('ricevute', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('tipo',50);
+            $table->enum('tipo',['noleggio','pagamento']);
             $table->unsignedInteger('id_pt_vendita');
             $table->unsignedInteger('id_dipendente');
             $table->unsignedInteger('id_cliente');

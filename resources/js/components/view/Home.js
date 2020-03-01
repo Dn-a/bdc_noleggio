@@ -79,6 +79,7 @@ export default class Home extends Component {
 
 
 			}).catch((error) => {
+                if(error.response===undefined) return;
                 if(error.response.data!==undefined)
                     console.log(error.response.data);
                 else

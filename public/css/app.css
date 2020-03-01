@@ -11429,6 +11429,10 @@ ul {
   margin: 0 -16px;
 }
 
+.description-txt {
+  color: #666;
+}
+
 /*--- BUTTON ---*/
 
 .btn-info,
