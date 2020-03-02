@@ -10,6 +10,7 @@ import Clienti from './view/Clienti';
 import Dipendenti from './view/Dipendenti';
 import Magazzino from './view/Magazzino';
 import Incassi from './view/Incassi';
+import Catalogo from './view/Catalogo';
 
 const routes = [
     {path: "/", name:"Home",title:'Home', icon:'fa-home', Component:Home},
@@ -18,7 +19,8 @@ const routes = [
     {path: "/clienti", name:"Clienti",title:'Gestione Clienti', icon:'fa-address-card-o', Component: Clienti},
     {path: "/dipendenti", name:"Dipendenti",title:'Gestione Dipendenti', icon:'fa-users', Component: Dipendenti},
     {path: "/incassi", name:"Incassi",title:'Report Incassi', icon:'fa-area-chart', Component: Incassi},
-    {path: "/magazzino", name:"Magazzino",title:'Gestione Magazzino', icon:'fa-list-alt', Component: Magazzino},
+    {path: "/magazzino", name:"Magazzino",title:'Gestione Magazzino', icon:'fa fa-truck', Component: Magazzino},
+    {path: "/catalogo", name:"Catalogo",title:'Gestione Film', icon:'fa fa-youtube-play', Component: Catalogo},
 ];
 
 
@@ -55,7 +57,9 @@ export default class Main extends Component {
     }
 
     render() {
+        
         let menu = USER_CONFIG.menu !== undefined?USER_CONFIG.menu:[];
+
         return (
             <Router>
                 <aside id="sidebar" className="shadow">

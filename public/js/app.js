@@ -76237,6 +76237,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_Dipendenti__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./view/Dipendenti */ "./resources/js/components/view/Dipendenti.js");
 /* harmony import */ var _view_Magazzino__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./view/Magazzino */ "./resources/js/components/view/Magazzino.js");
 /* harmony import */ var _view_Incassi__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./view/Incassi */ "./resources/js/components/view/Incassi.js");
+/* harmony import */ var _view_Catalogo__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./view/Catalogo */ "./resources/js/components/view/Catalogo.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -76254,6 +76255,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -76306,8 +76308,14 @@ var routes = [{
   path: "/magazzino",
   name: "Magazzino",
   title: 'Gestione Magazzino',
-  icon: 'fa-list-alt',
+  icon: 'fa fa-truck',
   Component: _view_Magazzino__WEBPACK_IMPORTED_MODULE_9__["default"]
+}, {
+  path: "/catalogo",
+  name: "Catalogo",
+  title: 'Gestione Film',
+  icon: 'fa fa-youtube-play',
+  Component: _view_Catalogo__WEBPACK_IMPORTED_MODULE_11__["default"]
 }];
 
 var MainTitle = function MainTitle() {
@@ -76399,6 +76407,450 @@ function (_Component) {
 if (document.getElementById('noleggio')) {
   react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Main, null), document.getElementById('noleggio'));
 }
+
+/***/ }),
+
+/***/ "./resources/js/components/modals/CatalogoModal.js":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/modals/CatalogoModal.js ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return CatalogoModal; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Env__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Env */ "./resources/js/components/Env.js");
+/* harmony import */ var _utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/AddEditModal */ "./resources/js/components/utils/AddEditModal.js");
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/form/InputField */ "./resources/js/components/utils/form/InputField.js");
+/* harmony import */ var _utils_form_DataField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/form/DataField */ "./resources/js/components/utils/form/DataField.js");
+/* harmony import */ var _utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/DropdownSelect */ "./resources/js/components/utils/form/DropdownSelect.js");
+/* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
+/* harmony import */ var _utils_form_FileField__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../utils/form/FileField */ "./resources/js/components/utils/form/FileField.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+
+
+
+
+var email_reg_exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+var whitespace_reg_ex = /^[^\s].*/;
+var FIELDS = ['titolo', 'durata', 'trama', 'in_uscita', 'data_uscita', 'prezzo', 'img', 'id_attori', 'id_categoria', 'id_regista'];
+
+var CatalogoModal =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(CatalogoModal, _Component);
+
+  function CatalogoModal(props) {
+    var _this;
+
+    _classCallCheck(this, CatalogoModal);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(CatalogoModal).call(this, props));
+    var data = {};
+    var error = {};
+    FIELDS.map(function (fd, id) {
+      data[fd] = error[fd] = '';
+    });
+    _this.state = {
+      data: data,
+      error: error,
+      checked: false,
+      loader: false,
+      remoteError: ''
+    };
+    _this.home = _Env__WEBPACK_IMPORTED_MODULE_1__["URL_HOME"];
+    _this._handleChange = _this._handleChange.bind(_assertThisInitialized(_this));
+    _this._handleOnSave = _this._handleOnSave.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(CatalogoModal, [{
+    key: "_resetAfterClose",
+    value: function _resetAfterClose() {
+      var data = {};
+      var error = {};
+      FIELDS.map(function (fd, id) {
+        data[fd] = error[fd] = '';
+      });
+      this.state.data = data;
+      this.state.error = error;
+      this.state.loader = false;
+      this.state.checked = false;
+    }
+  }, {
+    key: "setRemoteStore",
+    value: function setRemoteStore() {
+      var _this2 = this;
+
+      var url = this.props.url + '/video';
+      var headers = {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      };
+      var data = this.state.data;
+      var formData = new FormData();
+      Object.keys(data).map(function (k, id) {
+        formData.append(k, data[k]);
+      });
+      formData.append('_token', CSRF_TOKEN);
+      this.setState({
+        loader: true
+      });
+      return axios.post(url, formData, headers).then(function (result) {
+        //console.log(result);
+        if (_this2.props.callback !== undefined) _this2.props.callback(data);
+
+        _this2.props.onHide();
+
+        _this2.state.loader = false;
+        return result;
+      })["catch"](function (error) {
+        if (error.response === undefined) {
+          console.log(error);
+          return;
+        }
+
+        console.error(error.response);
+        var msgError = 'Qualcosa è andato storto. Errore: ' + error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
+
+        _this2.setState({
+          remoteError: msgError
+        });
+
+        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
+        throw error;
+      });
+    }
+  }, {
+    key: "_handleOnSave",
+    value: function _handleOnSave() {
+      console.log("save");
+      this.setRemoteStore();
+    }
+  }, {
+    key: "_handleChange",
+    value: function _handleChange(e) {
+      var _this3 = this;
+
+      var value = e.target.value.toLowerCase();
+      var field = e.target.name;
+      var error = this.state.error;
+      var data = this.state.data;
+      if (value == '') error[field] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['vuoto'];else error[field] = '';
+
+      switch (field) {
+        case 'titolo':
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.nome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['caratteri'];
+          break;
+
+        case 'durata':
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cognome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['caratteri'];
+          break;
+
+        case 'trama':
+          value = value.toUpperCase();
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cf = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['caratteri'];
+          break;
+
+        case 'in_uscita':
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.indirizzo = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['caratteri'];
+          break;
+
+        case 'data_uscita':
+          var today = new Date();
+          today = new Date(today.toDateString()).getTime();
+          var date = new Date(value);
+          date = new Date(date.toDateString()).getTime();
+          if (date > today) error.data_nascita = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['data_2'];
+          break;
+
+        case 'prezzo':
+          if (isNaN(value)) error.cellulare = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['numero'];
+          break;
+
+        case 'img':
+          if (value.length < 8) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['email_1'];else if (!email_reg_exp.test(value)) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['email_2'];
+          break;
+      }
+
+      data[field] = field != 'privacy' ? value.trim() : value;
+      this.setState({
+        data: data,
+        error: error
+      }, function () {
+        return _this3.checked();
+      });
+    }
+  }, {
+    key: "checked",
+    value: function checked() {
+      var data = this.state.data;
+      var error = this.state.error;
+      var checked = true;
+      Object.keys(error).map(function (k, id) {
+        if (error[k] != '' || data[k] == '') checked = false;
+      });
+      this.setState({
+        checked: checked
+      });
+    }
+  }, {
+    key: "showError",
+    value: function showError(field) {
+      var error = this.state.error[field] !== undefined ? this.state.error[field] : '';
+      if (error != '') return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "error-div"
+      }, error);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this4 = this;
+
+      var objFid = {
+        '1': 'Start - 0%'
+      };
+
+      if (USER_CONFIG.ruolo != 'Addetto') {
+        objFid['2'] = 'Plus - 10%';
+        objFid['3'] = 'Revolution - 20%';
+      }
+
+      var divClassName = 'mb-3';
+      var urlCategorie = this.props.url + '/categorie/search';
+      var urlRegisti = this.props.url + '/registi/search';
+      var urlAttori = this.props.url + '/attori/search';
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        size: "md",
+        show: this.props.show,
+        onHide: function onHide(a) {
+          _this4.props.onHide(a);
+
+          _this4._resetAfterClose();
+        },
+        onConfirm: this._handleOnSave,
+        loader: this.state.loader,
+        disabledConfirmButton: !this.state.checked,
+        error: this.state.remoteError,
+        title: "Film",
+        type: "Nuovo"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        name: "titolo",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Titolo",
+        helperText: this.showError('titolo'),
+        handleChange: this._handleChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        name: "durata",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Durata",
+        helperText: this.showError('durata'),
+        handleChange: this._handleChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        name: "trama",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Trama",
+        helperText: this.showError('trama'),
+        handleChange: this._handleChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DataField__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        name: "data_uscita",
+        className: "form-control",
+        label: "Data Uscita",
+        helperText: this.showError('data_uscita'),
+        handleChange: this._handleChange
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        label: "Genere",
+        placeholder: "Cerca un Genere",
+        searchClassName: "w-100",
+        showList: true,
+        url: urlCategorie,
+        patternList: {
+          id: 'id',
+          fields: {
+            titolo: []
+          }
+        } //id di ritorno; i fields vengono usati come titolo
+        ,
+        reloadOnClick: false,
+        onClick: function onClick(val) {
+          //console.log(val);
+          var data = _this4.state.data;
+          var error = _this4.state.error;
+          data.id_categoria = val.id;
+          error.id_categoria = '';
+
+          _this4.setState({
+            data: data,
+            error: error
+          }, function () {
+            return _this4.checked();
+          });
+        },
+        callback: function callback(val) {
+          //console.log(val);
+          var data = _this4.state.data;
+          var error = _this4.state.error;
+          data.id_categoria = '';
+
+          if (val.length == 0) {
+            error.id_categoria = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['genere'];
+          }
+
+          _this4.setState({
+            data: data,
+            error: error
+          }, function () {
+            return _this4.checked();
+          });
+        }
+      }), this.showError('id_categoria')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        label: "Regista",
+        placeholder: "Cerca un Regista",
+        searchClassName: "w-100",
+        showList: true,
+        url: urlRegisti,
+        patternList: {
+          id: 'id',
+          fields: {
+            nome: [],
+            cognome: []
+          }
+        } //id di ritorno; i fields vengono usati come titolo
+        ,
+        reloadOnClick: false,
+        onClick: function onClick(val) {
+          //console.log(val);
+          var data = _this4.state.data;
+          var error = _this4.state.error;
+          data.id_regista = val.id;
+          error.id_regista = '';
+
+          _this4.setState({
+            data: data,
+            error: error
+          }, function () {
+            return _this4.checked();
+          });
+        },
+        callback: function callback(val) {
+          //console.log(val);
+          var data = _this4.state.data;
+          var error = _this4.state.error;
+          data.id_regista = '';
+
+          if (val.length == 0) {
+            error.id_regista = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['regista'];
+          }
+
+          _this4.setState({
+            data: data,
+            error: error
+          }, function () {
+            return _this4.checked();
+          });
+        }
+      }), this.showError('id_regista')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        label: "Attore",
+        placeholder: "Cerca un Attore",
+        searchClassName: "w-100",
+        showList: true,
+        url: urlAttori,
+        patternList: {
+          id: 'id',
+          fields: {
+            nome: [],
+            cognome: []
+          }
+        } //id di ritorno; i fields vengono usati come titolo
+        ,
+        reloadOnClick: false,
+        onClick: function onClick(val) {
+          //console.log(val);
+          var data = _this4.state.data;
+          var error = _this4.state.error;
+          data.id_attori = val.id;
+          error.id_attori = '';
+
+          _this4.setState({
+            data: data,
+            error: error
+          }, function () {
+            return _this4.checked();
+          });
+        },
+        callback: function callback(val) {
+          //console.log(val);
+          var data = _this4.state.data;
+          var error = _this4.state.error;
+          data.id_attori = '';
+
+          if (val.length == 0) {
+            error.id_attori = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['attore'];
+          }
+
+          _this4.setState({
+            data: data,
+            error: error
+          }, function () {
+            return _this4.checked();
+          });
+        }
+      }), this.showError('id_attori')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        name: "img",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Link immagine",
+        helperText: this.showError('img'),
+        handleChange: this._handleChange
+      }))));
+    }
+  }]);
+
+  return CatalogoModal;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
 
 /***/ }),
 
@@ -79828,21 +80280,24 @@ var FileField = function FileField(_ref) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var InfoError = {
-  'vuoto': 'campo vuoto',
-  'data': 'inserire una data superiore a quella corrente',
-  'data_2': 'inserire una data inferiore a quella corrente',
+  'vuoto': 'Campo vuoto',
+  'data': 'Inserire una data superiore a quella corrente',
+  'data_2': 'Inserire una data inferiore a quella corrente',
+  'genere': 'Inserire un Genere valido',
+  'regista': 'Inserire un Regista valido',
+  'attore': 'Inserire un Attore valido',
   'caratteri': 'Inserire caratteri validi',
   'password': 'Inserire almeno 8 caratteri',
   'confirm_password': 'Le password non corrispondono',
-  'comune': 'inserire un comune valido',
-  'pt_vendita': 'inserire un punto vendita valido',
-  'fornitore': 'inserire un fornitore valido',
-  'cliente': 'inserire un cliente valido',
-  'film': 'inserire un film valido',
+  'comune': 'Inserire un comune valido',
+  'pt_vendita': 'Inserire un punto vendita valido',
+  'fornitore': 'Inserire un fornitore valido',
+  'cliente': 'Inserire un cliente valido',
+  'film': 'Inserire un film valido',
   'file': 'Allegare un file valido',
   'caratteri_min': 'Inserire almeno 2 caratteri',
   'iva': 'La partita IVA in genere è composta da 11 cifre',
-  'cap': 'il CAP in genere è composto da almeno 5 cifre',
+  'cap': 'Il CAP in genere è composto da almeno 5 cifre',
   'telefono': 'Il numero di telefono in genere è composto da almeno 8 cifre',
   'numero': 'Inserire un numero valido',
   'numero_2': 'Inserire un numero maggiore di zero',
@@ -80025,6 +80480,234 @@ var RangeField = function RangeField(_ref) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (RangeField);
+
+/***/ }),
+
+/***/ "./resources/js/components/view/Catalogo.js":
+/*!**************************************************!*\
+  !*** ./resources/js/components/view/Catalogo.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Noleggi; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
+/* harmony import */ var _utils_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/Button */ "./resources/js/components/utils/Button.js");
+/* harmony import */ var _utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/InfiniteTable */ "./resources/js/components/utils/InfiniteTable.js");
+/* harmony import */ var _modals_CatalogoModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modals/CatalogoModal */ "./resources/js/components/modals/CatalogoModal.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+var COLUMNS_VIDEO = [{
+  title: 'id',
+  field: 'id',
+  align: 'right'
+}, {
+  title: 'Titolo',
+  field: 'titolo',
+  img: '',
+  render: function render(cell, row) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      style: {
+        display: 'inline-block'
+      }
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      style: {
+        textTransform: 'capitalize',
+        fontWeight: '600'
+      }
+    }, row['titolo']), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['categoria']), " -\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, row['regista']), "\xA0", row.attori != undefined && row.trama != undefined && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      id: "accordion-" + row.id
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      className: "btn btn-link pl-0",
+      "data-toggle": "collapse",
+      "data-target": "#collapse-" + row.id,
+      "aria-expanded": "false",
+      "aria-controls": "collapse-" + row.id
+    }, "Maggiori Info"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      id: "collapse-" + row.id,
+      className: "collapse",
+      "aria-labelledby": "heading-" + row.id,
+      "data-parent": "#accordion-" + row.id
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: ""
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Attori:"), " ", row.attori.map(function (a, k) {
+      return a + ' | ';
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "mb-3"
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Trama:"), " ", row.trama)))));
+  }
+}, {
+  title: 'Durata',
+  field: 'durata'
+}, {
+  title: 'Data Uscita',
+  field: 'data_uscita',
+  render: function render(cell, row) {
+    var uscita = row.in_uscita == 0 ? 'uscito' : 'in uscita';
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: row.in_uscita == 1 ? 'highlight-confirm' : ''
+    }, uscita));
+  }
+}, {
+  title: 'Prezzo',
+  field: 'prezzo',
+  render: function render(cell) {
+    return parseFloat(cell).toFixed(2) + ' €';
+  }
+}];
+
+var Noleggi =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Noleggi, _Component);
+
+  function Noleggi(props) {
+    var _this;
+
+    _classCallCheck(this, Noleggi);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Noleggi).call(this, props));
+    _this.state = {
+      rowsVideo: '',
+      showVideo: false,
+      recallSearch: false,
+      reloadInfiniteTable: 0
+    };
+    _this.url = _this.props.url + '/video';
+    _this._handleCloseModal = _this._handleCloseModal.bind(_assertThisInitialized(_this));
+    _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
+    _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(Noleggi, [{
+    key: "_handleCloseModal",
+    value: function _handleCloseModal() {
+      this.setState({
+        showVideo: false
+      });
+    }
+  }, {
+    key: "_handleShowModal",
+    value: function _handleShowModal() {
+      this.setState({
+        showVideo: true
+      });
+    }
+  }, {
+    key: "_handleSearchFieldCallback",
+    value: function _handleSearchFieldCallback(data, reset) {
+      //console.log(data);
+      var rowsVideo = this.state.rowsVideo;
+
+      if (reset) {
+        // al momento unica soluzione per notificare a InfinityTable che externalRow è vuoto
+        rowsVideo = '';
+        this.setState({
+          rowsVideo: rowsVideo
+        });
+      } else {
+        rowsVideo = data.data;
+        this.setState({
+          rowsVideo: rowsVideo
+        });
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      var user = USER_CONFIG;
+      var ruolo = user.ruolo;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container-fluid pl-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-2 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12 description-txt"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Cliccando su ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Aggiungi film"), " si aprir\xE0 una finestra che ti consentir\xE0 di aggiungere un nuovo film (uscito o in uscita) nel catalogo."), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "\xC8 possibile cercare un ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Video"), " in base a: TITOLO | GENERE "))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row mb-3 px-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        key: "s-video",
+        showList: false,
+        query: "only=catalogo",
+        url: this.url + '/search',
+        callback: this._handleSearchFieldCallback,
+        handles: function handles(reset, recall) {
+          var check = _this2.state.recallSearch;
+          recall(check);
+          if (check) _this2.state.recallSearch = false;
+        }
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6 text-right"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+        className: "btn-success mr-3",
+        onClick: this._handleShowModal
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-plus",
+        "aria-hidden": "true"
+      }), "\xA0Aggiungi un Film"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_modals_CatalogoModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        url: this.props.url,
+        show: this.state.showVideo,
+        onHide: this._handleCloseModal,
+        callback: function callback(row) {
+          _this2.setState({
+            recallSearch: true,
+            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+          });
+        }
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_InfiniteTable__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        key: "video",
+        id: "video",
+        reload: this.state.reloadInfiniteTable,
+        url: this.url,
+        query: "only=catalogo",
+        columns: COLUMNS_VIDEO,
+        externalRows: this.state.rowsVideo
+      })))));
+    }
+  }]);
+
+  return Noleggi;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
 
 /***/ }),
 
@@ -81829,7 +82512,7 @@ var COLUMNS_VIDEO = [{
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
-    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    })), row.attori != undefined && row.trama != undefined && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       id: "accordion-" + row.id
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
       className: "btn btn-link pl-0",

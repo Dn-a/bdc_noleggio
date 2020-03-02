@@ -23,7 +23,7 @@ Auth::routes([
 // browser request
 if(request()->header('accept')!='application/json')
     Route::get('/{name}', 'HomeController@index')->name('home')
-    ->where('name','(|home|clienti|dipendenti|video|magazzino|noleggi|prenotazioni|restituzioni|incassi|setting)');
+    ->where('name','(|home|clienti|dipendenti|video|magazzino|noleggi|prenotazioni|restituzioni|incassi|setting|catalogo)');
 
 
 // ADMIN

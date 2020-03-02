@@ -20,22 +20,24 @@ const COLUMNS_VIDEO = [
                         <span>{row['categoria']}</span> -&nbsp;
                         <span>{row['regista']}</span> -&nbsp;
                         <span>{new Date(row['data_uscita']).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})}</span>
-                        <div id={"accordion-"+row.id}>
-                            <button className="btn btn-link pl-0" data-toggle="collapse" data-target={"#collapse-"+row.id} aria-expanded="false" aria-controls={"collapse-"+row.id}>
-                                Maggiori Info
-                            </button>
-                            <div id={"collapse-"+row.id} className="collapse" aria-labelledby={"heading-"+row.id} data-parent={"#accordion-"+row.id}>
-                                <div className="">
-                                    <strong>Attori:</strong> {
-                                        row.attori.map((a,k) => {
-                                            return(a+' | ')
-                                        })
-                                    }
-                                    <div className="mb-3"></div>
-                                    <strong>Trama:</strong> {row.trama}
+                        {row.attori!=undefined && row.trama!=undefined &&
+                            <div id={"accordion-"+row.id}>
+                                <button className="btn btn-link pl-0" data-toggle="collapse" data-target={"#collapse-"+row.id} aria-expanded="false" aria-controls={"collapse-"+row.id}>
+                                    Maggiori Info
+                                </button>
+                                <div id={"collapse-"+row.id} className="collapse" aria-labelledby={"heading-"+row.id} data-parent={"#accordion-"+row.id}>
+                                    <div className="">
+                                        <strong>Attori:</strong> {
+                                            row.attori.map((a,k) => {
+                                                return(a+' | ')
+                                            })
+                                        }
+                                        <div className="mb-3"></div>
+                                        <strong>Trama:</strong> {row.trama}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                     </div>
                 </div>
             );
