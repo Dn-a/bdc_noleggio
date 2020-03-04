@@ -38,7 +38,6 @@ export default class Dipendenti extends Component {
         this._handleShowModal = this._handleShowModal.bind(this);
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
         this._handleCheckDataModal = this._handleCheckDataModal.bind(this);
-        this._handleSearchFieldClick = this._handleSearchFieldClick.bind(this);
     }
 
     componentDidMount(){
@@ -101,10 +100,6 @@ export default class Dipendenti extends Component {
 
     }
 
-    _handleSearchFieldClick(data){
-        console.log(data)
-    }
-
 
     render() {
 
@@ -150,7 +145,7 @@ export default class Dipendenti extends Component {
                         url={this.url+'/search'}
                         query={idPtVendita!=-1 ? 'id_pt_vendita='+idPtVendita : ''}
                         callback={this._handleSearchFieldCallback}
-                        onClick={this._handleSearchFieldClick}
+                        onClick={(a) => console.log(a) }
                         />
                     </div>
 

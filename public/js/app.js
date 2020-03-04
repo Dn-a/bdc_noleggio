@@ -77445,7 +77445,7 @@ function (_Component) {
           break;
       }
 
-      data[field] = field != 'privacy' ? value.trim() : value;
+      data[field] = value.trim();
       this.setState({
         data: data,
         error: error
@@ -78979,7 +78979,7 @@ function (_Component) {
             color: '#666',
             fontSize: '0.9em'
           }
-        }, "visualizza tutti i video gi\xE0 usciti presenti nel catalogo.")),
+        }, "puoi cercare tutti i video gi\xE0 usciti.")),
         placeholder: "Cerca un Film",
         searchClassName: "w-100",
         showList: true,
@@ -81263,7 +81263,6 @@ function (_Component) {
     _this._handleShowModal = _this._handleShowModal.bind(_assertThisInitialized(_this));
     _this._handleSearchFieldCallback = _this._handleSearchFieldCallback.bind(_assertThisInitialized(_this));
     _this._handleCheckDataModal = _this._handleCheckDataModal.bind(_assertThisInitialized(_this));
-    _this._handleSearchFieldClick = _this._handleSearchFieldClick.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -81339,11 +81338,6 @@ function (_Component) {
       }
     }
   }, {
-    key: "_handleSearchFieldClick",
-    value: function _handleSearchFieldClick(data) {
-      console.log(data);
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this3 = this;
@@ -81389,7 +81383,9 @@ function (_Component) {
         url: this.url + '/search',
         query: idPtVendita != -1 ? 'id_pt_vendita=' + idPtVendita : '',
         callback: this._handleSearchFieldCallback,
-        onClick: this._handleSearchFieldClick
+        onClick: function onClick(a) {
+          return console.log(a);
+        }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
       }, USER_CONFIG.ruolo == 'Admin' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_3__["AddButton"], {

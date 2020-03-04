@@ -188,7 +188,7 @@ export default class ScaricoVideoModal extends Component {
                         <SearchField
                             label={(
                                 <Fragment>
-                                    Film - <span style={{color:'#666',fontSize:'0.9em'}}>visualizza tutti i video già usciti presenti nel catalogo.</span>
+                                    Film - <span style={{color:'#666',fontSize:'0.9em'}}>puoi cercare tutti i video già usciti.</span>
                                 </Fragment>
                             )}
                             placeholder='Cerca un Film'

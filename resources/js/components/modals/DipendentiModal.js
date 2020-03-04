@@ -170,7 +170,7 @@ export default class DipendentiModal extends Component {
                 break;
         }
 
-        data[field] = field!='privacy'? value.trim() : value;
+        data[field] = value.trim();
 
         this.setState({data,error},()  => this.checked());
     }
