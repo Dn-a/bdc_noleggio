@@ -15,7 +15,7 @@ const COLUMNS = [
     { title: 'Matricola', field: 'matricola' },
     { title: 'Ruolo', field:'ruolo'},
     { title: 'Punto Vendita', field:'pt_vendita'},
-    { title: 'Creato il', field:'created_at', render: cell => new Date(cell).toLocaleDateString("it-IT")},
+    { title: 'Creato il', field:'created_at', render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})},
   ];
 
 
