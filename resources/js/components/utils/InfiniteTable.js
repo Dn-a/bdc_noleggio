@@ -12,7 +12,8 @@ import {URL_HOME} from '../Env';
 // - externalRows: uso temporaneo; adotterò soluzioni migiori in futuro
 // - multiSelect: tipo boolean, attiva/disattiva la selezione multipla delle righe
 // - selectedList: riceve in ingresso una lista di ID dei dati visulalizzati in tabella
-// - multiSelectCallback: metodo richiamato ogni qualvolta si clicca su una nuova riga
+// - multiSelectCallback: ritorna un set di dati inerenti le righe selezionate
+// - onClick: intercetta il click sulla singola riga
 // - onActions: metodo invocato da eventuali azioni implementate nel render del campo columns - argomenti(object)
 
 export default class InfiniteTable extends Component {
@@ -133,6 +134,11 @@ export default class InfiniteTable extends Component {
 						window.location.href=this.home + '/login';
 			});
     }
+
+    _onClick(row){
+        if(this.props.onClick!==undefined)
+            this.props.onClick(row);
+    } 
 
     // Multiselezione righe
     _handleMultiSelection(id,row){
@@ -430,7 +436,7 @@ export default class InfiniteTable extends Component {
                                                 )
                                             }
                                             key={id}
-                                            onClick={() => this._handleMultiSelection(idField,row)}
+                                            onClick={() => {this._handleMultiSelection(idField,row),this._onClick(row);}}
                                         >
                                             {
                                                 columns.map((column,id) => {
