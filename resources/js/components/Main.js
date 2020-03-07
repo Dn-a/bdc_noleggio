@@ -11,6 +11,7 @@ import Dipendenti from './view/Dipendenti';
 import Magazzino from './view/Magazzino';
 import Incassi from './view/Incassi';
 import Catalogo from './view/Catalogo';
+import Impostazioni from './view/Impostazioni';
 
 const routes = [
     {path: "/", name:"Home",title:'Home', icon:'fa-home', Component:Home},
@@ -21,6 +22,7 @@ const routes = [
     {path: "/incassi", name:"Incassi",title:'Report Incassi', icon:'fa-area-chart', Component: Incassi},
     {path: "/magazzino", name:"Magazzino",title:'Gestione Magazzino', icon:'fa fa-truck', Component: Magazzino},
     {path: "/catalogo", name:"Catalogo",title:'Gestione Film', icon:'fa fa-youtube-play', Component: Catalogo},
+    {path: "/settings", name:"Impostazioni",title:'Impostazioni', icon:'fa fa-cogs', Component: Impostazioni},
 ];
 
 

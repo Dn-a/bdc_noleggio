@@ -8,6 +8,7 @@ use App\Magazzino;
 use App\Noleggio;
 use App\Prenotazione;
 use App\Ricevuta;
+use App\Setting;
 use App\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -200,7 +201,10 @@ class NoleggioController extends Controller
 
                 $scontoGG = 0;
                 if($gg>1){
-                    $prc = !isset($this->percSconto[$gg]) ? end($this->percSconto) : $this->percSconto[$gg];
+                    //$percSconto = $this->percSconto;
+                    $percSconto = Setting::where('titolo','sconti')->first()->parametri;
+                    $percSconto = json_decode($percSconto,true);
+                    $prc = !isset($percSconto[$gg]) ? end($percSconto) : $percSconto[$gg];
                     $scontoGG = $video->prezzo * $gg * $prc;
                     //$scontoGG = $scontoGG > ($video->prezzo/2)? ($video->prezzo/2) : $scontoGG;
                 }
@@ -393,7 +397,9 @@ class NoleggioController extends Controller
 
                 $scontoGG = 0;
                 if($gg>1){
-                    $prc = !isset($this->percSconto[$gg]) ? end($this->percSconto) : $this->percSconto[$gg];
+                    $percSconto = Setting::where('titolo','sconti')->first()->parametri;
+                    $percSconto = json_decode($percSconto,true);
+                    $prc = !isset($percSconto[$gg]) ? end($percSconto) : $percSconto[$gg];
                     $scontoGG = $video->prezzo * $gg * $prc;
                     //$scontoGG = $video->prezzo*($gg/40); $scontoGG = $scontoGG > ($video->prezzo/2)? ($video->prezzo/2) : $scontoGG;
                 }

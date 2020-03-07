@@ -23,7 +23,10 @@ Auth::routes([
 // browser request
 if(request()->header('accept')!='application/json')
     Route::get('/{name}', 'HomeController@index')->name('home')
-    ->where('name','(|home|clienti|dipendenti|video|magazzino|noleggi|prenotazioni|restituzioni|incassi|setting|catalogo)');
+    ->where(
+        'name',
+        '(|home|clienti|dipendenti|video|magazzino|noleggi|prenotazioni|restituzioni|incassi|catalogo|settings)'
+    );
 
 
 // ADMIN
@@ -33,6 +36,9 @@ Route::middleware(['auth','ruolo:admin'])->group( function () {
     // Punti Vendita
     Route::get('punti-vendita/search/{val}', 'PuntoVenditaController@search')->name('punti-vendita.search');
     Route::get('punti-vendita', 'PuntoVenditaController@index')->name('punti-vendita');
+
+    // Settings
+    Route::resource('settings', 'SettingController',['as' => 'settings']);
 
 });
 

@@ -109,25 +109,33 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     @php
-        $array = array('home', 'prenotazioni', 'noleggi', 'clienti', 'magazzino');
-        $user = Auth::user();
-        $nome = $user->nome;// .' '. $user->cognome;
-        $ruolo = $user->ruolo->titolo;
-        $idPtVendita = $user->id_pt_vendita;
-        if($ruolo != 'Addetto')
-            $array = array_merge($array,['dipendenti','incassi']);
-        
-        //if($ruolo == 'Admin') $array = array_merge($array,['catalogo']);
+        if(Auth::check()){
+            $array = array('home', 'prenotazioni', 'noleggi', 'clienti', 'magazzino');
+            $user = Auth::user();
+            $nome = $user->nome;// .' '. $user->cognome;
+            $ruolo = $user->ruolo->titolo;
+            $idPtVendita = $user->id_pt_vendita;
+            $sconti = App\Setting::where('titolo','sconti')->first()->parametri;
 
-        echo "<script>
-                let array =".json_encode($array).'; '.
-                "const USER_CONFIG = {
-                    nome:'".$nome."',
-                    ruolo:'".$ruolo."',".
-                    "menu:array,".
-                    "id_pt_vendita:'".$idPtVendita."'".
-                '}; //console.log(USER_CONFIG)'.
-            "</script>";
+            if($ruolo == 'Admin')
+                $array = array_merge($array,['impostazioni']);
+            
+            if($ruolo != 'Addetto')
+                $array = array_merge($array,['dipendenti','incassi']);
+            
+            //if($ruolo == 'Admin') $array = array_merge($array,['catalogo']);
+
+            echo "<script>
+                    let array =".json_encode($array).'; '.
+                    "const USER_CONFIG = {
+                        nome:'".$nome."',
+                        ruolo:'".$ruolo."',".
+                        "menu:array,
+                        sconti:'".$sconti."',".
+                        "id_pt_vendita:'".$idPtVendita."'".
+                    '}; //console.log(USER_CONFIG)'.
+                "</script>";
+        }
     @endphp
 
 @endsection

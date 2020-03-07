@@ -1,6 +1,6 @@
 import React, { Component , Fragment } from 'react';
 import cx from "classnames";
-import {URL_HOME} from '../Env';
+import {URL_HOME,User} from '../Env';
 
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
@@ -54,8 +54,9 @@ export default class NoleggoModal extends Component {
             pdf:''
         };
 
-        this.scontoGiorni = {2:'0.1',3:'0.1',4:'0.2',5:'0.2',6:'0.3',7:'0.3',8:'0.4'};
-
+        //this.scontoGiorni = {2:'0.1',3:'0.1',4:'0.2',5:'0.2',6:'0.3',7:'0.3',8:'0.4'};
+        this.scontoGiorni = JSON.parse(User().sconti);
+        
         this.home = URL_HOME;
 
         this._handleChange = this._handleChange.bind(this);
