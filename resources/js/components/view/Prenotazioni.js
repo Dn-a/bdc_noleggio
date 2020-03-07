@@ -42,7 +42,28 @@ const COLUMNS_VIDEO = [
     },
     { title: 'Prezzo', field: 'prezzo', render: cell => parseFloat(cell).toFixed(2) +' €' },
     { title: 'Prenotazioni', field: 'numero_prenotazioni'},
-    { title: 'Data Uscita', field: 'data_uscita',render: cell => new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"}) },
+    { title: 'Data Uscita', field: 'data_uscita',
+        render: (cell,row) =>
+        {
+            let now = new Date();
+            now= now.getFullYear() +'-'+ ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
+            now = Date.parse(now);
+            let date = cell;
+            let check = Date.parse(date) <= now;
+
+            let disp = row.disp_magazzino == true;
+
+            return(
+                <Fragment>
+                    <div className={check?'highlight-confirm':''} style={{fontWeight:check?'600':'inherit'}}>
+                        {check && 'uscito il '}
+                        {new Date(date).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})}
+                    </div>
+                    {disp && <span style={{color:'green',fontSize:'0.9em'}}>copia disponibile in magazzino</span>}
+                </Fragment>
+            );
+        }
+    },
 ];
 
 const MS_VIDEO = {

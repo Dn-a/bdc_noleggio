@@ -5,9 +5,7 @@ import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
 import InputField from '../utils/form/InputField';
 import DataField from '../utils/form/DataField';
-import DropDownSelect from '../utils/form/DropdownSelect';
 import INFO_ERROR from '../utils/form/InfoError';
-import FileField from '../utils/form/FileField';
 
 const email_reg_exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const whitespace_reg_ex = /^[^\s].*/;

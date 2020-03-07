@@ -69818,7 +69818,7 @@ function useWaitForDOMRef(ref, onResolved) {
 /*!***************************************************************!*\
   !*** ./node_modules/react-router-dom/esm/react-router-dom.js ***!
   \***************************************************************/
-/*! exports provided: BrowserRouter, HashRouter, Link, NavLink, MemoryRouter, Prompt, Redirect, Route, Router, StaticRouter, Switch, __RouterContext, generatePath, matchPath, useHistory, useLocation, useParams, useRouteMatch, withRouter */
+/*! exports provided: MemoryRouter, Prompt, Redirect, Route, Router, StaticRouter, Switch, __RouterContext, generatePath, matchPath, useHistory, useLocation, useParams, useRouteMatch, withRouter, BrowserRouter, HashRouter, Link, NavLink */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -76427,9 +76427,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
 /* harmony import */ var _utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/form/InputField */ "./resources/js/components/utils/form/InputField.js");
 /* harmony import */ var _utils_form_DataField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/form/DataField */ "./resources/js/components/utils/form/DataField.js");
-/* harmony import */ var _utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/DropdownSelect */ "./resources/js/components/utils/form/DropdownSelect.js");
-/* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
-/* harmony import */ var _utils_form_FileField__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../utils/form/FileField */ "./resources/js/components/utils/form/FileField.js");
+/* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -76447,8 +76445,6 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
 
 
 
@@ -76564,24 +76560,24 @@ function (_Component) {
       var field = e.target.name;
       var error = this.state.error;
       var data = this.state.data;
-      if (value == '') error[field] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['vuoto'];else error[field] = '';
+      if (value == '') error[field] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['vuoto'];else error[field] = '';
 
       switch (field) {
         case 'titolo':
-          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.nome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['caratteri'];
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.nome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
           break;
 
         case 'durata':
-          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cognome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['caratteri'];
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cognome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
           break;
 
         case 'trama':
           value = value.toUpperCase();
-          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cf = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['caratteri'];
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cf = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
           break;
 
         case 'in_uscita':
-          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.indirizzo = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['caratteri'];
+          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.indirizzo = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
           break;
 
         case 'data_uscita':
@@ -76589,15 +76585,15 @@ function (_Component) {
           today = new Date(today.toDateString()).getTime();
           var date = new Date(value);
           date = new Date(date.toDateString()).getTime();
-          if (date > today) error.data_nascita = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['data_2'];
+          if (date > today) error.data_nascita = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['data_2'];
           break;
 
         case 'prezzo':
-          if (isNaN(value)) error.cellulare = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['numero'];
+          if (isNaN(value)) error.cellulare = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['numero'];
           break;
 
         case 'img':
-          if (value.length < 8) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['email_1'];else if (!email_reg_exp.test(value)) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['email_2'];
+          if (value.length < 8) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['email_1'];else if (!email_reg_exp.test(value)) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['email_2'];
           break;
       }
 
@@ -76728,7 +76724,7 @@ function (_Component) {
           data.id_categoria = '';
 
           if (val.length == 0) {
-            error.id_categoria = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['genere'];
+            error.id_categoria = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['genere'];
           }
 
           _this4.setState({
@@ -76776,7 +76772,7 @@ function (_Component) {
           data.id_regista = '';
 
           if (val.length == 0) {
-            error.id_regista = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['regista'];
+            error.id_regista = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['regista'];
           }
 
           _this4.setState({
@@ -76824,7 +76820,7 @@ function (_Component) {
           data.id_attori = '';
 
           if (val.length == 0) {
-            error.id_attori = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_7__["default"]['attore'];
+            error.id_attori = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['attore'];
           }
 
           _this4.setState({
@@ -79148,7 +79144,7 @@ function AddEditModal(props) {
 /*!*************************************************!*\
   !*** ./resources/js/components/utils/Button.js ***!
   \*************************************************/
-/*! exports provided: Button, ConfirmButton, BackButton, NextButton, CloseButton, AddButton */
+/*! exports provided: Button, ConfirmButton, BackButton, NextButton, CloseButton, AddButton, EditButton */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -79159,6 +79155,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NextButton", function() { return NextButton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CloseButton", function() { return CloseButton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddButton", function() { return AddButton; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EditButton", function() { return EditButton; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
@@ -79189,14 +79186,14 @@ var ConfirmButton = function ConfirmButton(_ref2) {
       _ref2$disabled = _ref2.disabled,
       disabled = _ref2$disabled === void 0 ? false : _ref2$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn waves-effect waves-light light-green darken-2 " + className + (disabled ? ' disabled' : ''),
+    className: "btn confirm btn-success waves-effect waves-light light-green darken-2 " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick2();
     }
   }, children);
 };
 
-var AddButton = function AddButton(_ref3) {
+var EditButton = function EditButton(_ref3) {
   var _ref3$className = _ref3.className,
       className = _ref3$className === void 0 ? '' : _ref3$className,
       _onClick3 = _ref3.onClick,
@@ -79204,14 +79201,14 @@ var AddButton = function AddButton(_ref3) {
       _ref3$disabled = _ref3.disabled,
       disabled = _ref3$disabled === void 0 ? false : _ref3$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn btn-info waves-effect waves-light light-green darken-2 " + className + (disabled ? ' disabled' : ''),
+    className: "btn edit btn-secondary waves-effect waves-light light-green darken-2 " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick3();
     }
   }, children);
 };
 
-var BackButton = function BackButton(_ref4) {
+var AddButton = function AddButton(_ref4) {
   var _ref4$className = _ref4.className,
       className = _ref4$className === void 0 ? '' : _ref4$className,
       _onClick4 = _ref4.onClick,
@@ -79219,14 +79216,14 @@ var BackButton = function BackButton(_ref4) {
       _ref4$disabled = _ref4.disabled,
       disabled = _ref4$disabled === void 0 ? false : _ref4$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn waves-effect waves-light blue-grey lighten-4  " + className + (disabled ? ' disabled' : ''),
+    className: "btn add btn-info waves-effect waves-light light-green darken-2 " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick4();
     }
   }, children);
 };
 
-var CloseButton = function CloseButton(_ref5) {
+var BackButton = function BackButton(_ref5) {
   var _ref5$className = _ref5.className,
       className = _ref5$className === void 0 ? '' : _ref5$className,
       _onClick5 = _ref5.onClick,
@@ -79234,14 +79231,14 @@ var CloseButton = function CloseButton(_ref5) {
       _ref5$disabled = _ref5.disabled,
       disabled = _ref5$disabled === void 0 ? false : _ref5$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn  btn-danger waves-effect waves-light red darken-1 " + className + (disabled ? ' disabled' : ''),
+    className: "btn back waves-effect waves-light blue-grey lighten-4  " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick5();
     }
   }, children);
 };
 
-var NextButton = function NextButton(_ref6) {
+var CloseButton = function CloseButton(_ref6) {
   var _ref6$className = _ref6.className,
       className = _ref6$className === void 0 ? '' : _ref6$className,
       _onClick6 = _ref6.onClick,
@@ -79249,9 +79246,24 @@ var NextButton = function NextButton(_ref6) {
       _ref6$disabled = _ref6.disabled,
       disabled = _ref6$disabled === void 0 ? false : _ref6$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "btn waves-effect waves-light light-blue darken-3 " + className + (disabled ? ' disabled' : ''),
+    className: "btn close btn-danger waves-effect waves-light red darken-1 " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick6();
+    }
+  }, children);
+};
+
+var NextButton = function NextButton(_ref7) {
+  var _ref7$className = _ref7.className,
+      className = _ref7$className === void 0 ? '' : _ref7$className,
+      _onClick7 = _ref7.onClick,
+      children = _ref7.children,
+      _ref7$disabled = _ref7.disabled,
+      disabled = _ref7$disabled === void 0 ? false : _ref7$disabled;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    className: "btn next waves-effect waves-light light-blue darken-3 " + className + (disabled ? ' disabled' : ''),
+    onClick: function onClick() {
+      return _onClick7();
     }
   }, children);
 };
@@ -83292,12 +83304,28 @@ var COLUMNS_VIDEO = [{
 }, {
   title: 'Data Uscita',
   field: 'data_uscita',
-  render: function render(cell) {
-    return new Date(cell).toLocaleDateString("it-IT", {
+  render: function render(cell, row) {
+    var now = new Date();
+    now = now.getFullYear() + '-' + ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
+    now = Date.parse(now);
+    var date = cell;
+    var check = Date.parse(date) <= now;
+    var disp = row.disp_magazzino == true;
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: check ? 'highlight-confirm' : '',
+      style: {
+        fontWeight: check ? '600' : 'inherit'
+      }
+    }, check && 'uscito il ', new Date(date).toLocaleDateString("it-IT", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
-    });
+    })), disp && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      style: {
+        color: 'green',
+        fontSize: '0.9em'
+      }
+    }, "copia disponibile in magazzino"));
   }
 }];
 var MS_VIDEO = {

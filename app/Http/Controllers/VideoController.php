@@ -31,7 +31,8 @@ class VideoController extends Controller
             if(!$catalogo){
                 $date = Carbon::now();
                 $date = $date->toDateString();
-                $query->where('data_uscita', $inUscita ? '>=' : '<' , $date);
+                //$query->where('data_uscita', $inUscita ? '>=' : '<' , $date);
+                $query->where('in_uscita', $inUscita ? 1 : 0);
             }
         })
         ->where(function($query) use($idPtVendita,$noleggi) {
@@ -65,7 +66,8 @@ class VideoController extends Controller
             if(!$catalogo){
                 $date = Carbon::now();
                 $date = $date->toDateString();
-                $query->where('data_uscita', $inUscita ? '>=' : '<' , $date);
+                //$query->where('data_uscita', $inUscita ? '>=' : '<' , $date);
+                $query->where('in_uscita', $inUscita ? 1 : 0);
             }
         })
         ->where(function($query) use($idPtVendita,$noleggi) {
@@ -74,7 +76,7 @@ class VideoController extends Controller
                     $query->where('id_pt_vendita',$idPtVendita);
                 });
         })
-        ->where(function($query) use($arr,$inUscita) {
+        ->where(function($query) use($arr) {
             $query->where('titolo','like',$arr[0].'%')
             ->orWhereHas('categoria',function($query) use($arr) {
                 $query->where('titolo','like',$arr[0].'%');
