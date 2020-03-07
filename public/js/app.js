@@ -69818,7 +69818,7 @@ function useWaitForDOMRef(ref, onResolved) {
 /*!***************************************************************!*\
   !*** ./node_modules/react-router-dom/esm/react-router-dom.js ***!
   \***************************************************************/
-/*! exports provided: MemoryRouter, Prompt, Redirect, Route, Router, StaticRouter, Switch, __RouterContext, generatePath, matchPath, useHistory, useLocation, useParams, useRouteMatch, withRouter, BrowserRouter, HashRouter, Link, NavLink */
+/*! exports provided: BrowserRouter, HashRouter, Link, NavLink, MemoryRouter, Prompt, Redirect, Route, Router, StaticRouter, Switch, __RouterContext, generatePath, matchPath, useHistory, useLocation, useParams, useRouteMatch, withRouter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -77589,7 +77589,7 @@ function (_Component) {
         className: "form-control",
         label: "Ruolo",
         values: objFid,
-        defaultSelected: "default",
+        defaultSelected: "Scegli un valore",
         handleChange: this._handleChange
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
@@ -79312,7 +79312,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 // - externalRows: uso temporaneo; adotterò soluzioni migiori in futuro
 // - multiSelect: tipo boolean, attiva/disattiva la selezione multipla delle righe
 // - selectedList: riceve in ingresso una lista di ID dei dati visulalizzati in tabella
-// - multiSelectCallback: metodo richiamato ogni qualvolta si clicca su una nuova riga
+// - multiSelectCallback: ritorna un set di dati inerenti le righe selezionate
+// - onClick: intercetta il click sulla singola riga
 // - onActions: metodo invocato da eventuali azioni implementate nel render del campo columns - argomenti(object)
 
 var InfiniteTable =
@@ -79443,6 +79444,11 @@ function (_Component) {
         if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this4.home + '/login';
       });
+    }
+  }, {
+    key: "_onClick",
+    value: function _onClick(row) {
+      if (this.props.onClick !== undefined) this.props.onClick(row);
     } // Multiselezione righe
 
   }, {
@@ -79693,7 +79699,7 @@ function (_Component) {
           className: _this10.props.multiSelectSetting != undefined && _this10.props.multiSelectSetting.disableSelect != undefined && _this10.props.multiSelectSetting.disableSelect(row) ? '' : sl.indexOf(idField) > -1 ? 'active' : '',
           key: id,
           onClick: function onClick() {
-            return _this10._handleMultiSelection(idField, row);
+            _this10._handleMultiSelection(idField, row), _this10._onClick(row);
           }
         }, columns.map(function (column, id) {
           //console.log(row['img']);
@@ -79853,6 +79859,7 @@ function (_Component) {
     value: function _getRemoteData(val) {
       var _this2 = this;
 
+      if (this.props.url === undefined) return;
       var query = this.props.query !== undefined ? this.props.query : '';
       var qStrings = '';
       if (query != '') qStrings = '?&' + query;
@@ -79944,6 +79951,7 @@ function (_Component) {
         });
       });
       if (this.props.onClick !== undefined) this.props.onClick(val);
+      if (this.props.showList !== undefined && this.props.resetAfterClick !== undefined && this.props.resetAfterClick) this._handleReset();
     } // Richiama getRemoteData dopo un certo tempo T
 
   }, {
@@ -80200,7 +80208,7 @@ var DropdownSelect = function DropdownSelect(_ref) {
     required: required,
     onChange: handleChange
   }, placeholder !== undefined && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-    value: "default",
+    value: placeholder,
     disabled: true
   }, placeholder), firstValue !== undefined && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
     value: firstValue
@@ -80793,7 +80801,11 @@ var COLUMNS = [{
   title: 'Data di Nascita',
   field: 'data_nascita',
   render: function render(cell) {
-    return new Date(cell).toLocaleDateString("it-IT");
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
   }
 }, {
   title: 'Recapiti',
@@ -81235,7 +81247,11 @@ var COLUMNS = [{
   title: 'Creato il',
   field: 'created_at',
   render: function render(cell) {
-    return new Date(cell).toLocaleDateString("it-IT");
+    return new Date(cell).toLocaleDateString("it-IT", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
   }
 }];
 
