@@ -138,20 +138,20 @@ export default class ClientiModal extends Component {
 
         switch(field){
             case 'nome':
-                if( value.length > 1 && !whitespace_reg_ex.test(value))
+                if( value.length > 0 && !whitespace_reg_ex.test(value))
                     error.nome = INFO_ERROR['caratteri'];
                 break;
             case 'cognome':
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
+                if(value.length > 0 && !whitespace_reg_ex.test(value))
                     error.cognome = INFO_ERROR['caratteri'];
                 break;
             case 'cf':
                 value = value.toUpperCase();
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
+                if(value.length > 0 && !whitespace_reg_ex.test(value))
                     error.cf = INFO_ERROR['caratteri'];
                 break;
             case 'indirizzo':
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
+                if(value.length > 0 && !whitespace_reg_ex.test(value))
                     error.indirizzo = INFO_ERROR['caratteri'];
                 break;
             case 'telefono':
