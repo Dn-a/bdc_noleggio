@@ -5,7 +5,10 @@ const InfoError = {
     'genere': 'Inserire un Genere valido',
     'regista': 'Inserire un Regista valido',
     'attore': 'Inserire un Attore valido',
+    'attore_2': 'Inserire almeno un Attore',
     'caratteri': 'Inserire caratteri validi',
+    'img': 'Inserire un URL valido',
+    'limite_caratteri': 'Superato il limite massimo di caratteri consentiti',
     'password': 'Inserire almeno 8 caratteri',
     'confirm_password': 'Le password non corrispondono',
     'comune':'Inserire un comune valido',
@@ -22,6 +25,7 @@ const InfoError = {
     'numero_2': 'Inserire un numero maggiore di zero',
     'email_1': 'l\'email in genere è composta da almeno 8 caratteri',
     'email_2': 'email non valida',
+    'ingredienti': 'Inserire almeno un ingrediente'
   }
 
   export default InfoError;

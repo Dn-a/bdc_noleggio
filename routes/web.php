@@ -40,6 +40,18 @@ Route::middleware(['auth','ruolo:admin'])->group( function () {
     // Settings
     Route::resource('settings', 'SettingController',['as' => 'settings']);
 
+    // Catalogo
+    Route::resource('catalogo', 'CatalogoController',['as' => 'catalogo']);
+
+    // Attori
+    Route::get('attori/search/{val}', 'AttoreController@search')->name('attori.search');
+
+    // Registi
+    Route::get('registi/search/{val}', 'RegistaController@search')->name('registi.search');
+
+    // Generi
+    Route::get('generi/search/{val}', 'GenereController@search')->name('generi.search');
+
 });
 
 

@@ -123,7 +123,7 @@
             if($ruolo != 'Addetto')
                 $array = array_merge($array,['dipendenti','incassi']);
             
-            //if($ruolo == 'Admin') $array = array_merge($array,['catalogo']);
+            if($ruolo == 'Admin') $array = array_merge($array,['catalogo']);
 
             echo "<script>
                     let array =".json_encode($array).'; '.

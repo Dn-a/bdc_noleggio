@@ -175,6 +175,7 @@ export default class ScaricoVideoModal extends Component {
             <AddEditModal size="md"
                 show={this.props.show}
                 onHide={(a) => {this.props.onHide(a);this._resetAfterClose();}}
+                url={this.props.url}
                 loader={this.state.loader}
                 onConfirm={this._handleOnSave}
                 disabledConfirmButton={!this.state.checked}

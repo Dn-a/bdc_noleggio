@@ -76203,13 +76203,14 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 /*!****************************************!*\
   !*** ./resources/js/components/Env.js ***!
   \****************************************/
-/*! exports provided: URL_HOME, User */
+/*! exports provided: URL_HOME, User, ASSETS */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "URL_HOME", function() { return URL_HOME; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "User", function() { return User; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ASSETS", function() { return ASSETS; });
 var URL_HOME = window.location.hostname == 'www.dn-a.it' ? '/noleggio' : '';
 
 var User = function User() {
@@ -76221,6 +76222,9 @@ var User = function User() {
   return config;
 };
 
+var ASSETS = {
+  loader_gif: URL_HOME + '/img/loader.gif'
+};
 
 
 /***/ }),
@@ -76446,7 +76450,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_SearchField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/SearchField */ "./resources/js/components/utils/SearchField.js");
 /* harmony import */ var _utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/form/InputField */ "./resources/js/components/utils/form/InputField.js");
 /* harmony import */ var _utils_form_DataField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/form/DataField */ "./resources/js/components/utils/form/DataField.js");
-/* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
+/* harmony import */ var _utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/form/DropdownSelect */ "./resources/js/components/utils/form/DropdownSelect.js");
+/* harmony import */ var _utils_form_TextAreaField__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/form/TextAreaField */ "./resources/js/components/utils/form/TextAreaField.js");
+/* harmony import */ var _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../utils/form/InfoError */ "./resources/js/components/utils/form/InfoError.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -76472,9 +76478,13 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
+
 var email_reg_exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 var whitespace_reg_ex = /^[^\s].*/;
-var FIELDS = ['titolo', 'durata', 'trama', 'in_uscita', 'data_uscita', 'prezzo', 'img', 'id_attori', 'id_categoria', 'id_regista'];
+var url_reg_ex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
+var FIELDS = ['titolo', 'durata', 'trama', 'disponibile', 'data_uscita', 'prezzo', 'img', 'attori', 'id_categoria', 'id_regista'];
+var LOWER_CASE = [];
 
 var CatalogoModal =
 /*#__PURE__*/
@@ -76490,7 +76500,16 @@ function (_Component) {
     var data = {};
     var error = {};
     FIELDS.map(function (fd, id) {
-      data[fd] = error[fd] = '';
+      if (fd == 'attori') {
+        data[fd] = {
+          id: [],
+          nome: []
+        };
+        error[fd] = '';
+      } else {
+        data[fd] = '';
+        error[fd] = '';
+      }
     });
     _this.state = {
       data: data,
@@ -76511,7 +76530,16 @@ function (_Component) {
       var data = {};
       var error = {};
       FIELDS.map(function (fd, id) {
-        data[fd] = error[fd] = '';
+        if (fd == 'attori') {
+          data[fd] = {
+            id: [],
+            nome: []
+          };
+          error[fd] = '';
+        } else {
+          data[fd] = '';
+          error[fd] = '';
+        }
       });
       this.state.data = data;
       this.state.error = error;
@@ -76519,8 +76547,8 @@ function (_Component) {
       this.state.checked = false;
     }
   }, {
-    key: "setRemoteStore",
-    value: function setRemoteStore() {
+    key: "setRemoteData",
+    value: function setRemoteData() {
       var _this2 = this;
 
       var url = this.props.url + '/video';
@@ -76531,16 +76559,18 @@ function (_Component) {
         }
       };
       var data = this.state.data;
-      var formData = new FormData();
-      Object.keys(data).map(function (k, id) {
-        formData.append(k, data[k]);
+      var sendData = {};
+      FIELDS.map(function (f, k) {
+        if (f != 'attori') if (typeof data[f] === 'string') sendData[f] = LOWER_CASE.includes(f) ? data[f].trim().toLowerCase() : data[f].trim();else sendData[f] = data[f];
       });
-      formData.append('_token', CSRF_TOKEN);
+      sendData._token = CSRF_TOKEN;
+      sendData.id_attori = data.attori.id; //console.log(sendData);return;
+
       this.setState({
         loader: true
       });
-      return axios.post(url, formData, headers).then(function (result) {
-        //console.log(result);
+      return axios.post(url, sendData, headers).then(function (result) {
+        console.log(result);
         if (_this2.props.callback !== undefined) _this2.props.callback(data);
 
         _this2.props.onHide();
@@ -76548,75 +76578,69 @@ function (_Component) {
         _this2.state.loader = false;
         return result;
       })["catch"](function (error) {
-        if (error.response === undefined) {
-          console.log(error);
-          return;
+        console.error(error);
+        var msg = '';
+
+        if (error.response !== undefined) {
+          if (error.response.data.errors !== undefined) msg = error.response.data.errors; // else if(error.response.data.message!==undefined)
+          //     msg = error.response.data.message;
         }
 
-        console.error(error.response);
-        var msgError = 'Qualcosa è andato storto. Errore: ' + error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
-
         _this2.setState({
-          remoteError: msgError
-        });
+          remoteError: msg,
+          loader: false
+        }); //throw error;
 
-        if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this2.home + '/login';
-        throw error;
       });
     }
   }, {
     key: "_handleOnSave",
     value: function _handleOnSave() {
       console.log("save");
-      this.setRemoteStore();
+      this.setRemoteData();
     }
   }, {
     key: "_handleChange",
     value: function _handleChange(e) {
       var _this3 = this;
 
-      var value = e.target.value.toLowerCase();
+      var value = e.target.value;
       var field = e.target.name;
       var error = this.state.error;
       var data = this.state.data;
-      if (value == '') error[field] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['vuoto'];else error[field] = '';
+      if (value == '') error[field] = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['vuoto'];else error[field] = '';
 
       switch (field) {
         case 'titolo':
-          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.nome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+          if (value.length > 0 && !whitespace_reg_ex.test(value)) error.titolo = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['caratteri'];
           break;
 
         case 'durata':
-          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cognome = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+          if (isNaN(value) || !whitespace_reg_ex.test(value)) error.durata = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['numero'];
           break;
 
         case 'trama':
           value = value.toUpperCase();
-          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.cf = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+          if (value.length > 0 && !whitespace_reg_ex.test(value)) error.trama = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['caratteri'];
           break;
 
-        case 'in_uscita':
-          if (value.length > 1 && !whitespace_reg_ex.test(value)) error.indirizzo = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['caratteri'];
+        case 'disponibile':
+          if (value.length > 0 && !whitespace_reg_ex.test(value)) error.disponibile = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['caratteri'];
           break;
 
         case 'data_uscita':
-          var today = new Date();
-          today = new Date(today.toDateString()).getTime();
-          var date = new Date(value);
-          date = new Date(date.toDateString()).getTime();
-          if (date > today) error.data_nascita = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['data_2'];
           break;
 
         case 'prezzo':
-          if (isNaN(value)) error.cellulare = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['numero'];
+          if (isNaN(value)) error.prezzo = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['numero'];
           break;
 
         case 'img':
-          if (value.length < 8) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['email_1'];else if (!email_reg_exp.test(value)) error.email = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['email_2'];
+          if (value.length > 0 && !whitespace_reg_ex.test(value)) error.img = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['caratteri'];else if (value.length > 2048) error.img = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['limite_caratteri'];else if (!url_reg_ex.test(value)) error.img = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['img'];
           break;
       }
 
-      data[field] = field != 'privacy' ? value.trim() : value;
+      data[field] = value;
       this.setState({
         data: data,
         error: error
@@ -76630,9 +76654,13 @@ function (_Component) {
       var data = this.state.data;
       var error = this.state.error;
       var checked = true;
-      Object.keys(error).map(function (k, id) {
-        if (error[k] != '' || data[k] == '') checked = false;
-      });
+      Object.keys(error).map(function (key, id) {
+        if (key == 'attori') {
+          if (error[key] != '' || data[key].id.length == 0) checked = false;
+        } else if (error[key] != '' || data[key] == '') checked = false;else if (key == 'prezzo' && data[key] == 0) checked = false;
+      }); // console.log(checked)
+      // console.log(data)
+
       this.setState({
         checked: checked
       });
@@ -76650,17 +76678,14 @@ function (_Component) {
     value: function render() {
       var _this4 = this;
 
-      var objFid = {
-        '1': 'Start - 0%'
+      var data = this.state.data;
+      var objDisp = {
+        '0': 'Non disponibile',
+        '1': 'Disponibile'
       };
-
-      if (USER_CONFIG.ruolo != 'Addetto') {
-        objFid['2'] = 'Plus - 10%';
-        objFid['3'] = 'Revolution - 20%';
-      }
-
+      var remoteError = this.state.remoteError;
       var divClassName = 'mb-3';
-      var urlCategorie = this.props.url + '/categorie/search';
+      var urlGeneri = this.props.url + '/generi/search';
       var urlRegisti = this.props.url + '/registi/search';
       var urlAttori = this.props.url + '/attori/search';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_AddEditModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -76671,6 +76696,7 @@ function (_Component) {
 
           _this4._resetAfterClose();
         },
+        url: this.props.url,
         onConfirm: this._handleOnSave,
         loader: this.state.loader,
         disabledConfirmButton: !this.state.checked,
@@ -76693,7 +76719,7 @@ function (_Component) {
         label: "Durata",
         helperText: this.showError('durata'),
         handleChange: this._handleChange
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_TextAreaField__WEBPACK_IMPORTED_MODULE_7__["default"], {
         name: "trama",
         divClassName: divClassName,
         className: "form-control",
@@ -76713,7 +76739,7 @@ function (_Component) {
         placeholder: "Cerca un Genere",
         searchClassName: "w-100",
         showList: true,
-        url: urlCategorie,
+        url: urlGeneri,
         patternList: {
           id: 'id',
           fields: {
@@ -76743,7 +76769,7 @@ function (_Component) {
           data.id_categoria = '';
 
           if (val.length == 0) {
-            error.id_categoria = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['genere'];
+            error.id_categoria = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['genere'];
           }
 
           _this4.setState({
@@ -76791,7 +76817,7 @@ function (_Component) {
           data.id_regista = '';
 
           if (val.length == 0) {
-            error.id_regista = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['regista'];
+            error.id_regista = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['regista'];
           }
 
           _this4.setState({
@@ -76818,38 +76844,53 @@ function (_Component) {
         } //id di ritorno; i fields vengono usati come titolo
         ,
         reloadOnClick: false,
+        resetAfterClick: true,
         onClick: function onClick(val) {
           //console.log(val);
           var data = _this4.state.data;
           var error = _this4.state.error;
-          data.id_attori = val.id;
-          error.id_attori = '';
 
-          _this4.setState({
-            data: data,
-            error: error
-          }, function () {
-            return _this4.checked();
-          });
-        },
-        callback: function callback(val) {
-          //console.log(val);
-          var data = _this4.state.data;
-          var error = _this4.state.error;
-          data.id_attori = '';
+          if (!data.attori.id.includes(val.id)) {
+            data.attori.id.push(val.id);
+            data.attori.nome.push(val.nome + ' ' + val.cognome); //let id = Object.keys(error.attori).length;                                        
 
-          if (val.length == 0) {
-            error.id_attori = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_6__["default"]['attore'];
-          }
+            if (data.attori.id.length > 0) error.attori = '';
+            _this4.state.data = data;
+            _this4.state.error = error;
 
-          _this4.setState({
-            data: data,
-            error: error
-          }, function () {
-            return _this4.checked();
-          });
+            _this4.checked();
+          } //this.setState({data,error},() => this.checked());
+
         }
-      }), this.showError('id_attori')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), this.showError('attori'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "ml-2 my-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, data.attori.id.map(function (id, key) {
+        //console.log(key); return;
+        var nome = data.attori.nome[key];
+        var cnt = key + 1; //console.log(cnt); return;
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+          key: key,
+          className: "mb-3"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, cnt, ". "), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, nome), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "btn-clear d-inline-block ml-3 p-1",
+          onClick: function onClick(a) {
+            var data = _this4.state.data;
+            var error = _this4.state.error;
+            data.attori.id.splice(key, 1);
+            data.attori.nome.splice(key, 1);
+            if (data.attori.id.length == 0) error.attori = _utils_form_InfoError__WEBPACK_IMPORTED_MODULE_8__["default"]['attore_2']; //console.log(error.ingredienti)
+
+            _this4.state.data = data;
+            _this4.state.error = error;
+
+            _this4.checked();
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fa fa-times",
+          "aria-hidden": "true"
+        })));
+      })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__["default"], {
         name: "img",
@@ -76858,6 +76899,36 @@ function (_Component) {
         label: "Link immagine",
         helperText: this.showError('img'),
         handleChange: this._handleChange
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_InputField__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        name: "prezzo",
+        divClassName: divClassName,
+        className: "form-control",
+        label: "Prezzo \u20AC",
+        helperText: this.showError('prezzo'),
+        handleChange: this._handleChange
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_form_DropdownSelect__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        placeholder: "Scegli un valore",
+        name: "disponibile",
+        className: "form-control",
+        label: "Disponibilit\xE0",
+        values: objDisp,
+        defaultSelected: "Scegli un valore",
+        handleChange: this._handleChange
+      })), _typeof(remoteError) === 'object' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "alert alert-danger",
+        role: "alert"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Attenzione!"), Object.keys(remoteError).map(function (a, k1) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          key: k1
+        }, remoteError[a].map(function (s, k2) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+            key: k2
+          }, s, " ");
+        }));
       }))));
     }
   }]);
@@ -77132,6 +77203,7 @@ function (_Component) {
 
           _this4._resetAfterClose();
         },
+        url: this.props.url,
         onConfirm: this._handleOnSave,
         loader: this.state.loader,
         disabledConfirmButton: !this.state.checked,
@@ -77509,6 +77581,7 @@ function (_Component) {
 
           _this4._resetAfterClose();
         },
+        url: this.props.url,
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
         disabledConfirmButton: !this.state.checked,
@@ -77989,6 +78062,7 @@ function (_Component) {
           _this5._resetAfterClose();
         },
         loader: this.state.loader,
+        url: this.props.url,
         onConfirm: this._handleOnSave,
         txtConfirmButton: this.state.complited ? 'Noleggiato' : 'Noleggia',
         disabledConfirmButton: !this.state.checked || this.state.complited,
@@ -78371,6 +78445,7 @@ function (_Component) {
 
           _this5._resetAfterClose();
         },
+        url: this.props.url,
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
         txtConfirmButton: this.state.complited ? 'Prenotato' : 'Prenota',
@@ -78689,6 +78764,7 @@ function (_Component) {
           _this3._resetAfterClose();
         },
         loader: this.state.loader,
+        url: this.props.url,
         onConfirm: this._handleOnSave,
         txtConfirmButton: this.state.complited ? 'Confermato' : 'Conferma',
         disabledConfirmButton: !this.state.checked || this.state.complited,
@@ -78973,6 +79049,7 @@ function (_Component) {
 
           _this4._resetAfterClose();
         },
+        url: this.props.url,
         loader: this.state.loader,
         onConfirm: this._handleOnSave,
         disabledConfirmButton: !this.state.checked,
@@ -79146,7 +79223,7 @@ function AddEditModal(props) {
     onClick: props.onConfirm
   }, props.txtConfirmButton !== undefined ? props.txtConfirmButton : 'Aggiungi', " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
     className: "loader-2" + (props.loader == true ? ' d-inline-block' : ''),
-    src: "../img/loader_2.gif"
+    src: props.url + '/img/loader_2.gif'
   }))));
 }
 
@@ -79184,8 +79261,8 @@ var Button = function Button(_ref) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     title: title,
     className: "btn waves-effect waves-light " + className + " grey lighten-5" + (disabled ? ' disabled' : ''),
-    onClick: function onClick() {
-      return _onClick();
+    onClick: function onClick(e) {
+      return _onClick(e);
     }
   }, children);
 };
@@ -79193,11 +79270,13 @@ var Button = function Button(_ref) {
 var ConfirmButton = function ConfirmButton(_ref2) {
   var _ref2$className = _ref2.className,
       className = _ref2$className === void 0 ? '' : _ref2$className,
+      style = _ref2.style,
       _onClick2 = _ref2.onClick,
       children = _ref2.children,
       _ref2$disabled = _ref2.disabled,
       disabled = _ref2$disabled === void 0 ? false : _ref2$disabled;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    style: style,
     className: "btn confirm btn-success waves-effect waves-light light-green darken-2 " + className + (disabled ? ' disabled' : ''),
     onClick: function onClick() {
       return _onClick2();
@@ -79338,7 +79417,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 // - selectedList: riceve in ingresso una lista di ID dei dati visulalizzati in tabella
 // - multiSelectCallback: ritorna un set di dati inerenti le righe selezionate
 // - onClick: intercetta il click sulla singola riga
-// - onActions: metodo invocato da eventuali azioni implementate nel render del campo columns - argomenti(object)
+// - onActions: metodo invocato da eventuali azioni implementate nel render del campo columns - argomenti(object,type)
 
 var InfiniteTable =
 /*#__PURE__*/
@@ -79464,7 +79543,7 @@ function (_Component) {
         }); //console.log(res.data);
 
       })["catch"](function (error) {
-        //if(error.response===undefined) return;
+        if (error.response === undefined) return;
         if (error.response.data !== undefined) console.log(error.response.data);else console.log(error.response);
         if (error.response.status == 401) if (window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.')) window.location.href = _this4.home + '/login';
       });
@@ -79735,7 +79814,8 @@ function (_Component) {
           }, value); // IMAGE
 
           var img = '';
-          if (column.img !== undefined && row['img'] !== undefined) img = row['img'];else if (column.img !== undefined && column.img != '') img = column.img; // RENDER
+          if (column.img !== undefined && row['img'] !== undefined) img = row['img'];else if (column.img !== undefined && column.img != '') img = column.img; //img = img!=null && img!='' ? img : this.props.url+'default_table.png';
+          // RENDER
 
           if (rows[0][column.field] === undefined) return;else if (column.render != undefined) value = column.render(row[column.field], row, _this10._handleActions);else value = row[column.field]; //cell
 
@@ -79848,6 +79928,12 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 //
 // - reloadOnClick: esegue una nuova ricerca
 // - handles: consente di richiamare alcune funzioni dall'esterno {reset,recall}
+// - showList: boolean
+// - reloadOnClick: boolean
+// - resetAfterClick: boolean
+// - onClick: handle
+// - patternList: Object - {id:'id', fields:{titolo:[],calorie:[]}
+// - loaderPath: string
 
 var SearchField =
 /*#__PURE__*/
@@ -80052,7 +80138,7 @@ function (_Component) {
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "img-loader " + (this.state.loader ? "active" : '')
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
-        src: "../img/loader.gif"
+        src: this.props.loaderPath !== undefined ? this.props.loaderPath : "../img/loader.gif"
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "info-search"
       }, this.state.infoSearch), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -80112,16 +80198,22 @@ __webpack_require__.r(__webpack_exports__);
 var CheckField = function CheckField(_ref) {
   var name = _ref.name,
       placeholder = _ref.placeholder,
+      _ref$style = _ref.style,
+      style = _ref$style === void 0 ? {} : _ref$style,
+      _ref$divClassName = _ref.divClassName,
+      divClassName = _ref$divClassName === void 0 ? null : _ref$divClassName,
       _ref$className = _ref.className,
-      className = _ref$className === void 0 ? null : _ref$className,
+      className = _ref$className === void 0 ? '' : _ref$className,
       label = _ref.label,
       required = _ref.required,
       checked = _ref.checked,
       defaultChecked = _ref.defaultChecked,
       value = _ref.value,
-      handleChange = _ref.handleChange;
+      handleChange = _ref.handleChange,
+      onChange = _ref.onChange;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: className
+    style: style,
+    className: divClassName
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: name + value
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -80129,10 +80221,10 @@ var CheckField = function CheckField(_ref) {
     id: name + value,
     name: name //className={'with-gap'}
     ,
-    className: 'darken-3',
+    className: 'darken-3 ' + className,
     required: required,
     placeholder: placeholder,
-    onChange: handleChange,
+    onChange: handleChange ? handleChange : onChange ? onChange : null,
     checked: checked,
     defaultChecked: defaultChecked,
     value: value
@@ -80318,7 +80410,10 @@ var InfoError = {
   'genere': 'Inserire un Genere valido',
   'regista': 'Inserire un Regista valido',
   'attore': 'Inserire un Attore valido',
+  'attore_2': 'Inserire almeno un Attore',
   'caratteri': 'Inserire caratteri validi',
+  'img': 'Inserire un URL valido',
+  'limite_caratteri': 'Superato il limite massimo di caratteri consentiti',
   'password': 'Inserire almeno 8 caratteri',
   'confirm_password': 'Le password non corrispondono',
   'comune': 'Inserire un comune valido',
@@ -80334,7 +80429,8 @@ var InfoError = {
   'numero': 'Inserire un numero valido',
   'numero_2': 'Inserire un numero maggiore di zero',
   'email_1': 'l\'email in genere è composta da almeno 8 caratteri',
-  'email_2': 'email non valida'
+  'email_2': 'email non valida',
+  'ingredienti': 'Inserire almeno un ingrediente'
 };
 /* harmony default export */ __webpack_exports__["default"] = (InfoError);
 
@@ -80388,7 +80484,7 @@ var InputField = function InputField(_ref) {
     placeholder: placeholder,
     onFocus: handleFocus,
     onChange: handleChange,
-    value: value
+    value: value != null ? value : undefined
   }), helperText, dataList != null && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("datalist", {
     id: name
   }, dataList.map(function (value, id) {
@@ -80515,6 +80611,60 @@ var RangeField = function RangeField(_ref) {
 
 /***/ }),
 
+/***/ "./resources/js/components/utils/form/TextAreaField.js":
+/*!*************************************************************!*\
+  !*** ./resources/js/components/utils/form/TextAreaField.js ***!
+  \*************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var TextAreaField = function TextAreaField(_ref) {
+  var name = _ref.name,
+      value = _ref.value,
+      placeholder = _ref.placeholder,
+      required = _ref.required,
+      handleChange = _ref.handleChange,
+      onMouseUp = _ref.onMouseUp,
+      onKeyUp = _ref.onKeyUp,
+      label = _ref.label,
+      _ref$divClassName = _ref.divClassName,
+      divClassName = _ref$divClassName === void 0 ? '' : _ref$divClassName,
+      _ref$className = _ref.className,
+      className = _ref$className === void 0 ? '' : _ref$className,
+      style = _ref.style,
+      helperText = _ref.helperText;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "input-field " + divClassName
+  }, label != null ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+    className: "",
+    htmlFor: name
+  }, label) : '', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+    type: "text",
+    name: name,
+    value: value != null ? value : undefined,
+    required: required,
+    className: className,
+    style: style != undefined ? style : {
+      height: "80px"
+    },
+    autoComplete: "off",
+    placeholder: placeholder,
+    onChange: handleChange,
+    onMouseUpCapture: onMouseUp,
+    onKeyUp: onKeyUp
+  }), helperText);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (TextAreaField);
+
+/***/ }),
+
 /***/ "./resources/js/components/view/Catalogo.js":
 /*!**************************************************!*\
   !*** ./resources/js/components/view/Catalogo.js ***!
@@ -80600,14 +80750,39 @@ var COLUMNS_VIDEO = [{
   title: 'Data Uscita',
   field: 'data_uscita',
   render: function render(cell, row) {
-    var uscita = row.in_uscita == 0 ? 'uscito' : 'in uscita';
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, new Date(cell).toLocaleDateString("it-IT", {
+    var now = new Date();
+    now = now.getFullYear() + '-' + ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
+    now = Date.parse(now);
+    var date = cell;
+    var check = Date.parse(date) <= now;
+    var uscita = check ? 'uscito' : 'in uscita';
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: check ? '' : 'highlight-confirm'
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, uscita, ": "), new Date(cell).toLocaleDateString("it-IT", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
-    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-      className: row.in_uscita == 1 ? 'highlight-confirm' : ''
-    }, uscita));
+    })));
+  }
+}, {
+  title: 'Disponibilità',
+  field: 'disponibile',
+  render: function render(cell, row, handle) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "mb-2 " + (row.disponibile == 1 ? 'highlight-confirm' : '')
+    }, cell == 1 ? 'Disponibile' : 'Non disponibile'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+      className: "btn-light",
+      onClick: function onClick(e) {
+        e.stopPropagation();
+
+        if (confirm("Confermi?")) {
+          handle({
+            id: row.id,
+            disponibile: Math.abs(row.disponibile - 1)
+          });
+        }
+      }
+    }, cell == 0 ? 'Disponibile' : 'Non disponibile'));
   }
 }, {
   title: 'Prezzo',
@@ -80675,9 +80850,48 @@ function (_Component) {
       }
     }
   }, {
+    key: "setRemoteData",
+    value: function setRemoteData(id, disponibile) {
+      var _this2 = this;
+
+      var url = this.props.url + '/catalogo/' + id;
+      var headers = {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      };
+      var sendData = {};
+      sendData.disponibile = disponibile;
+      sendData._method = 'put';
+      sendData._token = CSRF_TOKEN; //console.log(sendData);return;
+
+      return axios.post(url, sendData, headers).then(function (result) {
+        //console.log(result);
+        _this2.setState({
+          reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+        });
+
+        return result;
+      })["catch"](function (error) {
+        console.error(error.response);
+        var msg = '';
+
+        if (error.response !== undefined) {
+          if (error.response.data.errors) msg = error.response.data.errors;else if (error.response.data.msg) msng = error.response.data.msg;
+        }
+
+        _this2.setState({
+          errorRegMessage: msg
+        });
+
+        throw error;
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       var user = USER_CONFIG;
       var ruolo = user.ruolo;
@@ -80698,9 +80912,9 @@ function (_Component) {
         url: this.url + '/search',
         callback: this._handleSearchFieldCallback,
         handles: function handles(reset, recall) {
-          var check = _this2.state.recallSearch;
+          var check = _this3.state.recallSearch;
           recall(check);
-          if (check) _this2.state.recallSearch = false;
+          if (check) _this3.state.recallSearch = false;
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6 text-right"
@@ -80715,9 +80929,9 @@ function (_Component) {
         show: this.state.showVideo,
         onHide: this._handleCloseModal,
         callback: function callback(row) {
-          _this2.setState({
+          _this3.setState({
             recallSearch: true,
-            reloadInfiniteTable: ++_this2.state.reloadInfiniteTable
+            reloadInfiniteTable: ++_this3.state.reloadInfiniteTable
           });
         }
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -80731,7 +80945,10 @@ function (_Component) {
         url: this.url,
         query: "only=catalogo",
         columns: COLUMNS_VIDEO,
-        externalRows: this.state.rowsVideo
+        externalRows: this.state.rowsVideo,
+        onActions: function onActions(obj, type) {
+          return _this3.setRemoteData(obj.id, obj.disponibile);
+        }
       })))));
     }
   }]);
@@ -81630,7 +81847,7 @@ function (_Component) {
         key: "video",
         id: "tb-video",
         url: urlVideo,
-        query: "only=in_uscita",
+        query: "only=disponibile",
         columns: COLUMNS_VIDEO
       })), ruolo != 'Addetto' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-4 incassi"
@@ -83777,7 +83994,7 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_utils_SearchField__WEBPACK_IMPORTED_MODULE_2__["default"], {
         key: "s-video",
         showList: false,
-        query: "only=in_uscita",
+        query: "only=disponibile",
         url: urlVideo + '/search',
         callback: this._handleSearchFieldCallback,
         handles: function handles(reset, recall) {
@@ -83814,7 +84031,7 @@ function (_Component) {
         id: "tb-video",
         reload: this.state.reloadInfiniteTable,
         url: urlVideo,
-        query: "only=in_uscita",
+        query: "only=disponibile",
         columns: COLUMNS_VIDEO,
         externalRows: this.state.rowsVideo,
         multiSelect: true //multiSelectSetting={MS_VIDEO}

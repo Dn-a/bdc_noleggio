@@ -8,9 +8,11 @@ class Video extends Model
 {
     protected $table = 'video';
 
+    public $timestamps = false;
+
     protected $fillable = [
-        'titolo', 'durata', 'id_casa_produzione', 'id_categoria','id_regista','in_uscita',
-        'data_uscita', 'prezzo', 'img'
+        'titolo', 'durata', 'trama', 'id_categoria','id_regista','disponibile',
+        'data_uscita', 'prezzo',  'img'
     ];
 
     public function attori()

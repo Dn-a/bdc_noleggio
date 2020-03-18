@@ -181,6 +181,7 @@ export default class RestNoleggioModal extends Component {
                 show={this.props.show}
                 onHide={(a) => {this.props.onHide(a);this._resetAfterClose();}}
                 loader={this.state.loader}
+                url={this.props.url}
                 onConfirm={this._handleOnSave}
                 txtConfirmButton={this.state.complited ? 'Confermato':'Conferma'}
                 disabledConfirmButton={!this.state.checked || this.state.complited}

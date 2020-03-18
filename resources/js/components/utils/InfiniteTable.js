@@ -14,7 +14,7 @@ import {URL_HOME} from '../Env';
 // - selectedList: riceve in ingresso una lista di ID dei dati visulalizzati in tabella
 // - multiSelectCallback: ritorna un set di dati inerenti le righe selezionate
 // - onClick: intercetta il click sulla singola riga
-// - onActions: metodo invocato da eventuali azioni implementate nel render del campo columns - argomenti(object)
+// - onActions: metodo invocato da eventuali azioni implementate nel render del campo columns - argomenti(object,type)
 
 export default class InfiniteTable extends Component {
 
@@ -124,7 +124,7 @@ export default class InfiniteTable extends Component {
                 //console.log(res.data);
 
 			}).catch((error) => {
-                //if(error.response===undefined) return;
+                if(error.response===undefined) return;
                 if(error.response.data!==undefined)
                     console.log(error.response.data);
                 else
@@ -224,8 +224,7 @@ export default class InfiniteTable extends Component {
     // il numero di righe iniziali potrebbero non essere sufficienti a riempire l'area dello schermo.
     // MoreData provvede a recuperare un numero di righe sufficienti ad attivare la barra di scorrimento verticale
     _moreData(){
-        let content = document.getElementById('content');
-
+        let content = document.getElementById('content');        
         if(content.offsetHeight >= content.scrollHeight &&  this.state.moreData ){
             let page = this.state.data.page;
             this.state.moreData = false;
@@ -456,10 +455,11 @@ export default class InfiniteTable extends Component {
                                                     // IMAGE
                                                     let img = '';
                                                     if(column.img !== undefined &&  row['img']!== undefined)
-                                                        img=  row['img'];
+                                                        img =  row['img'];
                                                     else if(column.img !== undefined && column.img !='')
-                                                        img= column.img;
-
+                                                        img = column.img;
+                                                    
+                                                    //img = img!=null && img!='' ? img : this.props.url+'default_table.png';
                                                     // RENDER
                                                     if(rows[0][column.field] === undefined)
                                                         return;

@@ -7,6 +7,12 @@ import InputField from './form/InputField';
 //
 // - reloadOnClick: esegue una nuova ricerca
 // - handles: consente di richiamare alcune funzioni dall'esterno {reset,recall}
+// - showList: boolean
+// - reloadOnClick: boolean
+// - resetAfterClick: boolean
+// - onClick: handle
+// - patternList: Object - {id:'id', fields:{titolo:[],calorie:[]}
+// - loaderPath: string
 
 export default class SearchField extends Component {
 
@@ -196,7 +202,7 @@ export default class SearchField extends Component {
                 label={this.props.label!== undefined? this.props.label:''}
                 handleChange={this._handleChange} />
                 <div className={"img-loader " + (this.state.loader ? "active":'' )}>
-                    <img src="../img/loader.gif" />
+                    <img src={this.props.loaderPath!==undefined ? this.props.loaderPath : "../img/loader.gif"} />
                 </div>
                 {
                     <span className="info-search">

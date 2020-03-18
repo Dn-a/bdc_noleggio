@@ -19,7 +19,7 @@ class VideoController extends Controller
         //
         $only = $request->input('only') ?: '';
         $noleggi = in_array('noleggi', explode('-',$only));
-        $inUscita = in_array('in_uscita', explode('-',$only));
+        $inUscita = in_array('disponibile', explode('-',$only));
         $catalogo = in_array('catalogo', explode('-',$only));
 
         $user = Auth::user();
@@ -32,7 +32,7 @@ class VideoController extends Controller
                 $date = Carbon::now();
                 $date = $date->toDateString();
                 //$query->where('data_uscita', $inUscita ? '>=' : '<' , $date);
-                $query->where('in_uscita', $inUscita ? 1 : 0);
+                $query->where('disponibile', $inUscita ? 0 : 1);
             }
         })
         ->where(function($query) use($idPtVendita,$noleggi) {
@@ -55,7 +55,7 @@ class VideoController extends Controller
 
         $only = $request->input('only') ?: '';
         $noleggi = in_array('noleggi', explode('-',$only));
-        $inUscita = in_array('in_uscita', explode('-',$only));
+        $inUscita = in_array('disponibile', explode('-',$only));
         $catalogo = in_array('catalogo', explode('-',$only));
 
         $user = Auth::user();
@@ -67,7 +67,7 @@ class VideoController extends Controller
                 $date = Carbon::now();
                 $date = $date->toDateString();
                 //$query->where('data_uscita', $inUscita ? '>=' : '<' , $date);
-                $query->where('in_uscita', $inUscita ? 1 : 0);
+                $query->where('disponibile', $inUscita ? 0 : 1);
             }
         })
         ->where(function($query) use($idPtVendita,$noleggi) {
@@ -97,7 +97,7 @@ class VideoController extends Controller
             $moreFields =  array_merge($moreFields,['numero_prenotazioni']);
         
         if($noleggi || $inUscita || $catalogo) 
-            $moreFields =  array_merge($moreFields,['trama','attori','in_uscita']);
+            $moreFields =  array_merge($moreFields,['trama','attori','disponibile']);
 
         return $moreFields;
     }
@@ -111,7 +111,40 @@ class VideoController extends Controller
 
     public function store(Request $request)
     {
-        //
+        try{
+            //return response()->json($request->all(),201);exit;            
+
+            if($request->fase!='bozza')
+                $request->validate([
+                    'titolo' => 'required|string|min:1|max:50',
+                    'durata' => 'required|integer',
+                    'trama' => 'required|string|max:1024',
+                    'disponibile' => 'required|integer',
+                    'data_uscita' => 'required|date|date_format:Y-m-d',
+                    'prezzo' => 'required|regex:/^\d+(\.\d{1,6})?$/',
+                    'img' => 'required|string|max:2048',
+                    'id_attori' => 'required|array',
+                    'id_attori.*' => 'required|integer',
+                    'id_categoria' => 'required|integer',
+                    'id_regista' => 'required|integer',
+                ]);
+
+            //return response()->json($request->except('id_attori'),201);exit;
+            
+            $data = $request->except('id_attori');            
+            
+            $video = Video::create($data);
+
+            $video->attori()->sync($request->id_attori);            
+            
+            
+            $msg = 'Video Inserito!';
+
+            return response()->json(['insert' => $msg],201);
+
+        }catch( \Illuminate\Database\QueryException $e){
+            return response()->json(['msg' => $e->getMessage() ],422);
+        }
     }
 
 

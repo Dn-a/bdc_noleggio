@@ -227,6 +227,7 @@ export default class ClientiModal extends Component {
             <AddEditModal size="md"
                 show={this.props.show}
                 onHide={(a) => {this.props.onHide(a);this._resetAfterClose();}}
+                url={this.props.url}
                 onConfirm={this._handleOnSave}
                 loader={this.state.loader}
                 disabledConfirmButton={!this.state.checked}

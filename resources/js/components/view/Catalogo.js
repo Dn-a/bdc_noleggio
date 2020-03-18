@@ -43,16 +43,42 @@ const COLUMNS_VIDEO = [
     { title: 'Durata', field: 'durata'},
     { title: 'Data Uscita', field: 'data_uscita', render: 
         (cell,row) => {
-            let uscita = row.in_uscita==0? 'uscito' : 'in uscita' ;
+            let now = new Date();
+            now= now.getFullYear() +'-'+ ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
+            now = Date.parse(now);
+            let date = cell;
+            let check = Date.parse(date) <= now;
+            let uscita = check ? 'uscito' : 'in uscita' ;
             return(
                 <Fragment>
-                    <div>
+                    <div className={(check?'':'highlight-confirm')}>
+                        <span >{uscita}: </span>
                         {new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})}
-                    </div>
-                    <span className={row.in_uscita==1?'highlight-confirm':''}>{uscita}</span>
+                    </div> 
                 </Fragment>
             );
         }
+    },
+    { title: 'Disponibilità', field: 'disponibile', render: (cell,row,handle) => 
+        {
+            return(
+                <Fragment>
+                    <div className={"mb-2 "+(row.disponibile==1?'highlight-confirm':'')}>{cell==1?'Disponibile':'Non disponibile'}</div>
+                    <Button
+                    className="btn-light"
+                    onClick={(e) =>  {
+                            e.stopPropagation();
+                            if(confirm("Confermi?")){
+                                handle({id:row.id, disponibile: Math.abs(row.disponibile-1)})
+                            }
+                        }
+                    }
+                    >
+                        {cell==0?'Disponibile':'Non disponibile'}
+                    </Button>
+                </Fragment>
+            )
+        } 
     },
     { title: 'Prezzo', field: 'prezzo', render: cell => parseFloat(cell).toFixed(2) +' €' }
 ];
@@ -102,6 +128,45 @@ export default class Noleggi extends Component {
 
     }
 
+    setRemoteData(id,disponibile){
+
+        let url = this.props.url+'/catalogo/'+id;
+
+        let headers = {headers: {'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            }
+        };
+
+        let sendData = {};
+
+        sendData.disponibile = disponibile;
+        sendData._method = 'put';
+        sendData._token = CSRF_TOKEN;        
+
+        //console.log(sendData);return;
+
+        return axios.post(url,sendData,headers)
+        .then(result => {
+            //console.log(result);
+
+            this.setState({ reloadInfiniteTable : ++this.state.reloadInfiniteTable});
+
+            return result;
+
+        }).catch((error) => {
+            console.error(error.response);
+            let msg = '';
+            if(error.response!==undefined ){
+                if(error.response.data.errors)
+                    msg = error.response.data.errors;
+                else if(error.response.data.msg)
+                    msng = error.response.data.msg;
+            } 
+            this.setState({errorRegMessage: msg});
+            throw error;
+        });
+
+    }
 
 
     render() {
@@ -167,7 +232,9 @@ export default class Noleggi extends Component {
                             url={this.url}
                             query='only=catalogo'
                             columns={COLUMNS_VIDEO}
-                            externalRows={this.state.rowsVideo}                            
+                            externalRows={this.state.rowsVideo}
+                            onActions={(obj,type) =>  this.setRemoteData(obj.id, obj.disponibile)
+                            }                          
                             />
 
                         </div>

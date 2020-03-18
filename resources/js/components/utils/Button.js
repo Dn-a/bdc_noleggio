@@ -1,13 +1,13 @@
 import React from "react";
 
 const Button = ({ className='',title='', onClick, children, disabled=false}) => (
-  <a title={title} className={"btn waves-effect waves-light "+className+" grey lighten-5" +(disabled?' disabled':'')} onClick={() => onClick()}>
+  <a title={title} className={"btn waves-effect waves-light "+className+" grey lighten-5" +(disabled?' disabled':'')} onClick={(e) => onClick(e)}>
     {children}
   </a>
 );
 
-const ConfirmButton = ({ className='', onClick, children, disabled=false}) => (
-  <a className={"btn confirm btn-success waves-effect waves-light light-green darken-2 "+className +(disabled?' disabled':'')}
+const ConfirmButton = ({ className='',style, onClick, children, disabled=false}) => (
+  <a style={style} className={"btn confirm btn-success waves-effect waves-light light-green darken-2 "+className +(disabled?' disabled':'')}
     onClick={() => onClick()}>
     {children}
   </a>
@@ -45,4 +45,4 @@ const NextButton = ({ className='', onClick, children, disabled=false}) => (
   </a>
 );
 
-export {Button, ConfirmButton, BackButton, NextButton, CloseButton, AddButton,EditButton};
+export {Button, ConfirmButton, BackButton, NextButton, CloseButton, AddButton, EditButton};

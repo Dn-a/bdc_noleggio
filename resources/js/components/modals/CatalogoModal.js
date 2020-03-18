@@ -5,23 +5,30 @@ import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
 import InputField from '../utils/form/InputField';
 import DataField from '../utils/form/DataField';
+import DropdownSelect from '../utils/form/DropdownSelect';
+import TextAreaField from '../utils/form/TextAreaField';
 import INFO_ERROR from '../utils/form/InfoError';
 
 const email_reg_exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const whitespace_reg_ex = /^[^\s].*/;
+const url_reg_ex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 
 const FIELDS = [
     'titolo',
     'durata',
     'trama',
-    'in_uscita',
+    'disponibile',
     'data_uscita',
     'prezzo',
     'img',
-    'id_attori',
+    'attori',
     'id_categoria',
     'id_regista'
 ];
+
+const LOWER_CASE = [    
+];
+
 export default class CatalogoModal extends Component {
 
     constructor(props){
@@ -31,7 +38,16 @@ export default class CatalogoModal extends Component {
         let error = {};
 
         FIELDS.map((fd,id) => {
-            data[fd] = error[fd]= '';
+            if(fd=='attori'){
+                data[fd] = {
+                    id:[],
+                    nome:[]
+                };
+                error[fd]= '';
+            }else{
+                data[fd] = '';
+                error[fd]= '';
+            }
         });
 
         this.state = {
@@ -53,15 +69,24 @@ export default class CatalogoModal extends Component {
         let error = {};
 
         FIELDS.map((fd,id) => {
-            data[fd] = error[fd]= '';
+            if(fd=='attori'){
+                data[fd] = {
+                    id:[],
+                    nome:[]
+                };
+                error[fd]= '';
+            }else{
+                data[fd] = '';
+                error[fd]= '';
+            }
         });
-        this.state.data=data;
+        this.state.data= data;
         this.state.error =error;
         this.state.loader = false;
         this.state.checked = false;
     }
 
-    setRemoteStore() {
+    setRemoteData() {
 
         let url = this.props.url+'/video';
 
@@ -71,20 +96,26 @@ export default class CatalogoModal extends Component {
         };
 
         let data = this.state.data;
+        let sendData = {};
 
-        let formData = new FormData();
-
-        Object.keys(data).map((k,id) => {
-            formData.append(k,data[k]);
+        FIELDS.map((f,k) => {
+            if(f!='attori')
+                if(typeof data[f] === 'string')
+                    sendData[f] = LOWER_CASE.includes(f) ?  data[f].trim().toLowerCase() : data[f].trim();
+                else
+                    sendData[f] = data[f]
         });
 
-        formData.append('_token',CSRF_TOKEN);
+        sendData._token = CSRF_TOKEN;        
+        sendData.id_attori = data.attori.id;
+        
+        //console.log(sendData);return;
 
         this.setState({loader:true});
 
-        return axios.post(url,formData,headers)
+        return axios.post(url,sendData,headers)
         .then(result => {
-            //console.log(result);
+            console.log(result);
             
             if(this.props.callback !== undefined)
                 this.props.callback(data);
@@ -94,24 +125,26 @@ export default class CatalogoModal extends Component {
             
             return result;
         }).catch((error) => {
-          if(error.response===undefined){ console.log(error); return }
-          console.error(error.response);
-          let msgError = 'Qualcosa è andato storto. Errore: '+ error.response.data + '. Aggiornare la pagine per vedere se il problema persiste';
-          this.setState({remoteError: msgError});
-          if(error.response.status==401)
-            if(window.confirm('Devi effettuare il Login, Clicca ok per essere reindirizzato.'))
-              window.location.href=this.home + '/login';
-          throw error;
+            console.error(error)
+            let msg ='';
+            if(error.response!==undefined){
+                if(error.response.data.errors!==undefined)
+                    msg = error.response.data.errors;
+                // else if(error.response.data.message!==undefined)
+                //     msg = error.response.data.message;
+            }                
+            this.setState({remoteError: msg, loader:false}); 
+          //throw error;
         });
     }
 
     _handleOnSave(){
         console.log("save");
-        this.setRemoteStore();
+        this.setRemoteData();
     }
 
     _handleChange(e){
-        let value = e.target.value.toLowerCase();
+        let value = e.target.value;
         let field = e.target.name;
 
         let error = this.state.error;
@@ -124,43 +157,39 @@ export default class CatalogoModal extends Component {
 
         switch(field){
             case 'titolo':
-                if( value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.nome = INFO_ERROR['caratteri'];
+                if( value.length > 0 && !whitespace_reg_ex.test(value))
+                    error.titolo = INFO_ERROR['caratteri'];
                 break;
             case 'durata':
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.cognome = INFO_ERROR['caratteri'];
+                if(isNaN(value) ||  !whitespace_reg_ex.test(value))
+                   error.durata = INFO_ERROR['numero'];
                 break;
             case 'trama':
                 value = value.toUpperCase();
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.cf = INFO_ERROR['caratteri'];
+                if(value.length > 0 && !whitespace_reg_ex.test(value))
+                    error.trama = INFO_ERROR['caratteri'];
                 break;
-            case 'in_uscita':
-                if(value.length > 1 && !whitespace_reg_ex.test(value))
-                    error.indirizzo = INFO_ERROR['caratteri'];
+            case 'disponibile':
+                if(value.length > 0 && !whitespace_reg_ex.test(value))
+                    error.disponibile = INFO_ERROR['caratteri'];
                 break;
-            case 'data_uscita':
-                let today = new Date();
-                today = new Date(today.toDateString()).getTime();
-                let date = new Date(value);
-                date = new Date(date.toDateString()).getTime();
-                if(date > today)
-                    error.data_nascita = INFO_ERROR['data_2'];
+            case 'data_uscita':                
                 break;
             case 'prezzo':
                 if(isNaN(value))
-                   error.cellulare = INFO_ERROR['numero'];
+                   error.prezzo = INFO_ERROR['numero'];
                 break;
             case 'img':
-                if(value.length < 8 )
-                    error.email = INFO_ERROR['email_1'];
-                else if(!email_reg_exp.test(value))
-                    error.email = INFO_ERROR['email_2'];
+                if(value.length > 0 && !whitespace_reg_ex.test(value))
+                    error.img = INFO_ERROR['caratteri'];
+                else if(value.length > 2048)
+                    error.img = INFO_ERROR['limite_caratteri'];
+                else if(!url_reg_ex.test(value))
+                    error.img = INFO_ERROR['img'];                
                 break;            
         }
 
-        data[field] = field!='privacy'? value.trim() : value;
+        data[field] = value;
 
         this.setState({data,error},()  => this.checked());
     }
@@ -170,11 +199,17 @@ export default class CatalogoModal extends Component {
         let error = this.state.error;
 
         let checked = true;
-        Object.keys(error).map((k,id) => {
-            if(error[k]!='' || data[k]=='')
+        Object.keys(error).map((key,id) => {
+            if(key=='attori'){
+                if(error[key]!='' || data[key].id.length == 0)
+                checked = false;
+            }else if(error[key]!='' || data[key]=='')
+                checked = false;
+            else if(key=='prezzo' && data[key]==0)
                 checked = false;
         });
-
+        // console.log(checked)
+        // console.log(data)
         this.setState({checked});
     }
 
@@ -189,16 +224,16 @@ export default class CatalogoModal extends Component {
 
     render(){
 
-        let objFid = {'1':'Start - 0%'};
+        let data = this.state.data;
 
-        if(USER_CONFIG.ruolo!='Addetto'){
-            objFid['2'] = 'Plus - 10%';
-            objFid['3'] = 'Revolution - 20%';
-        }
+        let objDisp = {'0':'Non disponibile','1':'Disponibile'};
 
+        let remoteError = this.state.remoteError;
+
+        
         let divClassName = 'mb-3';
 
-        let urlCategorie = this.props.url+'/categorie/search';
+        let urlGeneri = this.props.url+'/generi/search';
         let urlRegisti = this.props.url+'/registi/search';
         let urlAttori = this.props.url+'/attori/search';
 
@@ -206,6 +241,7 @@ export default class CatalogoModal extends Component {
             <AddEditModal size="md"
                 show={this.props.show}
                 onHide={(a) => {this.props.onHide(a);this._resetAfterClose();}}
+                url={this.props.url}
                 onConfirm={this._handleOnSave}
                 loader={this.state.loader}
                 disabledConfirmButton={!this.state.checked}
@@ -220,7 +256,7 @@ export default class CatalogoModal extends Component {
                         helperText={this.showError('titolo')} handleChange={this._handleChange} />
                         <InputField name="durata" divClassName={divClassName} className="form-control" label="Durata"
                         helperText={this.showError('durata')} handleChange={this._handleChange} />
-                        <InputField name="trama" divClassName={divClassName} className="form-control" label="Trama"
+                        <TextAreaField name="trama" divClassName={divClassName} className="form-control" label="Trama"
                         helperText={this.showError('trama')} handleChange={this._handleChange} />
                         <DataField name="data_uscita" className="form-control" label="Data Uscita"
                         helperText={this.showError('data_uscita')} handleChange={this._handleChange} />
@@ -232,7 +268,7 @@ export default class CatalogoModal extends Component {
                             placeholder='Cerca un Genere'
                             searchClassName='w-100'
                             showList={true}
-                            url={urlCategorie}
+                            url={urlGeneri}
                             patternList={{id:'id', fields:{titolo:[]}} }//id di ritorno; i fields vengono usati come titolo
                             reloadOnClick={false}
                             onClick={(val) => {
@@ -301,34 +337,99 @@ export default class CatalogoModal extends Component {
                             url={urlAttori}
                             patternList={{id:'id', fields:{nome:[],cognome:[]}} }//id di ritorno; i fields vengono usati come titolo
                             reloadOnClick={false}
+                            resetAfterClick={true}
                             onClick={(val) => {
                                     //console.log(val);
+                                    
                                     let data = this.state.data;
                                     let error = this.state.error;
-                                    data.id_attori = val.id;
-                                    error.id_attori = '';
-                                    this.setState({data,error},() => this.checked());
-                                }
-                            }
-                            callback={(val) => {
-                                    //console.log(val);
-                                    let data = this.state.data;
-                                    let error = this.state.error;
-                                    data.id_attori = '';
-                                    if(val.length==0){
-                                        error.id_attori = INFO_ERROR['attore'];
+
+                                    if(!data.attori.id.includes(val.id)){
+                                        data.attori.id.push(val.id)
+                                        data.attori.nome.push(val.nome + ' ' + val.cognome)
+                                        
+                                        //let id = Object.keys(error.attori).length;                                        
+                                        if(data.attori.id.length>0)
+                                            error.attori = '';
+
+                                        this.state.data = data;
+                                        this.state.error = error;
+                                        
+                                        this.checked();
                                     }
-                                    this.setState({data,error},() => this.checked());
+                                    //this.setState({data,error},() => this.checked());
                                 }
-                            }
+                            }                            
                         />
-                        {this.showError('id_attori')}
+                        {this.showError('attori')}
+
+                        <div className="ml-2 my-3">
+                            <ul>
+                                {
+                                    data.attori.id.map((id,key) => {
+                                        //console.log(key); return;
+                                        let nome = data.attori.nome[key];
+                                        let cnt = key+1;
+                                        //console.log(cnt); return;
+                                        return(
+                                            <li key={key} className="mb-3">
+                                                <span>{cnt}. </span>&nbsp;                                                                                                
+                                                <span>{nome}</span>
+                                                <div 
+                                                className="btn-clear d-inline-block ml-3 p-1"
+                                                onClick={(a) => {
+
+                                                    let data = this.state.data;
+                                                    let error = this.state.error;
+                                                    
+                                                    data.attori.id.splice(key,1);
+                                                    data.attori.nome.splice(key,1);
+                                                    
+                                                    if(data.attori.id.length==0)
+                                                        error.attori = INFO_ERROR['attore_2'];
+
+                                                    //console.log(error.ingredienti)
+                                                    this.state.data = data;
+                                                    this.state.error = error;
+                                                    
+                                                    this.checked();
+
+                                                }}   
+                                                ><i className="fa fa-times" aria-hidden="true"></i></div>
+                                            </li>
+                                        )
+                                    })
+                                }
+                            </ul>
+                        </div>
                     </div>
 
                     <div className="form-group">
                         <InputField name="img" divClassName={divClassName} className="form-control" label="Link immagine"
                         helperText={this.showError('img')} handleChange={this._handleChange} />                        
                     </div>
+
+                    <div className="form-group">
+                        <InputField name="prezzo" divClassName={divClassName} className="form-control" label="Prezzo €"
+                        helperText={this.showError('prezzo')} handleChange={this._handleChange} />                        
+                    </div>
+
+                    <div className="form-group">
+                        <DropdownSelect placeholder="Scegli un valore"
+                        name="disponibile" className="form-control" label="Disponibilità"
+                        values={objDisp}
+                        defaultSelected='Scegli un valore'
+                        handleChange={this._handleChange} />
+                    </div>
+
+                    { typeof remoteError ==='object' && 
+                        <div className="alert alert-danger" role="alert">
+                            <strong>Attenzione!</strong>
+                            {
+                                Object.keys(remoteError).map((a,k1) => <div key={k1}>{remoteError[a].map((s,k2) => <span key={k2}>{s} </span>)}</div>)
+                            }
+                        </div>
+                    }
 
                 </form>
             </AddEditModal>

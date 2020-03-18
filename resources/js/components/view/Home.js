@@ -114,7 +114,7 @@ export default class Home extends Component {
                         <InfiniteTable key="video"
                             id="tb-video"
                             url={urlVideo}
-                            query='only=in_uscita'
+                            query='only=disponibile'
                             columns={COLUMNS_VIDEO}
                         />
                     </div>

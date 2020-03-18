@@ -17,7 +17,7 @@ const InputField = ({name ,type='', divClassName='', className='', placeholder,a
             placeholder = {placeholder}
             onFocus = {handleFocus}
             onChange = {handleChange}
-            value = {value}
+            value = {value!=null ? value : undefined}
 
         />
         {helperText}

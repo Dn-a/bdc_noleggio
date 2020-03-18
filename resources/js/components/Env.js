@@ -7,4 +7,8 @@ const User = () => {
     return config;
 }
 
-export {URL_HOME,User};
+const ASSETS = {
+    loader_gif : URL_HOME+'/img/loader.gif',
+} 
+
+export {URL_HOME,User,ASSETS};

@@ -269,7 +269,7 @@ export default class Noleggi extends Component {
 
                                     <div className="col-md-6">
                                         <SearchField key="s-video" showList={false}
-                                        query='only=in_uscita'
+                                        query='only=disponibile'
                                         url={urlVideo+'/search'}
                                         callback={this._handleSearchFieldCallback}
                                         handles={(reset,recall) =>{
@@ -306,7 +306,7 @@ export default class Noleggi extends Component {
                                             id="tb-video"
                                             reload={this.state.reloadInfiniteTable}
                                             url={urlVideo}
-                                            query='only=in_uscita'
+                                            query='only=disponibile'
                                             columns={COLUMNS_VIDEO}
                                             externalRows={this.state.rowsVideo}
                                             multiSelect={true}

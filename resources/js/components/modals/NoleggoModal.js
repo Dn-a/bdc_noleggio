@@ -1,6 +1,6 @@
 import React, { Component , Fragment } from 'react';
 import cx from "classnames";
-import {URL_HOME,User} from '../Env';
+import {URL_HOME,User,ASSETS} from '../Env';
 
 import AddEditModal from '../utils/AddEditModal';
 import SearchField from '../utils/SearchField';
@@ -329,6 +329,7 @@ export default class NoleggoModal extends Component {
                 show={this.props.show}
                 onHide={(a) => {this.props.onHide(a);this._resetAfterClose();}}
                 loader={this.state.loader}
+                url={this.props.url}
                 onConfirm={this._handleOnSave}
                 txtConfirmButton={this.state.complited? 'Noleggiato': 'Noleggia'}
                 disabledConfirmButton={!this.state.checked || this.state.complited}
