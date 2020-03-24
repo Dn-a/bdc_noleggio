@@ -1,6 +1,7 @@
 import React, { Component , Fragment } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { BackButton, ConfirmButton } from './Button';
+import {ASSETS} from '../Env';
 
 export default function AddEditModal(props) {
     //console.log(props);
@@ -36,7 +37,7 @@ export default function AddEditModal(props) {
                         disabled={props.disabledConfirmButton!==undefined ? props.disabledConfirmButton:false}
                         className="btn-success" onClick={props.onConfirm}
                     >
-                        {props.txtConfirmButton!== undefined ? props.txtConfirmButton:'Aggiungi'} <img className={"loader-2"+(props.loader==true?' d-inline-block':'')} src={props.url+'/img/loader_2.gif'}></img>
+                        {props.txtConfirmButton!== undefined ? props.txtConfirmButton:'Aggiungi'} <img className={"loader-2"+(props.loader==true?' d-inline-block':'')} src={ASSETS.loader_2}></img>
                     </ConfirmButton>
                 }
 

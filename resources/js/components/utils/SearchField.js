@@ -1,5 +1,5 @@
 import React, { Component , Fragment } from 'react';
-import {URL_HOME} from '../Env';
+import {URL_HOME,ASSETS} from '../Env';
 
 import InputField from './form/InputField';
 
@@ -27,7 +27,7 @@ export default class SearchField extends Component {
             loader:false,
             infoSearch:''
         };
-
+        
         this.home = URL_HOME;
 
         this._getRemoteData = this._getRemoteData.bind(this);
@@ -202,7 +202,7 @@ export default class SearchField extends Component {
                 label={this.props.label!== undefined? this.props.label:''}
                 handleChange={this._handleChange} />
                 <div className={"img-loader " + (this.state.loader ? "active":'' )}>
-                    <img src={this.props.loaderPath!==undefined ? this.props.loaderPath : "../img/loader.gif"} />
+                    <img src={this.props.loaderPath!==undefined ? this.props.loaderPath : ASSETS.loader_gif} />
                 </div>
                 {
                     <span className="info-search">

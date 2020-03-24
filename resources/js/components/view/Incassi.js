@@ -1,5 +1,6 @@
 import React, { Component , Fragment } from 'react';
 import ReactApexChart from "react-apexcharts";
+import {ASSETS} from '../Env';
 
 import DropDownSelect from '../utils/form/DropdownSelect';
 
@@ -159,7 +160,7 @@ export default class Incassi extends Component {
                                 }
                                 />
                             </div>
-                            <img className={"loader-2"+(this.state.loader==true?' d-inline-block':'')} src="../img/loader_2.gif"></img>
+                            <img className={"loader-2"+(this.state.loader==true?' d-inline-block':'')} src={ASSETS.loader_2}></img>
                         </div>
                     }
 

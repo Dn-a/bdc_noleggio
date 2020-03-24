@@ -1,6 +1,6 @@
 import React, { Component , Fragment } from 'react';
 import SearchField from './SearchField';
-import {URL_HOME} from '../Env';
+import {URL_HOME, ASSETS} from '../Env';
 
 // Proprietà
 //
@@ -487,7 +487,7 @@ export default class InfiniteTable extends Component {
                             <tr>
                                 <td>
                             <div className={"img-loader loader-3 " + (this.state.loader ? "active":'' )}>
-                                <img src="../img/loader_3.gif" />
+                                <img src={ASSETS.loader_3} />
                             </div>  
                             </td>
                             </tr>
@@ -509,7 +509,7 @@ const TableSearchField = (props) => {
             label={props.label!== undefined? props.label:''}
             handleChange={props.onChange} />
             <div className={"img-loader " + (props.loader ? "active":'' )}>
-                <img src="../img/loader.gif" />
+                <img src={ASSETS.loader_gif} />
             </div>
             {
                 <span className="info-search">

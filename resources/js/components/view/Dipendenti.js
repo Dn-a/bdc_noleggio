@@ -1,4 +1,5 @@
 import React, { Component , Fragment } from 'react';
+import {ASSETS} from '../Env';
 
 import SearchField from '../utils/SearchField';
 import DropDownSelect from '../utils/form/DropdownSelect';
@@ -134,7 +135,7 @@ export default class Dipendenti extends Component {
                             }
                             />
                         </div>
-                        <img className={"loader-2"+(this.state.loader==true?' d-inline-block':'')} src="../img/loader_2.gif"></img>
+                        <img className={"loader-2"+(this.state.loader==true?' d-inline-block':'')} src={ASSETS.loader_2}></img>
                     </div>
                 }
 

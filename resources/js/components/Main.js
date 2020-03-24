@@ -1,6 +1,7 @@
 import React, { Component , Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Switch, Route, Link, NavLink} from "react-router-dom";
+import {URL_HOME} from './Env';
 
 import Home from './view/Home';
 import Prenotazioni from './view/Prenotazioni';
@@ -33,7 +34,7 @@ const MainTitle = ()  => {
             {
             routes.map(({path, title, icon},key) => {
             return(
-            <Route key={key} exact path={path} >
+            <Route key={key} exact path={URL_HOME + path} >
                 <h3>
                     <i className={"fa "+icon} aria-hidden="true"> </i>
                     <strong> {title}</strong>
@@ -54,7 +55,7 @@ export default class Main extends Component {
         super(props);
 
         const host = window.location.hostname;
-        this.home = host=='www.dn-a.it'? '/noleggio':'';
+        this.home = host=='www.g-soluzioniassicurative.it'? '/noleggio':'';
         this.url = this.home;
     }
 
@@ -72,7 +73,7 @@ export default class Main extends Component {
                                     if(menu.indexOf(name.toLowerCase())==-1) return;
                                     return(
                                         <li key={key} >
-                                            <NavLink exact to={path} title={name}>
+                                            <NavLink exact to={URL_HOME + path} title={name}>
                                                 <i className={"fa "+icon} aria-hidden="true"></i>
                                                 <span>{name}</span>
                                             </NavLink>
@@ -92,7 +93,7 @@ export default class Main extends Component {
                         {
                             routes.map(({path, Component},key) => {
                                 return(
-                                    <Route key={key} path={path} exact
+                                    <Route key={key} path={URL_HOME + path} exact
                                         component={() => <Component url={this.url} />}
                                     />
                                 )
