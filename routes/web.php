@@ -11,6 +11,14 @@
 |
 */
 
+if(env('APP_DEBUG')){
+    \DB::listen(function($sql)  {
+        $log = \Log::channel('queries');
+        $log->info($sql->sql);
+        $log->info($sql->bindings);
+        $log->info($sql->time);
+    });
+}
 
 Auth::routes([
     'register' => false, // Registration Routes...
