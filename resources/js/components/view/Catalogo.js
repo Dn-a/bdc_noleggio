@@ -10,11 +10,11 @@ const COLUMNS_VIDEO = [
     { title: 'id', field: 'id' , align:'right'},
     { title: 'Titolo', field: 'titolo', img:'',
         render: (cell,row) => {
-            
+
             return(
                 <div style={{display: 'inline-block'}}>
                     <span style={{textTransform:'capitalize',fontWeight:'600'}}>{row['titolo']}</span>
-                    <div>                        
+                    <div>
                         <span>{row['categoria']}</span> -&nbsp;
                         <span>{row['regista']}</span>&nbsp;
                         {row.attori!=undefined && row.trama!=undefined &&
@@ -30,6 +30,8 @@ const COLUMNS_VIDEO = [
                                             })
                                         }
                                         <div className="mb-3"></div>
+                                        <strong>Casa Produzione:</strong> {row.casa_produzione}
+                                        <div className="mb-3"></div>
                                         <strong>Trama:</strong> {row.trama}
                                     </div>
                                 </div>
@@ -41,7 +43,7 @@ const COLUMNS_VIDEO = [
         }
     },
     { title: 'Durata', field: 'durata'},
-    { title: 'Data Uscita', field: 'data_uscita', render: 
+    { title: 'Data Uscita', field: 'data_uscita', render:
         (cell,row) => {
             let now = new Date();
             now= now.getFullYear() +'-'+ ("0" + (now.getMonth() + 1)).slice(-2) + '-' + ("0" + now.getDate()).slice(-2);
@@ -54,12 +56,12 @@ const COLUMNS_VIDEO = [
                     <div className={(check?'':'highlight-confirm')}>
                         <span >{uscita}: </span>
                         {new Date(cell).toLocaleDateString("it-IT",{year:"numeric",month:"2-digit", day:"2-digit"})}
-                    </div> 
+                    </div>
                 </Fragment>
             );
         }
     },
-    { title: 'Disponibilità', field: 'disponibile', render: (cell,row,handle) => 
+    { title: 'Disponibilità', field: 'disponibile', render: (cell,row,handle) =>
         {
             return(
                 <Fragment>
@@ -78,7 +80,7 @@ const COLUMNS_VIDEO = [
                     </Button>
                 </Fragment>
             )
-        } 
+        }
     },
     { title: 'Prezzo', field: 'prezzo', render: cell => parseFloat(cell).toFixed(2) +' €' }
 ];
@@ -99,7 +101,7 @@ export default class Noleggi extends Component {
 
         this._handleCloseModal = this._handleCloseModal.bind(this);
         this._handleShowModal = this._handleShowModal.bind(this);
-        
+
         this._handleSearchFieldCallback = this._handleSearchFieldCallback.bind(this);
     }
 
@@ -141,7 +143,7 @@ export default class Noleggi extends Component {
 
         sendData.disponibile = disponibile;
         sendData._method = 'put';
-        sendData._token = CSRF_TOKEN;        
+        sendData._token = CSRF_TOKEN;
 
         //console.log(sendData);return;
 
@@ -161,7 +163,7 @@ export default class Noleggi extends Component {
                     msg = error.response.data.errors;
                 else if(error.response.data.msg)
                     msng = error.response.data.msg;
-            } 
+            }
             this.setState({errorRegMessage: msg});
             throw error;
         });
@@ -177,13 +179,13 @@ export default class Noleggi extends Component {
         return (
             <Fragment>
 
-                {ruolo=='Admin' &&                
+                {ruolo=='Admin' &&
 
                 <div className="container-fluid pl-3">
 
                     <div className="row mb-2 px-2">
                         <div className="col-md-12 description-txt">
-                            <p>Cliccando su <strong>Aggiungi film</strong> si aprirà una finestra che ti consentirà di aggiungere un nuovo film (uscito o in uscita) nel catalogo.</p>                            
+                            <p>Cliccando su <strong>Aggiungi film</strong> si aprirà una finestra che ti consentirà di aggiungere un nuovo film (uscito o in uscita) nel catalogo.</p>
                             <p>È possibile cercare un <strong>Video</strong> in base a: TITOLO | GENERE </p>
                         </div>
                     </div>
@@ -204,13 +206,13 @@ export default class Noleggi extends Component {
                         </div>
 
                         <div className="col-md-6 text-right">
-                            <Button className="btn-success mr-3"                            
+                            <Button className="btn-success mr-3"
                             onClick={this._handleShowModal}>
                             <i className="fa fa-plus" aria-hidden="true"></i>
                             &nbsp;Aggiungi un Film</Button>
 
 
-                            <CatalogoModal url={this.props.url}                            
+                            <CatalogoModal url={this.props.url}
                             show={this.state.showVideo} onHide={this._handleCloseModal}
                             callback={
                                 (row) => {
@@ -234,7 +236,7 @@ export default class Noleggi extends Component {
                             columns={COLUMNS_VIDEO}
                             externalRows={this.state.rowsVideo}
                             onActions={(obj,type) =>  this.setRemoteData(obj.id, obj.disponibile)
-                            }                          
+                            }
                             />
 
                         </div>
@@ -243,7 +245,7 @@ export default class Noleggi extends Component {
                 </div>
 
                 }
-                    
+
             </Fragment>
 
         );

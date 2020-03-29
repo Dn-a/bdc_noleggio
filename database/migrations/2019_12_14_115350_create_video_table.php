@@ -20,6 +20,7 @@ class CreateVideoTable extends Migration
             $table->unsignedInteger('durata');
             $table->unsignedInteger('id_categoria');
             $table->unsignedInteger('id_regista');
+            $table->unsignedInteger('id_casa_produzione');
             $table->boolean('disponibile');
             $table->date('data_uscita');
             $table->float('prezzo');
@@ -29,6 +30,7 @@ class CreateVideoTable extends Migration
         Schema::table('video', function($table) {
         	$table->foreign('id_categoria')->references('id')->on('categorie')->onDelete('restrict');
         	$table->foreign('id_regista')->references('id')->on('registi')->onDelete('restrict');
+        	$table->foreign('id_casa_produzione')->references('id')->on('case_produzione')->onDelete('restrict');
         });
     }
 

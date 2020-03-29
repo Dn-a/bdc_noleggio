@@ -18,7 +18,10 @@ class RicevutaController extends Controller
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $user->id_pt_vendita;
 
-        $ricevuta = Ricevuta::where('id_pt_vendita',$idPtVendita)
+        $ricevuta = Ricevuta::
+            whereHas('dipendente', function($query) use($idPtVendita) {
+                $query->where('id_pt_vendita',$idPtVendita);
+            })
             ->orderBy('id','DESC')->paginate($page);
 
         return new RicevutaCollection($ricevuta, true, $this->moreField($ruolo) );
@@ -33,7 +36,10 @@ class RicevutaController extends Controller
         $ruolo = $user->ruolo->titolo;
         $idPtVendita = $user->id_pt_vendita;
 
-        $noleggio = Ricevuta::where('id_pt_vendita',$idPtVendita)
+        $noleggio = Ricevuta::
+        whereHas('dipendente', function($query) use($idPtVendita) {
+            $query->where('id_pt_vendita',$idPtVendita);
+        })
         ->where(function($query) use($arr) {
             $query->where('tipo','like',$arr[0].'%')
             ->orWhereHas('cliente',function($query) use($arr) {
@@ -55,6 +61,7 @@ class RicevutaController extends Controller
                     ->orWhere('cognome','like',$arr[0].'%');
             });
         })
+        ->orderBy('id','DESC')
         ->limit(15)->get();
 
 

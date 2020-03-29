@@ -11,7 +11,7 @@ const COLUMNS_VIDEO = [
     { title: 'id', field: 'id' , align:'right'},
     { title: 'Titolo', field: 'titolo', img:'',
         render: (cell,row) => {
-            
+
             return(
                 <div style={{display: 'inline-block'}}>
                     <span style={{textTransform:'capitalize',fontWeight:'600'}}>{row['titolo']}</span>
@@ -32,6 +32,8 @@ const COLUMNS_VIDEO = [
                                                 return(a+' | ')
                                             })
                                         }
+                                        <div className="mb-3"></div>
+                                        <strong>Casa Produzione:</strong> {row.casa_produzione}
                                         <div className="mb-3"></div>
                                         <strong>Trama:</strong> {row.trama}
                                     </div>
@@ -87,7 +89,7 @@ const COLUMNS_STORICO = [
 
             let linkRicevutaNoleggio = 'data:application/pdf;base64,'+row.ricevuta_noleggio;
             let linkRicevutaPagamento = 'data:application/pdf;base64,'+row.ricevuta_pagamento;
-                        
+
             return(
                 <Fragment>
                     {row.ricevuta_noleggio !=null &&
@@ -98,7 +100,7 @@ const COLUMNS_STORICO = [
                             </a>
                         </div>
                     }
-                    {row.ricevuta_pagamento !=null && 
+                    {row.ricevuta_pagamento !=null &&
                         <div>
                             <a className="privacy-file" href={linkRicevutaPagamento} download='ricevuta_pagamento.pdf'>
                                 <i className="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;
@@ -370,9 +372,9 @@ export default class Noleggi extends Component {
                         <div className="container-fluid pl-3">
 
                             <div className="row mb-2 px-2">
-                                <div className="col-md-12 description-txt">    
+                                <div className="col-md-12 description-txt">
                                     <p>Puoi selezionare contemporaneamente soltanto i video noleggiati dallo stesso cliente.
-                                    </p>                               
+                                    </p>
                                     <p>È possibile cercare un <strong>Noleggio</strong> in base a: TITOLO VIDEO | CLIENTE </p>
                                 </div>
                             </div>
@@ -450,9 +452,9 @@ export default class Noleggi extends Component {
 
                     <div className="tab-pane fade" id="nav-storico" role="tabpanel" aria-labelledby="nav-storico-tab">
                         <div className="container-fluid pl-3">
-                            
+
                             <div className="row mb-2 px-2">
-                                <div className="col-md-12 description-txt">                                   
+                                <div className="col-md-12 description-txt">
                                     <p>È possibile cercare un <strong>Noleggio</strong> in base a: TITOLO VIDEO | CLIENTE </p>
                                 </div>
                             </div>
@@ -490,7 +492,7 @@ export default class Noleggi extends Component {
                         <div className="container-fluid pl-3">
 
                             <div className="row mb-2 px-2">
-                                <div className="col-md-12 description-txt">                                   
+                                <div className="col-md-12 description-txt">
                                     <p>È possibile cercare una <strong>Ricevuta</strong> in base a: TIPO | CLIENTE </p>
                                 </div>
                             </div>

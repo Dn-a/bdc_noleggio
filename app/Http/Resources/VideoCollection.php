@@ -100,6 +100,10 @@ class VideoCollection extends ResourceCollection
             .' '. (string) $item->regista->cognome;
             $item['regista'] = $regista;
         }
+        if(in_array('casa_produzione',$fields)){
+            $casaProduzione = (string) $item->casaProduzione->nome;
+            $item['casa_produzione'] = $casaProduzione;
+        }
         if(in_array('numero_prenotazioni',$fields)){
             $idPtVendita = $this->idPtVendita;
             $item['numero_prenotazioni'] =

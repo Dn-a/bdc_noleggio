@@ -11,8 +11,8 @@ class Video extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'titolo', 'durata', 'trama', 'id_categoria','id_regista','disponibile',
-        'data_uscita', 'prezzo',  'img'
+        'titolo', 'durata', 'trama', 'id_categoria','id_regista', 'id_casa_produzione',
+        'disponibile', 'data_uscita', 'prezzo',  'img'
     ];
 
     public function attori()
@@ -33,6 +33,11 @@ class Video extends Model
     public function regista()
     {
         return $this->belongsTo('App\Regista','id_regista');
+    }
+
+    public function casaProduzione()
+    {
+        return $this->belongsTo('App\CasaProduzione','id_casa_produzione');
     }
 
     public function prenotazione()

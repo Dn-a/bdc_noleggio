@@ -23,10 +23,11 @@ const FIELDS = [
     'img',
     'attori',
     'id_categoria',
-    'id_regista'
+    'id_regista',
+    'id_casa_produzione'
 ];
 
-const LOWER_CASE = [    
+const LOWER_CASE = [
 ];
 
 export default class CatalogoModal extends Component {
@@ -106,9 +107,9 @@ export default class CatalogoModal extends Component {
                     sendData[f] = data[f]
         });
 
-        sendData._token = CSRF_TOKEN;        
+        sendData._token = CSRF_TOKEN;
         sendData.id_attori = data.attori.id;
-        
+
         //console.log(sendData);return;
 
         this.setState({loader:true});
@@ -116,13 +117,13 @@ export default class CatalogoModal extends Component {
         return axios.post(url,sendData,headers)
         .then(result => {
             console.log(result);
-            
+
             if(this.props.callback !== undefined)
                 this.props.callback(data);
 
             this.props.onHide();
             this.state.loader = false;
-            
+
             return result;
         }).catch((error) => {
             console.error(error)
@@ -132,8 +133,8 @@ export default class CatalogoModal extends Component {
                     msg = error.response.data.errors;
                 // else if(error.response.data.message!==undefined)
                 //     msg = error.response.data.message;
-            }                
-            this.setState({remoteError: msg, loader:false}); 
+            }
+            this.setState({remoteError: msg, loader:false});
           //throw error;
         });
     }
@@ -173,7 +174,7 @@ export default class CatalogoModal extends Component {
                 if(value.length > 0 && !whitespace_reg_ex.test(value))
                     error.disponibile = INFO_ERROR['caratteri'];
                 break;
-            case 'data_uscita':                
+            case 'data_uscita':
                 break;
             case 'prezzo':
                 if(isNaN(value))
@@ -185,8 +186,8 @@ export default class CatalogoModal extends Component {
                 else if(value.length > 2048)
                     error.img = INFO_ERROR['limite_caratteri'];
                 else if(!url_reg_ex.test(value))
-                    error.img = INFO_ERROR['img'];                
-                break;            
+                    error.img = INFO_ERROR['img'];
+                break;
         }
 
         data[field] = value;
@@ -230,11 +231,12 @@ export default class CatalogoModal extends Component {
 
         let remoteError = this.state.remoteError;
 
-        
+
         let divClassName = 'mb-3';
 
         let urlGeneri = this.props.url+'/generi/search';
         let urlRegisti = this.props.url+'/registi/search';
+        let urlCaseProduzione = this.props.url+'/case-produzione/search';
         let urlAttori = this.props.url+'/attori/search';
 
         return(
@@ -262,7 +264,7 @@ export default class CatalogoModal extends Component {
                         helperText={this.showError('data_uscita')} handleChange={this._handleChange} />
                     </div>
 
-                    <div className="form-group">                        
+                    <div className="form-group">
                         <SearchField
                             label="Genere"
                             placeholder='Cerca un Genere'
@@ -295,7 +297,7 @@ export default class CatalogoModal extends Component {
                         {this.showError('id_categoria')}
                     </div>
 
-                    <div className="form-group">                        
+                    <div className="form-group">
                         <SearchField
                             label="Regista"
                             placeholder='Cerca un Regista'
@@ -328,7 +330,7 @@ export default class CatalogoModal extends Component {
                         {this.showError('id_regista')}
                     </div>
 
-                    <div className="form-group">                        
+                    <div className="form-group">
                         <SearchField
                             label="Attore"
                             placeholder='Cerca un Attore'
@@ -340,26 +342,26 @@ export default class CatalogoModal extends Component {
                             resetAfterClick={true}
                             onClick={(val) => {
                                     //console.log(val);
-                                    
+
                                     let data = this.state.data;
                                     let error = this.state.error;
 
                                     if(!data.attori.id.includes(val.id)){
                                         data.attori.id.push(val.id)
                                         data.attori.nome.push(val.nome + ' ' + val.cognome)
-                                        
-                                        //let id = Object.keys(error.attori).length;                                        
+
+                                        //let id = Object.keys(error.attori).length;
                                         if(data.attori.id.length>0)
                                             error.attori = '';
 
                                         this.state.data = data;
                                         this.state.error = error;
-                                        
+
                                         this.checked();
                                     }
                                     //this.setState({data,error},() => this.checked());
                                 }
-                            }                            
+                            }
                         />
                         {this.showError('attori')}
 
@@ -373,28 +375,28 @@ export default class CatalogoModal extends Component {
                                         //console.log(cnt); return;
                                         return(
                                             <li key={key} className="mb-3">
-                                                <span>{cnt}. </span>&nbsp;                                                                                                
+                                                <span>{cnt}. </span>&nbsp;
                                                 <span>{nome}</span>
-                                                <div 
+                                                <div
                                                 className="btn-clear d-inline-block ml-3 p-1"
                                                 onClick={(a) => {
 
                                                     let data = this.state.data;
                                                     let error = this.state.error;
-                                                    
+
                                                     data.attori.id.splice(key,1);
                                                     data.attori.nome.splice(key,1);
-                                                    
+
                                                     if(data.attori.id.length==0)
                                                         error.attori = INFO_ERROR['attore_2'];
 
                                                     //console.log(error.ingredienti)
                                                     this.state.data = data;
                                                     this.state.error = error;
-                                                    
+
                                                     this.checked();
 
-                                                }}   
+                                                }}
                                                 ><i className="fa fa-times" aria-hidden="true"></i></div>
                                             </li>
                                         )
@@ -405,13 +407,46 @@ export default class CatalogoModal extends Component {
                     </div>
 
                     <div className="form-group">
+                        <SearchField
+                            label="Casa produzione"
+                            placeholder='Cerca un Casa di produzione'
+                            searchClassName='w-100'
+                            showList={true}
+                            url={urlCaseProduzione}
+                            patternList={{id:'id', fields:{nome:[]}} }//id di ritorno; i fields vengono usati come titolo
+                            reloadOnClick={false}
+                            onClick={(val) => {
+                                    //console.log(val);
+                                    let data = this.state.data;
+                                    let error = this.state.error;
+                                    data.id_casa_produzione = val.id;
+                                    error.id_casa_produzione = '';
+                                    this.setState({data,error},() => this.checked());
+                                }
+                            }
+                            callback={(val) => {
+                                    //console.log(val);
+                                    let data = this.state.data;
+                                    let error = this.state.error;
+                                    data.id_casa_produzione = '';
+                                    if(val.length==0){
+                                        error.id_casa_produzione = INFO_ERROR['casa_produzione'];
+                                    }
+                                    this.setState({data,error},() => this.checked());
+                                }
+                            }
+                        />
+                        {this.showError('id_casa_produzione')}
+                    </div>
+
+                    <div className="form-group">
                         <InputField name="img" divClassName={divClassName} className="form-control" label="Link immagine"
-                        helperText={this.showError('img')} handleChange={this._handleChange} />                        
+                        helperText={this.showError('img')} handleChange={this._handleChange} />
                     </div>
 
                     <div className="form-group">
                         <InputField name="prezzo" divClassName={divClassName} className="form-control" label="Prezzo €"
-                        helperText={this.showError('prezzo')} handleChange={this._handleChange} />                        
+                        helperText={this.showError('prezzo')} handleChange={this._handleChange} />
                     </div>
 
                     <div className="form-group">
@@ -422,7 +457,7 @@ export default class CatalogoModal extends Component {
                         handleChange={this._handleChange} />
                     </div>
 
-                    { typeof remoteError ==='object' && 
+                    { typeof remoteError ==='object' &&
                         <div className="alert alert-danger" role="alert">
                             <strong>Attenzione!</strong>
                             {

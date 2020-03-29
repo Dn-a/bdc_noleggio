@@ -57,6 +57,9 @@ Route::middleware(['auth','ruolo:admin'])->group( function () {
     // Registi
     Route::get('registi/search/{val}', 'RegistaController@search')->name('registi.search');
 
+    // Case produzione
+    Route::get('case-produzione/search/{val}', 'CasaProduzioneController@search')->name('case-produzione.search');
+
     // Generi
     Route::get('generi/search/{val}', 'GenereController@search')->name('generi.search');
 

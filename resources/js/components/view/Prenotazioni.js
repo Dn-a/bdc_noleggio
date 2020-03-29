@@ -31,6 +31,8 @@ const COLUMNS_VIDEO = [
                                         })
                                     }
                                     <div className="mb-3"></div>
+                                    <strong>Casa Produzione:</strong> {row.casa_produzione}
+                                    <div className="mb-3"></div>
                                     <strong>Trama:</strong> {row.trama}
                                 </div>
                             </div>
@@ -259,7 +261,7 @@ export default class Noleggi extends Component {
                         <div className="container-fluid pl-3">
 
                             <div className="row mb-2 px-2">
-                                <div className="col-md-12">                                   
+                                <div className="col-md-12">
                                     <p>Selezionando uno o più video si attiverà il tasto <strong>Prenota</strong></p>
                                     <p>Puoi cercare un <strong>Video</strong> in base a : TITOLO | GENERE</p>
                                 </div>

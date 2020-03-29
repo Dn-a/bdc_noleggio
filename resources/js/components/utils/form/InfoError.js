@@ -4,6 +4,7 @@ const InfoError = {
     'data_2': 'Inserire una data inferiore a quella corrente',
     'genere': 'Inserire un Genere valido',
     'regista': 'Inserire un Regista valido',
+    'casa_produzione': 'Inserire una Casa di Produzione valida',
     'attore': 'Inserire un Attore valido',
     'attore_2': 'Inserire almeno un Attore',
     'caratteri': 'Inserire caratteri validi',

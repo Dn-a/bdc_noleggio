@@ -100,7 +100,7 @@ class VideoController extends Controller
             $moreFields =  array_merge($moreFields,['numero_prenotazioni']);
 
         if($noleggi || $inUscita || $catalogo)
-            $moreFields =  array_merge($moreFields,['trama','attori','disponibile']);
+            $moreFields =  array_merge($moreFields,['trama','attori', 'casa_produzione', 'disponibile']);
 
         return $moreFields;
     }
@@ -117,20 +117,20 @@ class VideoController extends Controller
         try{
             //return response()->json($request->all(),201);exit;
 
-            if($request->fase!='bozza')
-                $request->validate([
-                    'titolo' => 'required|string|min:1|max:50',
-                    'durata' => 'required|integer',
-                    'trama' => 'required|string|max:1024',
-                    'disponibile' => 'required|integer',
-                    'data_uscita' => 'required|date|date_format:Y-m-d',
-                    'prezzo' => 'required|regex:/^\d+(\.\d{1,6})?$/',
-                    'img' => 'required|string|max:2048',
-                    'id_attori' => 'required|array',
-                    'id_attori.*' => 'required|integer',
-                    'id_categoria' => 'required|integer',
-                    'id_regista' => 'required|integer',
-                ]);
+            $request->validate([
+                'titolo' => 'required|string|min:1|max:50',
+                'durata' => 'required|integer',
+                'trama' => 'required|string|max:1024',
+                'disponibile' => 'required|integer',
+                'data_uscita' => 'required|date|date_format:Y-m-d',
+                'prezzo' => 'required|regex:/^\d+(\.\d{1,6})?$/',
+                'img' => 'required|string|max:2048',
+                'id_attori' => 'required|array',
+                'id_attori.*' => 'required|integer',
+                'id_categoria' => 'required|integer',
+                'id_regista' => 'required|integer',
+                'id_casa_produzione' => 'required|integer',
+            ]);
 
             //return response()->json($request->except('id_attori'),201);exit;
 

@@ -17,7 +17,9 @@ class Ricevuta extends Model
 
     public function puntoVendita()
     {
-        return $this->belongsTo('App\PuntoVendita','id_pt_vendita');
+        //return $this->belongsTo('App\PuntoVendita','id_pt_vendita');
+        $dipendente = Dipendente::where('id',$this->id_dipendente);
+        return $dipendente->puntoVendita();
     }
 
     public function cliente()
