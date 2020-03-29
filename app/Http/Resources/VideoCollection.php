@@ -63,8 +63,11 @@ class VideoCollection extends ResourceCollection
         if(in_array('qta_disponibili',$fields)){
             $idPtVendita = $this->idPtVendita;
             $qta_disponibili =
-                $item->magazzino
-                ->where('id_pt_vendita',$this->idPtVendita)
+                $item->magazzino()
+                //->where('id_pt_vendita',$this->idPtVendita) ridondante
+                ->whereHas('dipendente',function($query) use($idPtVendita) {
+                    $query->where('id_pt_vendita',$idPtVendita);
+                })
                 ->where('restituito_al_fornitore',0)
                 ->where('noleggiato',0)
                 ->where('danneggiato',0)->count();
@@ -77,11 +80,15 @@ class VideoCollection extends ResourceCollection
             $item['qta_disponibili'] = $qta_disponibili;
         }
         if(in_array('qta_magazzino',$fields)){
-            $qta_magazzino = count(
-                $item->magazzino
-                ->where('id_pt_vendita',$this->idPtVendita)
-                ->where('restituito_al_fornitore',0)
-            );
+            $idPtVendita = $this->idPtVendita;
+            $qta_magazzino =
+                $item->magazzino()
+                //->where('id_pt_vendita',$this->idPtVendita) ridondante
+                ->whereHas('dipendente',function($query) use($idPtVendita) {
+                    $query->where('id_pt_vendita',$idPtVendita);
+                })
+                ->where('restituito_al_fornitore',0)->count();
+
             $item['qta_magazzino'] = $qta_magazzino;
         }
         if(in_array('categoria',$fields)){
@@ -94,8 +101,12 @@ class VideoCollection extends ResourceCollection
             $item['regista'] = $regista;
         }
         if(in_array('numero_prenotazioni',$fields)){
+            $idPtVendita = $this->idPtVendita;
             $item['numero_prenotazioni'] =
-            $item->prenotazione->where('id_pt_vendita',$this->idPtVendita)
+            //$item->prenotazione->whereHas('id_pt_vendita',$this->idPtVendita)
+            $item->prenotazione()->whereHas('dipendente', function($query) use($idPtVendita)  {
+                $query->where('id_pt_vendita',$idPtVendita);
+            })
             ->count();
         }
         if(in_array('attori',$fields)){

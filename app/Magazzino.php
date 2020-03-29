@@ -17,7 +17,10 @@ class Magazzino extends Model
 
     public function puntoVendita()
     {
-        return $this->belongsTo('App\PuntoVendita','id_pt_vendita');
+        // rimozione ridondanza
+        //return $this->belongsTo('App\PuntoVendita','id_pt_vendita');
+        $dipendente = Dipendente::where('id',$this->id_dipendente)->first();
+        return $dipendente->puntoVendita();
     }
 
     public function video()
@@ -34,6 +37,7 @@ class Magazzino extends Model
     {
         return $this->belongsTo('App\Dipendente','id_dipendente');
     }
+
 
     public function noleggio()
     {

@@ -38,7 +38,10 @@ class VideoController extends Controller
         ->where(function($query) use($idPtVendita,$noleggi) {
             if($noleggi)
                 $query->whereHas('magazzino',function($query) use($idPtVendita) {
-                    $query->where('id_pt_vendita',$idPtVendita);
+                    //$query->where('id_pt_vendita',$idPtVendita); ridondante
+                    $query->whereHas('dipendente',function($query) use($idPtVendita) {
+                        $query->where('id_pt_vendita',$idPtVendita);
+                    });
                 });
         })
         ->orderBy('id','DESC')->paginate($page);
@@ -90,13 +93,13 @@ class VideoController extends Controller
 
     private function moreField($inUscita,$noleggi,$catalogo)
     {
-        $moreFields = [            
+        $moreFields = [
         ];
 
         if($inUscita)
             $moreFields =  array_merge($moreFields,['numero_prenotazioni']);
-        
-        if($noleggi || $inUscita || $catalogo) 
+
+        if($noleggi || $inUscita || $catalogo)
             $moreFields =  array_merge($moreFields,['trama','attori','disponibile']);
 
         return $moreFields;
@@ -112,7 +115,7 @@ class VideoController extends Controller
     public function store(Request $request)
     {
         try{
-            //return response()->json($request->all(),201);exit;            
+            //return response()->json($request->all(),201);exit;
 
             if($request->fase!='bozza')
                 $request->validate([
@@ -130,14 +133,14 @@ class VideoController extends Controller
                 ]);
 
             //return response()->json($request->except('id_attori'),201);exit;
-            
-            $data = $request->except('id_attori');            
-            
+
+            $data = $request->except('id_attori');
+
             $video = Video::create($data);
 
-            $video->attori()->sync($request->id_attori);            
-            
-            
+            $video->attori()->sync($request->id_attori);
+
+
             $msg = 'Video Inserito!';
 
             return response()->json(['insert' => $msg],201);

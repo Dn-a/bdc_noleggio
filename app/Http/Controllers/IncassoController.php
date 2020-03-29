@@ -67,35 +67,81 @@ class IncassoController extends Controller
                 "
             ));
 
+            // Ridondante (rimosso id_pt_vendita Entità Magazzino)
+            // $incassiPtVendita = DB::select( DB::raw(
+            //     "SELECT p.titolo AS titolo,
+            //         IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
+            //             WHERE DATE($date) ='$yesterday' AND n.id_magazzino = m.id
+            //             AND m.id_pt_vendita = p.id
+            //         ),0) AS incasso_ieri,
+            //         IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
+            //             WHERE DATE($date) ='$today' AND n.id_magazzino = m.id
+            //             AND m.id_pt_vendita = p.id
+            //         ),0) AS incasso_oggi,
+            //         IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
+            //             WHERE DATE($date) >='$sevenDayAgo' AND DATE($date) <='$today'
+            //             AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
+            //         ),0) AS incasso_week,
+            //         IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
+            //             WHERE DATE($date) >='$thirtyDayAgo' AND DATE($date) <='$today'
+            //             AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
+            //         ),0) AS incasso_month,
+            //         IFNULL((SELECT count(*) FROM noleggi AS n, magazzino AS m
+            //             WHERE DATE($date) ='$today' AND n.id_magazzino = m.id
+            //             AND m.id_pt_vendita = p.id
+            //         ),0) AS n_noleggi_oggi,
+            //         IFNULL((SELECT count(*) FROM noleggi AS n, magazzino AS m
+            //             WHERE DATE($date) >='$sevenDayAgo' AND DATE($date) <='$today'
+            //             AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
+            //         ),0) AS n_noleggi_week,
+            //         IFNULL((SELECT count(*) FROM noleggi AS n, magazzino AS m
+            //             WHERE DATE($date) >='$thirtyDayAgo' AND DATE($date) <='$today'
+            //             AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
+            //         ),0) AS n_noleggi_month
+            //         FROM pt_vendita AS p WHERE p.id = $idPtVendita GROUP BY titolo
+            //     "
+            // ));
+
             $incassiPtVendita = DB::select( DB::raw(
                 "SELECT p.titolo AS titolo,
-                    IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
+                    IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2)
+                        FROM noleggi AS n, magazzino AS m, dipendenti AS d
                         WHERE DATE($date) ='$yesterday' AND n.id_magazzino = m.id
-                        AND m.id_pt_vendita = p.id
+                        AND n.id_dipendente = d.id AND d.id_pt_vendita = p.id
                     ),0) AS incasso_ieri,
-                    IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
+                    IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2)
+                        FROM noleggi AS n, magazzino AS m, dipendenti AS d
                         WHERE DATE($date) ='$today' AND n.id_magazzino = m.id
-                        AND m.id_pt_vendita = p.id
+                        AND n.id_dipendente = d.id AND d.id_pt_vendita = p.id
                     ),0) AS incasso_oggi,
-                    IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
+                    IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2)
+                        FROM noleggi AS n, magazzino AS m, dipendenti AS d
                         WHERE DATE($date) >='$sevenDayAgo' AND DATE($date) <='$today'
-                        AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
+                        AND n.id_magazzino = m.id
+                        AND n.id_dipendente = d.id AND d.id_pt_vendita = p.id
                     ),0) AS incasso_week,
-                    IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2) FROM noleggi AS n, magazzino AS m
+                    IFNULL((SELECT ROUND(sum(prezzo_tot + prezzo_extra),2)
+                        FROM noleggi AS n, magazzino AS m, dipendenti AS d
                         WHERE DATE($date) >='$thirtyDayAgo' AND DATE($date) <='$today'
-                        AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
+                        AND n.id_magazzino = m.id
+                        AND n.id_dipendente = d.id AND d.id_pt_vendita = p.id
                     ),0) AS incasso_month,
-                    IFNULL((SELECT count(*) FROM noleggi AS n, magazzino AS m
+                    IFNULL((SELECT count(*)
+                        FROM noleggi AS n, magazzino AS m, dipendenti AS d
                         WHERE DATE($date) ='$today' AND n.id_magazzino = m.id
-                        AND m.id_pt_vendita = p.id
+                        AND n.id_dipendente = d.id AND d.id_pt_vendita = p.id
                     ),0) AS n_noleggi_oggi,
-                    IFNULL((SELECT count(*) FROM noleggi AS n, magazzino AS m
+                    IFNULL((SELECT count(*)
+                        FROM noleggi AS n, magazzino AS m, dipendenti AS d
                         WHERE DATE($date) >='$sevenDayAgo' AND DATE($date) <='$today'
-                        AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
+                        AND n.id_magazzino = m.id
+                        AND n.id_dipendente = d.id AND d.id_pt_vendita = p.id
                     ),0) AS n_noleggi_week,
-                    IFNULL((SELECT count(*) FROM noleggi AS n, magazzino AS m
+                    IFNULL((SELECT count(*)
+                        FROM noleggi AS n, magazzino AS m, dipendenti AS d
                         WHERE DATE($date) >='$thirtyDayAgo' AND DATE($date) <='$today'
-                        AND n.id_magazzino = m.id AND m.id_pt_vendita = p.id
+                        AND n.id_magazzino = m.id
+                        AND n.id_dipendente = d.id AND d.id_pt_vendita = p.id
                     ),0) AS n_noleggi_month
                     FROM pt_vendita AS p WHERE p.id = $idPtVendita GROUP BY titolo
                 "

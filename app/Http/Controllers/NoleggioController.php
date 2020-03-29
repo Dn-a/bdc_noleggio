@@ -47,9 +47,9 @@ class NoleggioController extends Controller
         $noleggio = Noleggio::where('data_restituzione',$storico?'!=':'=', null )
             ->where(function($query) use ($idCliente){
                 if($idCliente!=null)
-                    $query->where('id_cliente',$idCliente);   
+                    $query->where('id_cliente',$idCliente);
             })
-            ->whereHas('magazzino',function($query) use($idPtVendita) {
+            ->whereHas('dipendente',function($query) use($idPtVendita) {
                 $query->where('id_pt_vendita',$idPtVendita);
             })
             ->orderBy('id','DESC')->paginate($page);
@@ -71,7 +71,7 @@ class NoleggioController extends Controller
         $idPtVendita = $user->id_pt_vendita;
 
         $noleggio = Noleggio::where('data_restituzione',$storico?'!=':'=', null )
-        ->whereHas('magazzino',function($query) use($idPtVendita) {
+        ->whereHas('dipendente',function($query) use($idPtVendita) {
             $query->where('id_pt_vendita',$idPtVendita);
         })
         ->where(function($query) use($arr) {
@@ -163,7 +163,10 @@ class NoleggioController extends Controller
                 // seleziono il primo in ordine Ascendente
                 $magazzino = Magazzino::
                         where('id_video',$idVideo)
-                        ->where('id_pt_vendita',$idPtVendita)
+                        //->where('id_pt_vendita',$idPtVendita) ridondante
+                        ->whereHas('dipendente',function($query) use($idPtVendita) {
+                            $query->where('id_pt_vendita',$idPtVendita);
+                        })
                         ->where('noleggiato',0)
                         ->where('danneggiato',0)
                         ->orderBy('id','ASC')
@@ -258,7 +261,7 @@ class NoleggioController extends Controller
                     'pdf' => $ricevuta
                 ]
             );
-            
+
             for( $j=0 ; $j <$cntVideo; $j++ )
                 $arrayNlgInsert[$j]['id_ricevuta_noleggio'] = $idRicevuta;
 
@@ -462,7 +465,7 @@ class NoleggioController extends Controller
                     'pdf' => $ricevuta
                 ]
             );
-                        
+
             $noleggio = new Noleggio();
 
             $noleggio->whereIn('id',$input['id_noleggio'])

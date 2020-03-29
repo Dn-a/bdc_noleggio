@@ -25,7 +25,7 @@ class MagazzinoController extends Controller
         $idPtVendita = $request->input('id_pt_vendita')? : $idPtVendita;
 
         $magazzino = Magazzino::where('restituito_al_fornitore', $caricati? 1:0 )
-        ->where(function($query) use($idPtVendita) {
+        ->whereHas('dipendente',function($query) use($idPtVendita) {
             if( $idPtVendita!=null )
                 $query->where('id_pt_vendita',$idPtVendita);
         })
@@ -48,15 +48,12 @@ class MagazzinoController extends Controller
         $idPtVendita = $request->input('id_pt_vendita')? : $idPtVendita;
 
         $magazzino = Magazzino::where('restituito_al_fornitore', $caricati? 1:0 )
-        ->where(function($query) use($idPtVendita) {
+        ->whereHas('dipendente', function($query) use($idPtVendita) {
             if( $idPtVendita!=null )
                 $query->where('id_pt_vendita',$idPtVendita);
         })
         ->where(function($query) use($arr) {
             $query->whereHas('video',function($query) use($arr) {
-                $query->where('titolo','like',$arr[0].'%');
-            })
-            ->orWhereHas('puntoVendita',function($query) use($arr) {
                 $query->where('titolo','like',$arr[0].'%');
             })
             ->orWhereHas('dipendente',function($query) use($arr) {
@@ -122,10 +119,10 @@ class MagazzinoController extends Controller
 
             $input = $request->all();
 
-            $idPtVendita = Auth::user()->id_pt_vendita;
+            //$idPtVendita = Auth::user()->id_pt_vendita; ridondante
             $idUser = Auth::user()->id;
 
-            $input['id_pt_vendita'] = $idPtVendita;
+            //$input['id_pt_vendita'] = $idPtVendita; ridondante
             $input['id_dipendente'] = $idUser;
 
             // quantità di film da inserire

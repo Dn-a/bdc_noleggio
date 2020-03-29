@@ -17,7 +17,7 @@ class CreateMagazzinoTable extends Migration
         Schema::create('magazzino', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('id_video');
-            $table->unsignedInteger('id_pt_vendita');
+            //$table->unsignedInteger('id_pt_vendita'); ridindante
             $table->unsignedInteger('id_fornitore');
             $table->unsignedInteger('id_dipendente');
             $table->timestamp('data_scarico')->useCurrent();
@@ -39,7 +39,7 @@ class CreateMagazzinoTable extends Migration
         	$table->foreign('id_dipendente')->references('id')->on('dipendenti')->onDelete('restrict');
         	$table->foreign('id_fornitore')->references('id')->on('fornitori')->onDelete('restrict');
         	$table->foreign('id_video')->references('id')->on('video')->onDelete('restrict');
-        	$table->foreign('id_pt_vendita')->references('id')->on('pt_vendita')->onDelete('restrict');
+        	//$table->foreign('id_pt_vendita')->references('id')->on('pt_vendita')->onDelete('restrict'); ridondante
         });
     }
 

@@ -23,7 +23,9 @@ class PrenotazioneController extends Controller
         $idPtVendita = $user->id_pt_vendita;
 
         $prenotazione = Prenotazione::where('ritirato',$ritirati ? 1:0 )
-            ->where('id_pt_vendita',$idPtVendita)
+            ->whereHas('dipendente', function($query) use($idPtVendita)  {
+                $query->where('id_pt_vendita',$idPtVendita);
+            })
             ->orderBy('id','DESC')->paginate($page);
 
         return new PrenotazioneCollection($prenotazione, true,
@@ -46,7 +48,9 @@ class PrenotazioneController extends Controller
         $idPtVendita = $user->id_pt_vendita;
 
         $noleggio = Prenotazione::where('ritirato',$ritirati ? 1:0 )
-        ->where('id_pt_vendita',$idPtVendita)
+        ->whereHas('dipendente', function($query) use($idPtVendita)  {
+            $query->where('id_pt_vendita',$idPtVendita);
+        })
         ->where(function($query) use($arr) {
             $query->whereHas('video',function($query) use($arr) {
                 $query->where('titolo','like',$arr[0].'%');
@@ -104,7 +108,7 @@ class PrenotazioneController extends Controller
 
             $user = Auth::user();
             $idDipendente = $user->id;
-            $idPtVendita = $user->id_pt_vendita;
+            //$idPtVendita = $user->id_pt_vendita; ridondante ( rimosso dalla tabella)
             $array = [];
 
             for( $i=0 ; $i < count($input['id_video']) ; $i++ ){
@@ -113,7 +117,7 @@ class PrenotazioneController extends Controller
                     'id_dipendente' => $idDipendente,
                     'id_cliente' => $input['id_cliente'],
                     'id_video' => $input['id_video'][$i],
-                    'id_pt_vendita' => $idPtVendita
+                    //'id_pt_vendita' => $idPtVendita
                 ];
 
             }
