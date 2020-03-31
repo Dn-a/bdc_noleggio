@@ -73,8 +73,10 @@ class ClienteCollection extends ResourceCollection
         }
         if($this->idVideoPrenotazioni!=null && $this->idPtVendita!=null){
             $idptV = $this->idPtVendita;
-            $id_video = $item->prenotazione
-            ->where('id_pt_vendita',$this->idPtVendita)
+            $id_video = $item->prenotazione()
+            ->whereHas('dipendente', function($query) use($idptV) {
+                $query->where('id_pt_vendita',$idptV);
+            })
             ->whereIn('id_video',$this->idVideoPrenotazioni)
             ->pluck('id_video');
             $item['id_video'] = $id_video;
