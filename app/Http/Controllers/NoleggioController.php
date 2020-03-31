@@ -255,7 +255,7 @@ class NoleggioController extends Controller
             $idRicevuta = DB::table('ricevute')->insertGetId(
                 [
                     'tipo' => 'noleggio',
-                    'id_pt_vendita' => $idPtVendita,
+                    //'id_pt_vendita' => $idPtVendita, ridondante
                     'id_dipendente' => $idDipendente,
                     'id_cliente' => $input['id_cliente'],
                     'pdf' => $ricevuta
@@ -459,7 +459,7 @@ class NoleggioController extends Controller
             $idRicevuta = DB::table('ricevute')->insertGetId(
                 [
                     'tipo' => 'pagamento',
-                    'id_pt_vendita' => $idPtVendita,
+                    //'id_pt_vendita' => $idPtVendita, ridondante
                     'id_dipendente' => $idDipendente,
                     'id_cliente' => $input['id_cliente'],
                     'pdf' => $ricevuta
